@@ -1,6 +1,6 @@
 // next-sitemap.config.js
 module.exports = {
-    siteUrl: 'https://QuanMofii.github.io/',              
+    siteUrl: 'https://rayquasar18.github.io',              
     generateRobotsTxt: true,
     outDir: './out',
     changefreq: 'weekly',
