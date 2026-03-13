@@ -65,8 +65,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Internationalization
 
 - [x] **I18N-01**: App routes are restructured to `app/[lang]/` pattern with next-intl
-- [ ] **I18N-02**: User can switch between Vietnamese and English via language switcher
-- [ ] **I18N-03**: All UI text is externalized to translation files (not hardcoded)
+- [x] **I18N-02**: User can switch between Vietnamese and English via language switcher
+- [x] **I18N-03**: All UI text is externalized to translation files (not hardcoded)
 - [x] **I18N-04**: Language preference is detected and persisted client-side
 - [x] **I18N-05**: Static export generates both `/en/` and `/vi/` route trees via generateStaticParams
 
@@ -138,8 +138,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FNDN-03 | Phase 2 | Complete |
 | FNDN-05 | Phase 2 | Complete |
 | I18N-01 | Phase 2 | Complete |
-| I18N-02 | Phase 2 | Pending |
-| I18N-03 | Phase 2 | Pending |
+| I18N-02 | Phase 2 | Complete |
+| I18N-03 | Phase 2 | Complete |
 | I18N-04 | Phase 2 | Complete |
 | I18N-05 | Phase 2 | Complete |
 | UX-01 | Phase 2 | Complete |
