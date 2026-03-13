@@ -17,7 +17,9 @@
   },
   "Home": {
     "welcome": "Chào mừng đến portfolio của mình",
-    "subtitle": "Kỹ sư AI xây dựng hệ thống thông minh"
+    "subtitle": "Kỹ sư AI xây dựng hệ thống thông minh",
+    "description": "Mình chuyên về NLP, điều phối LLM, hệ thống đa tác tử, và kiến trúc RAG. Đam mê xây dựng AI mang tính nhân văn và hoạt động ổn định ở quy mô lớn.",
+    "cta": "Khám Phá Dự Án"
   },
   "LanguageSwitcher": {
     "en": "EN",
@@ -28,5 +30,8 @@
     "heading": "Không Tìm Thấy Trang",
     "description": "Trang bạn đang tìm không tồn tại hoặc đã được di chuyển.",
     "homeLink": "Về Trang Chủ"
+  },
+  "Footer": {
+    "copyright": "Hà Minh Quân. Bảo lưu mọi quyền."
   }
 }

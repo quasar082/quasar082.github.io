@@ -3,6 +3,7 @@ import {getMessages, setRequestLocale, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {marlinGeo, saprona, geistMono} from '@/lib/fonts';
+import {Header} from '@/components/Header';
 import type {Metadata} from 'next';
 
 export function generateStaticParams() {
@@ -51,7 +52,10 @@ export default async function LocaleLayout({
         className={`${marlinGeo.variable} ${saprona.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider locale={lang} messages={messages}>
-          {children}
+          <Header />
+          <main className="pt-16">
+            {children}
+          </main>
         </NextIntlClientProvider>
       </body>
     </html>

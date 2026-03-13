@@ -17,7 +17,9 @@
   },
   "Home": {
     "welcome": "Welcome to my portfolio",
-    "subtitle": "AI Engineer building intelligent systems"
+    "subtitle": "AI Engineer building intelligent systems",
+    "description": "I specialize in NLP, LLM orchestration, multi-agent systems, and RAG architecture. Passionate about building AI that feels human and works reliably at scale.",
+    "cta": "Explore Projects"
   },
   "LanguageSwitcher": {
     "en": "EN",
@@ -28,5 +30,8 @@
     "heading": "Page Not Found",
     "description": "The page you're looking for doesn't exist or has been moved.",
     "homeLink": "Go Home"
+  },
+  "Footer": {
+    "copyright": "Ha Minh Quan. All rights reserved."
   }
 }
