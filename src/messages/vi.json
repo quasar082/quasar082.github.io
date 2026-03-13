@@ -1,0 +1,32 @@
+{
+  "Metadata": {
+    "title": "Hà Minh Quân | Kỹ sư AI",
+    "description": "Kỹ sư AI chuyên về NLP, LLM, hệ thống đa tác tử, và kiến trúc RAG"
+  },
+  "Header": {
+    "brand": "RayQuasar",
+    "home": "Trang Chủ",
+    "about": "Giới Thiệu",
+    "projects": "Dự Án",
+    "blog": "Blog"
+  },
+  "Hero": {
+    "greeting": "Xin chào, mình là Quân",
+    "role": "Kỹ sư AI",
+    "tagline": "Làm cho Wall-E biết yêu lại"
+  },
+  "Home": {
+    "welcome": "Chào mừng đến portfolio của mình",
+    "subtitle": "Kỹ sư AI xây dựng hệ thống thông minh"
+  },
+  "LanguageSwitcher": {
+    "en": "EN",
+    "vi": "VI"
+  },
+  "NotFound": {
+    "title": "404",
+    "heading": "Không Tìm Thấy Trang",
+    "description": "Trang bạn đang tìm không tồn tại hoặc đã được di chuyển.",
+    "homeLink": "Về Trang Chủ"
+  }
+}

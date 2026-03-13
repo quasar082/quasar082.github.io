@@ -1,0 +1,32 @@
+{
+  "Metadata": {
+    "title": "Ha Minh Quan | AI Engineer",
+    "description": "AI Engineer specializing in NLP, LLM, multi-agent systems, and RAG architecture"
+  },
+  "Header": {
+    "brand": "RayQuasar",
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "blog": "Blog"
+  },
+  "Hero": {
+    "greeting": "Hi, I'm Quan",
+    "role": "AI Engineer",
+    "tagline": "Make Wall-E can love again"
+  },
+  "Home": {
+    "welcome": "Welcome to my portfolio",
+    "subtitle": "AI Engineer building intelligent systems"
+  },
+  "LanguageSwitcher": {
+    "en": "EN",
+    "vi": "VI"
+  },
+  "NotFound": {
+    "title": "404",
+    "heading": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "homeLink": "Go Home"
+  }
+}
