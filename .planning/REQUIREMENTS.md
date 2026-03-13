@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **FNDN-01**: Fix missing `"use client"` directives on components using React hooks
 - [x] **FNDN-02**: Fix basePath bug for CV download and asset URLs in production
 - [ ] **FNDN-03**: Fix hreflang meta tags that declare routes returning 404
-- [ ] **FNDN-04**: Fix LoadingScreen timing and scroll magic numbers in HeroSection
+- [x] **FNDN-04**: Fix LoadingScreen timing and scroll magic numbers in HeroSection
 - [ ] **FNDN-05**: Establish lab aesthetic with grid/caro pattern background (dark theme CSS variable system)
 
 ### 3D Robot
@@ -133,7 +133,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | FNDN-01 | Phase 1 | Complete |
 | FNDN-02 | Phase 1 | Complete |
-| FNDN-04 | Phase 1 | Pending |
+| FNDN-04 | Phase 1 | Complete |
 | UX-05 | Phase 1 | Complete |
 | FNDN-03 | Phase 2 | Pending |
 | FNDN-05 | Phase 2 | Pending |
