@@ -47,7 +47,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Language preference is detected from browser settings on first visit and remembered on return
   4. The static export build generates `/en/` and `/vi/` route trees — both work after `gh-pages` deploy
   5. All pages display the dark grid/caro lab aesthetic background with the CSS variable token system
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — i18n routing infrastructure + design tokens + fonts + route structure
+- [ ] 02-02-PLAN.md — Header + language switcher + mobile menu + translations + visual verification
 
 ### Phase 3: 3D Robot Subsystem
 **Goal**: A 3D robot character is rendered in the browser, displays emotion-based animations, and is safe to include in a static export build
@@ -147,14 +151,14 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 Note: Phase 6 depends on Phase 2 (not Phase 5), so it can run in parallel with Phases 3-5 if desired. Phase 7 similarly depends on Phase 2 only.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Setup | N/A | Complete | 2026-03-13 |
-| 2. i18n Foundation + Lab Aesthetic | 0/? | Not started | - |
+| 2. i18n Foundation + Lab Aesthetic | 0/2 | Planning complete | - |
 | 3. 3D Robot Subsystem | 0/? | Not started | - |
 | 4. Chatbot Integration | 0/? | Not started | - |
 | 5. Hero Section | 0/? | Not started | - |
