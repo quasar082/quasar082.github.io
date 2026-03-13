@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ROBT-01**: User can see an interactive 3D robot model rendered in the hero section via React Three Fiber
 - [ ] **ROBT-02**: Robot displays emotion-based animations (happy, sad, excited, thinking, idle) driven by Zustand state
 - [ ] **ROBT-03**: 3D model loads with Suspense fallback and graceful loading indicator
-- [ ] **ROBT-04**: Robot is wrapped with `dynamic({ ssr: false })` to prevent static export build crash
+- [x] **ROBT-04**: Robot is wrapped with `dynamic({ ssr: false })` to prevent static export build crash
 - [ ] **ROBT-05**: Robot renders performantly on mobile devices with reduced quality fallback
 
 ### Chatbot
@@ -146,7 +146,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROBT-01 | Phase 3 | Pending |
 | ROBT-02 | Phase 3 | Pending |
 | ROBT-03 | Phase 3 | Pending |
-| ROBT-04 | Phase 3 | Pending |
+| ROBT-04 | Phase 3 | Complete |
 | ROBT-05 | Phase 3 | Pending |
 | CHAT-01 | Phase 4 | Pending |
 | CHAT-02 | Phase 4 | Pending |
