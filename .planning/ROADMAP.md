@@ -2,7 +2,7 @@
 
 ## Overview
 
-Starting from a functional single-page Next.js app with basic sections and existing animation components, this roadmap builds the full AI engineer portfolio in ten focused phases. The work flows from fixing the existing codebase (Phase 1), establishing the i18n routing structure that everything else depends on (Phase 2), then building the centerpiece 3D robot and chatbot (Phases 3-4), followed by the hero integration (Phase 5), content sections (Phases 6-7), the blog system (Phase 8), and finally SEO and performance polish (Phases 9-10). The result is a bilingual, interactive portfolio distinguished by a live LLM-driven 3D robot chatbot.
+Starting from a fresh Next.js 16 app (TypeScript, Tailwind CSS v4, App Router), this roadmap builds the full AI engineer portfolio in ten focused phases. Phase 1 sets up the project foundation with the core tooling. Phase 2 establishes bilingual routing and the lab aesthetic. Phases 3-4 build the centerpiece 3D robot and chatbot. Phase 5 integrates the hero section. Phases 6-7 build content sections. Phase 8 adds the blog system. Phases 9-10 polish SEO and performance. The result is a bilingual, interactive portfolio distinguished by a live LLM-driven 3D robot chatbot.
 
 ## Phases
 
@@ -12,7 +12,7 @@ Starting from a functional single-page Next.js app with basic sections and exist
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Codebase Cleanup** - Fix existing bugs that would compound all future work
+- [x] **Phase 1: Project Setup** - Fresh Next.js 16 app with TypeScript, Tailwind CSS v4, and core dependencies
 - [ ] **Phase 2: i18n Foundation + Lab Aesthetic** - Restructure to `app/[lang]/` routing, install next-intl, establish dark theme CSS system
 - [ ] **Phase 3: 3D Robot Subsystem** - Interactive robot rendered in browser via React Three Fiber with emotion-based animations
 - [ ] **Phase 4: Chatbot Integration** - Sticky LLM-connected chatbot that drives robot emotions via Zustand
@@ -25,19 +25,17 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 ## Phase Details
 
-### Phase 1: Codebase Cleanup
-**Goal**: The existing codebase has no outstanding bugs — every existing feature works correctly in both dev and production builds
+### Phase 1: Project Setup
+**Goal**: A clean Next.js 16 project is scaffolded with the core tooling (TypeScript, Tailwind CSS v4, Framer Motion, Zustand, Lucide React) and all old code is removed
 **Depends on**: Nothing (first phase)
-**Requirements**: FNDN-01, FNDN-02, FNDN-04, UX-05
+**Requirements**: N/A (old FNDN-01, FNDN-02, FNDN-04, UX-05 are obsolete — old code deleted)
 **Success Criteria** (what must be TRUE):
-  1. All components using React hooks have `"use client"` directives — no hydration errors in dev console
-  2. The CV download button on the existing site works correctly on the GitHub Pages production URL (basePath applied)
-  3. The loading screen transitions smoothly into the hero section — no jarring jumps or timing gaps
-  4. All scroll-driven animations in the existing hero section use measured heights, not hardcoded magic numbers
-**Plans:** 2 plans
-Plans:
-- [ ] 01-01-PLAN.md — Restore files, fix "use client" directives, remove basePath/URL legacy
-- [ ] 01-02-PLAN.md — Rewrite LoadingScreen timing/animation, extract HeroSection scroll constants
+  1. `npm run dev` starts the Next.js dev server without errors
+  2. `npm run build` completes successfully
+  3. `public/HaMinhQuan_CV.pdf` is preserved and accessible
+  4. `model-3d/` directory with .glb files is intact
+  5. `framer-motion`, `zustand`, and `lucide-react` are installed in package.json
+**Plans:** N/A (single setup commit)
 
 ### Phase 2: i18n Foundation + Lab Aesthetic
 **Goal**: The app is restructured to bilingual routing and has the visual identity system that all future sections inherit
@@ -155,7 +153,7 @@ Note: Phase 6 depends on Phase 2 (not Phase 5), so it can run in parallel with P
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Codebase Cleanup | 0/2 | Planning complete | - |
+| 1. Project Setup | N/A | Complete | 2026-03-13 |
 | 2. i18n Foundation + Lab Aesthetic | 0/? | Not started | - |
 | 3. 3D Robot Subsystem | 0/? | Not started | - |
 | 4. Chatbot Integration | 0/? | Not started | - |

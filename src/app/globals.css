@@ -1,11 +1,8 @@
 @import "tailwindcss";
-* {
-  scroll-behavior: smooth;
-}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-
 }
 
 @theme inline {
@@ -13,7 +10,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-MarlinGeoSQ_Medium: var(--MarlinGeoSQ_Medium)
 }
 
 @media (prefers-color-scheme: dark) {

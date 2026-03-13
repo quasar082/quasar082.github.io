@@ -1,35 +1,28 @@
 {
-  "name": "quanmofii-portfolio",
+  "name": "rayquasar18.github.io",
   "version": "0.1.0",
-  "homepage": "https://quanmofii.github.io/",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
-    "postbuild": "npx next-sitemap && touch ./out/.nojekyll",
     "start": "next start",
-    "lint": "next lint",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d out"
+    "lint": "eslint"
   },
   "dependencies": {
-    "framer-motion": "^12.7.4",
-    "ldrs": "^1.1.7",
-    "lucide-react": "^0.488.0",
-    "next": "15.3.1",
-    "next-sitemap": "^4.2.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zustand": "^5.0.3"
+    "framer-motion": "^12.36.0",
+    "lucide-react": "^0.577.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.3.1",
+    "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
