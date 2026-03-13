@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
+/* === PRIMITIVE TOKENS === */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Green/Emerald palette */
+  --green-50: #ecfdf5;
+  --green-100: #d1fae5;
+  --green-200: #a7f3d0;
+  --green-300: #6ee7b7;
+  --green-400: #34d399;
+  --green-500: #10b981;
+  --green-600: #059669;
+  --green-700: #047857;
+  --green-800: #065f46;
+  --green-900: #064e3b;
+
+  /* Gray/Surface palette */
+  --gray-950: #030712;
+  --gray-900: #0a0f1a;
+  --gray-800: #111827;
+  --gray-700: #1f2937;
+  --gray-600: #374151;
 }
 
+/* === SEMANTIC TOKENS (registered with Tailwind) === */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  /* Surfaces */
+  --color-surface-base: var(--gray-950);
+  --color-surface-elevated: var(--gray-900);
+  --color-surface-overlay: var(--gray-800);
+
+  /* Text */
+  --color-text-primary: #f0fdf4;
+  --color-text-secondary: #a3a3a3;
+  --color-text-muted: #6b7280;
+  --color-text-accent: var(--green-400);
+
+  /* Accent */
+  --color-accent: var(--green-500);
+  --color-accent-hover: var(--green-400);
+  --color-accent-muted: var(--green-900);
+
+  /* Borders */
+  --color-border: rgba(16, 185, 129, 0.15);
+  --color-border-hover: rgba(16, 185, 129, 0.3);
+
+  /* Spacing */
+  --spacing-section: 8rem;
+  --spacing-section-sm: 5rem;
+
+  /* Fonts */
+  --font-display: var(--font-saprona);
+  --font-body: var(--font-marlin);
   --font-mono: var(--font-geist-mono);
+
+  /* Typography scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* === BASE STYLES === */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-body), sans-serif;
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(16, 185, 129, 0.12) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(16, 185, 129, 0.12) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+}
+
+/* Base link styles */
+a {
+  color: var(--color-text-accent);
+  transition: color 150ms ease-out;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Scrollbar (dark themed) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-700);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-600);
 }
