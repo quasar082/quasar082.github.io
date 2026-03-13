@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Project Setup** - Fresh Next.js 16 app with TypeScript, Tailwind CSS v4, and core dependencies
 - [ ] **Phase 2: i18n Foundation + Lab Aesthetic** - Restructure to `app/[lang]/` routing, install next-intl, establish dark theme CSS system
-- [ ] **Phase 3: 3D Robot Subsystem** - Interactive robot rendered in browser via React Three Fiber with emotion-based animations
+- [x] **Phase 3: 3D Robot Subsystem** - Interactive robot rendered in browser via React Three Fiber with emotion-based animations (completed 2026-03-13)
 - [ ] **Phase 4: Chatbot Integration** - Sticky LLM-connected chatbot that drives robot emotions via Zustand
 - [ ] **Phase 5: Hero Section** - Redesigned hero with static black hole background and 3D robot foreground
 - [ ] **Phase 6: About + Introduce Sections** - Storytelling-format sections with scroll animations
@@ -63,11 +63,11 @@ Plans:
   3. The build (`npm run build`) completes without `window is not defined` errors — SSR crash is prevented
   4. A loading indicator is shown while the 3D model is downloading — the page does not appear broken mid-load
   5. On a mobile device, the robot renders at reduced quality (lower polygon or texture) without crashing or excessive frame drops
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 03-01-PLAN.md — Install R3F dependencies, place model, create robot types and Zustand store
-- [ ] 03-02-PLAN.md — Build 3D robot components (model, scene, dynamic wrapper, loading), integrate into page, visual verification
+- [x] 03-01-PLAN.md — Install R3F dependencies, place model, create robot types and Zustand store
+- [x] 03-02-PLAN.md — Build 3D robot components (model, scene, dynamic wrapper, loading), integrate into page, visual verification
 
 ### Phase 4: Chatbot Integration
 **Goal**: Visitors can chat with the robot — messages reach the LLM backend, responses control robot animations, and unavailability is handled gracefully
@@ -163,7 +163,7 @@ Note: Phase 6 depends on Phase 2 (not Phase 5), so it can run in parallel with P
 |-------|----------------|--------|-----------|
 | 1. Project Setup | N/A | Complete | 2026-03-13 |
 | 2. i18n Foundation + Lab Aesthetic | 0/2 | Planning complete | - |
-| 3. 3D Robot Subsystem | 0/2 | Planning complete | - |
+| 3. 3D Robot Subsystem | 2/2 | Complete   | 2026-03-14 |
 | 4. Chatbot Integration | 0/? | Not started | - |
 | 5. Hero Section | 0/? | Not started | - |
 | 6. About + Introduce Sections | 0/? | Not started | - |

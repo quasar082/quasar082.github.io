@@ -17,11 +17,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### 3D Robot
 
-- [ ] **ROBT-01**: User can see an interactive 3D robot model rendered in the hero section via React Three Fiber
-- [ ] **ROBT-02**: Robot displays emotion-based animations (happy, sad, excited, thinking, idle) driven by Zustand state
-- [ ] **ROBT-03**: 3D model loads with Suspense fallback and graceful loading indicator
+- [x] **ROBT-01**: User can see an interactive 3D robot model rendered in the hero section via React Three Fiber
+- [x] **ROBT-02**: Robot displays emotion-based animations (happy, sad, excited, thinking, idle) driven by Zustand state
+- [x] **ROBT-03**: 3D model loads with Suspense fallback and graceful loading indicator
 - [x] **ROBT-04**: Robot is wrapped with `dynamic({ ssr: false })` to prevent static export build crash
-- [ ] **ROBT-05**: Robot renders performantly on mobile devices with reduced quality fallback
+- [x] **ROBT-05**: Robot renders performantly on mobile devices with reduced quality fallback
 
 ### Chatbot
 
@@ -143,11 +143,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | I18N-04 | Phase 2 | Complete |
 | I18N-05 | Phase 2 | Complete |
 | UX-01 | Phase 2 | Complete |
-| ROBT-01 | Phase 3 | Pending |
-| ROBT-02 | Phase 3 | Pending |
-| ROBT-03 | Phase 3 | Pending |
+| ROBT-01 | Phase 3 | Complete |
+| ROBT-02 | Phase 3 | Complete |
+| ROBT-03 | Phase 3 | Complete |
 | ROBT-04 | Phase 3 | Complete |
-| ROBT-05 | Phase 3 | Pending |
+| ROBT-05 | Phase 3 | Complete |
 | CHAT-01 | Phase 4 | Pending |
 | CHAT-02 | Phase 4 | Pending |
 | CHAT-03 | Phase 4 | Pending |
