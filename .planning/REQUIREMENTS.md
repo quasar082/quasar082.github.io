@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FNDN-01**: Fix missing `"use client"` directives on components using React hooks
-- [ ] **FNDN-02**: Fix basePath bug for CV download and asset URLs in production
+- [x] **FNDN-01**: Fix missing `"use client"` directives on components using React hooks
+- [x] **FNDN-02**: Fix basePath bug for CV download and asset URLs in production
 - [ ] **FNDN-03**: Fix hreflang meta tags that declare routes returning 404
 - [ ] **FNDN-04**: Fix LoadingScreen timing and scroll magic numbers in HeroSection
 - [ ] **FNDN-05**: Establish lab aesthetic with grid/caro pattern background (dark theme CSS variable system)
@@ -87,7 +87,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **UX-02**: Scroll-triggered animations (fade/slide) on content sections via Framer Motion
 - [ ] **UX-03**: Fully responsive layout for mobile, tablet, and desktop
 - [ ] **UX-04**: Footer displays social links (email, LinkedIn, GitHub) and copyright
-- [ ] **UX-05**: CV download button works correctly with proper basePath
+- [x] **UX-05**: CV download button works correctly with proper basePath
 
 ## v2 Requirements
 
@@ -131,10 +131,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FNDN-01 | Phase 1 | Pending |
-| FNDN-02 | Phase 1 | Pending |
+| FNDN-01 | Phase 1 | Complete |
+| FNDN-02 | Phase 1 | Complete |
 | FNDN-04 | Phase 1 | Pending |
-| UX-05 | Phase 1 | Pending |
+| UX-05 | Phase 1 | Complete |
 | FNDN-03 | Phase 2 | Pending |
 | FNDN-05 | Phase 2 | Pending |
 | I18N-01 | Phase 2 | Pending |
