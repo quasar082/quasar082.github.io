@@ -1,61 +1,74 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Bouncy } from "ldrs/react";
 import { Reuleaux } from "ldrs/react";
 import "ldrs/react/Bouncy.css";
-import 'ldrs/react/Reuleaux.css'
+import "ldrs/react/Reuleaux.css";
+
+const MIN_DISPLAY_MS = 1500;
+const TIMEOUT_FALLBACK_MS = 8000;
 
 export default function LoadingScreen() {
-  const [showLoader, setShowLoader] = useState(true);
-  const [animateOut, setAnimateOut] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [phase, setPhase] = useState<"loading" | "exiting" | "done">("loading");
 
   useEffect(() => {
-    // Đảm bảo tất cả assets được load xong
-    const loadAssets = async () => {
-      try {
-        // Đợi cho đến khi window load hoàn tất
-        if (document.readyState === 'complete') {
-          setIsLoaded(true);
-        } else {
-          window.addEventListener('load', () => setIsLoaded(true));
-        }
+    // Lock scroll during loading
+    document.body.style.overflow = "hidden";
 
-        // Đợi thêm một khoảng thời gian để đảm bảo các component được hydrate
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsLoaded(true);
-      } catch (error) {
-        console.error('Error loading assets:', error);
-        setIsLoaded(true); // Vẫn set true để không bị kẹt ở loading screen
+    const readyPromise = new Promise<void>((resolve) => {
+      if (document.readyState === "complete") {
+        resolve();
+      } else {
+        window.addEventListener("load", () => resolve(), { once: true });
       }
-    };
+    });
 
-    loadAssets();
+    const minTimePromise = new Promise<void>((resolve) =>
+      setTimeout(resolve, MIN_DISPLAY_MS)
+    );
+
+    // Timeout fallback -- never stay stuck indefinitely
+    const timeoutPromise = new Promise<void>((resolve) =>
+      setTimeout(resolve, TIMEOUT_FALLBACK_MS)
+    );
+
+    // Wait for BOTH readyState + minimum time, OR timeout (whichever comes first)
+    Promise.race([
+      Promise.all([readyPromise, minTimePromise]),
+      timeoutPromise,
+    ]).then(() => {
+      setPhase("exiting");
+    });
+
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) {
-      const loadingTimeout = setTimeout(() => {
-        setAnimateOut(true);
-        setTimeout(() => setShowLoader(false), 1000);
-      }, 2000);
+  const handleExitComplete = () => {
+    setPhase("done");
+    document.body.style.overflow = "";
+  };
 
-      return () => {
-        clearTimeout(loadingTimeout);
-      };
-    }
-  }, [isLoaded]);
-
-  if (!showLoader) return null;
+  if (phase === "done") return null;
 
   return (
-    <div
-      className={`fixed inset-0 bg-white z-50 flex items-center justify-center overflow-hidden
-        ${animateOut ? "h-0" : "h-screen"} transition-all duration-1000`}
+    <motion.div
+      className="fixed inset-0 bg-white z-50 flex items-center justify-center"
+      initial={{ opacity: 1, scale: 1 }}
+      animate={
+        phase === "exiting"
+          ? { opacity: 0, scale: 0.95 }
+          : { opacity: 1, scale: 1 }
+      }
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      onAnimationComplete={() => {
+        if (phase === "exiting") handleExitComplete();
+      }}
     >
-      <div className={`flex flex-col items-center justify-center gap-4 transition-opacity duration-500
-        ${animateOut ? "opacity-0" : "opacity-100"}`}>
+      <div className="flex flex-col items-center justify-center gap-4">
         <Reuleaux
           size="37"
           stroke="5"
@@ -64,12 +77,8 @@ export default function LoadingScreen() {
           speed="1.2"
           color="black"
         />
-        <Bouncy 
-          size="45" 
-          speed="1.75" 
-          color="black" 
-        />
+        <Bouncy size="45" speed="1.75" color="black" />
       </div>
-    </div>
+    </motion.div>
   );
 }
