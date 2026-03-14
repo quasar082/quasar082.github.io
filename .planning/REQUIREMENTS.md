@@ -1,97 +1,126 @@
 # Requirements: RayQuasar Portfolio
 
-**Defined:** 2026-03-13
+**Defined:** 2026-03-15
 **Core Value:** The interactive 3D robot chatbot experience — a cute robot that responds with emotions and animations based on LLM-generated answers — must work flawlessly.
-
-## v1 Requirements
-
-Requirements for initial release. Each maps to roadmap phases.
-
-### Foundation
-
-- ~~**FNDN-01**: Fix missing `"use client"` directives on components using React hooks~~ — N/A (old code removed)
-- ~~**FNDN-02**: Fix basePath bug for CV download and asset URLs in production~~ — N/A (old code removed)
-- [x] **FNDN-03**: Fix hreflang meta tags that declare routes returning 404
-- ~~**FNDN-04**: Fix LoadingScreen timing and scroll magic numbers in HeroSection~~ — N/A (old code removed)
-- [x] **FNDN-05**: Establish lab aesthetic with grid/caro pattern background (dark theme CSS variable system)
-
-### 3D Robot
-
-- [x] **ROBT-01**: User can see an interactive 3D robot model rendered in the hero section via React Three Fiber
-- [x] **ROBT-02**: Robot displays emotion-based animations (happy, sad, excited, thinking, idle) driven by Zustand state
-- [x] **ROBT-03**: 3D model loads with Suspense fallback and graceful loading indicator
-- [x] **ROBT-04**: Robot is wrapped with `dynamic({ ssr: false })` to prevent static export build crash
-- [x] **ROBT-05**: Robot renders performantly on mobile devices with reduced quality fallback
-
-### Chatbot
-
-- [x] **CHAT-01**: User can type messages in a sticky bottom input bar that follows scroll
-- [x] **CHAT-02**: Messages are sent to external LLM API endpoint via HTTP POST
-- [x] **CHAT-03**: LLM response includes answer text + emotion field that controls robot animation state
-- [x] **CHAT-04**: Chat displays typing indicator while waiting for API response
-- [x] **CHAT-05**: Chatbot gracefully handles API unavailability with fallback message and default robot emotion
-- [x] **CHAT-06**: Chat history is maintained in session via Zustand store
-
-### Hero Section
-
-- [ ] **HERO-01**: Hero section displays static black hole background image with 3D robot in foreground
-- [ ] **HERO-02**: User's name, role (AI Engineer), and tagline ("Make Wall-E can love again") are prominently displayed
-- [ ] **HERO-03**: Loading screen extends to handle 3D model loading before revealing hero
-
-### Content - About
-
-- [ ] **ABUT-01**: About section tells the owner's story in storytelling format with text and images
-- [ ] **ABUT-02**: Content covers AI engineering expertise: NLP, LLM, multi-agent, RAG architecture
-- [ ] **ABUT-03**: Section uses scroll-triggered fade/slide animations
-
-### Content - Projects
-
-- [ ] **PROJ-01**: Projects section displays data-driven card grid (not hardcoded)
-- [ ] **PROJ-02**: Each project card shows title, description, tech stack, and thumbnail
-- [ ] **PROJ-03**: User can click a project card to view a detail page with full case study
-- [ ] **PROJ-04**: Project detail pages include screenshots, demo links, and GitHub links where applicable
-
-### Blog
-
-- [ ] **BLOG-01**: User can browse a list of blog posts rendered from .md/.mdx files in the repository
-- [ ] **BLOG-02**: User can read a blog post with properly rendered MDX content
-- [ ] **BLOG-03**: Blog posts have syntax-highlighted code blocks via rehype-pretty-code
-- [ ] **BLOG-04**: Each blog post page displays an auto-generated table of contents from headings
-- [ ] **BLOG-05**: User can filter blog posts by tags
-- [ ] **BLOG-06**: User can search blog posts via client-side fuzzy search (Fuse.js)
-- [ ] **BLOG-07**: Blog posts support series grouping for multi-part articles
-- [ ] **BLOG-08**: Blog is compatible with static export via generateStaticParams
-
-### Internationalization
-
-- [x] **I18N-01**: App routes are restructured to `app/[lang]/` pattern with next-intl
-- [x] **I18N-02**: User can switch between Vietnamese and English via language switcher
-- [x] **I18N-03**: All UI text is externalized to translation files (not hardcoded)
-- [x] **I18N-04**: Language preference is detected and persisted client-side
-- [x] **I18N-05**: Static export generates both `/en/` and `/vi/` route trees via generateStaticParams
-
-### SEO & Performance
-
-- [ ] **SEO-01**: Every page has proper meta tags, Open Graph tags, and canonical URLs
-- [ ] **SEO-02**: JSON-LD structured data for Person schema on main pages
-- [ ] **SEO-03**: JSON-LD Article schema on each blog post page
-- [ ] **SEO-04**: Sitemap includes all pages and blog post URLs
-- [ ] **SEO-05**: hreflang tags correctly point to existing `/en/` and `/vi/` routes
-- [ ] **PERF-01**: 3D model lazy-loads with code splitting; page loads under 3 seconds without 3D
-- [ ] **PERF-02**: Three.js bundle is code-split into separate chunk
-- [ ] **PERF-03**: Images are optimized (next/image or manual optimization for static export)
-
-### Visual & UX
-
-- [x] **UX-01**: Consistent dark-only theme across all pages with lab aesthetic grid/caro background
-- [ ] **UX-02**: Scroll-triggered animations (fade/slide) on content sections via Framer Motion
-- [ ] **UX-03**: Fully responsive layout for mobile, tablet, and desktop
-- [ ] **UX-04**: Footer displays social links (email, LinkedIn, GitHub) and copyright
-- ~~**UX-05**: CV download button works correctly with proper basePath~~ — N/A (old code removed)
 
 ## v2 Requirements
 
-Deferred to future release. Tracked but not in current roadmap.
+Requirements for v2.0 Complete Redesign milestone. Each maps to roadmap phases.
+
+### Animation System
+
+- [ ] **ANIM-01**: Lenis smooth scroll wraps the entire app with GSAP ScrollTrigger sync
+- [ ] **ANIM-02**: GSAP plugin registration module (ScrollTrigger, SplitText, Flip, CustomEase)
+- [ ] **ANIM-03**: Scroll-triggered text reveals on section headings (clip-path + translateY)
+- [ ] **ANIM-04**: Character stagger animations for hero text and key display elements
+- [ ] **ANIM-05**: Page transitions with GSAP exit/enter animations between routes
+
+### Preloader
+
+- [ ] **PRLD-01**: Black overlay covers viewport on initial load with scroll locked
+- [ ] **PRLD-02**: "Welcome to party" text fades in letter-by-letter, holds, fades out
+- [ ] **PRLD-03**: "Quasar" text fades in larger/bolder, holds, fades out
+- [ ] **PRLD-04**: Curtain split-reveal transition exposes hero section beneath
+- [ ] **PRLD-05**: Lenis and ScrollTrigger activate only after preloader completes
+
+### Theme
+
+- [ ] **THME-01**: White/warm-white background replaces dark lab aesthetic across all pages
+- [ ] **THME-02**: CSS variable system updated for light palette (text, borders, surfaces)
+- [ ] **THME-03**: Oversized display typography system with clamp-based fluid sizing
+- [ ] **THME-04**: Subtle grain/noise texture overlay on white backgrounds
+- [ ] **THME-05**: WCAG AA contrast validated on all light backgrounds
+
+### Hero
+
+- [ ] **HERO-01**: Full-viewport (100dvh) hero section with centered placeholder photo
+- [ ] **HERO-02**: Oversized marquee name scrolling horizontally in continuous loop
+- [ ] **HERO-03**: "AI Engineer" role text and tagline prominently displayed
+- [ ] **HERO-04**: Marquee speed reacts to user scroll velocity via Lenis
+- [ ] **HERO-05**: Minimal redesigned navigation (logo left, nav links right, white theme)
+
+### Robot
+
+- [ ] **ROBT-06**: 3D robot relocated from hero to dedicated Section 2
+- [ ] **ROBT-07**: Scroll-triggered entrance animation when Section 2 enters viewport
+- [ ] **ROBT-08**: Section 2 has CTA text encouraging robot interaction
+
+### Chat
+
+- [ ] **CHAT-07**: Always-visible slim transparent floating bar, centered at viewport bottom
+- [ ] **CHAT-08**: Glassmorphism styling (backdrop-blur, semi-transparent white)
+- [ ] **CHAT-09**: Chat messages appear above bar in transparent panel on send
+- [ ] **CHAT-10**: Full-width on mobile, ~500px centered on desktop
+
+### Content
+
+- [ ] **CONT-01**: About section in storytelling format with scroll-triggered reveals
+- [ ] **CONT-02**: About content covers AI expertise (NLP, LLM, multi-agent, RAG)
+- [ ] **CONT-03**: Projects section with minimalist card grid, data-driven
+- [ ] **CONT-04**: Project detail pages with case study, screenshots, links
+- [ ] **CONT-05**: Blog listing page with post cards (title, date, tags, excerpt)
+- [ ] **CONT-06**: Blog post page with rendered MDX, syntax highlighting, TOC
+- [ ] **CONT-07**: Blog tag filtering and client-side search
+- [ ] **CONT-08**: Blog series support for multi-part articles
+- [ ] **CONT-09**: Footer with large CTA typography and social links
+
+### Micro-interactions
+
+- [ ] **MICR-01**: Magnetic hover effects on buttons and nav links
+- [ ] **MICR-02**: Custom cursor dot that follows mouse movement
+- [ ] **MICR-03**: Hover underline slide animations on text links
+- [ ] **MICR-04**: Section numbering ("01", "02") in monospace
+- [ ] **MICR-05**: Animated section dividers (SVG lines or shapes on scroll)
+
+### SEO & Performance
+
+- [ ] **PERF-04**: Every page has proper meta tags, OG tags, and canonical URLs
+- [ ] **PERF-05**: JSON-LD structured data (Person + Article schemas)
+- [ ] **PERF-06**: Sitemap includes all pages and blog posts
+- [ ] **PERF-07**: 3D model lazy-loads with code splitting, page usable under 3s without 3D
+- [ ] **PERF-08**: Images optimized (WebP/AVIF or next/image)
+
+## v1 Requirements (Validated)
+
+Shipped in v1.0 milestone. Confirmed valuable.
+
+### Foundation
+
+- ✓ **FNDN-03**: Fix hreflang meta tags — v1.0 Phase 2
+- ✓ **FNDN-05**: Lab aesthetic with grid/caro pattern background — v1.0 Phase 2 (replaced by THME-01 in v2)
+
+### 3D Robot
+
+- ✓ **ROBT-01**: Interactive 3D robot model via React Three Fiber — v1.0 Phase 3
+- ✓ **ROBT-02**: Emotion-based animations (happy, sad, excited, thinking, idle) — v1.0 Phase 3
+- ✓ **ROBT-03**: Suspense fallback and loading indicator — v1.0 Phase 3
+- ✓ **ROBT-04**: dynamic({ ssr: false }) for static export build — v1.0 Phase 3
+- ✓ **ROBT-05**: Performant on mobile with reduced quality fallback — v1.0 Phase 3
+
+### Chatbot
+
+- ✓ **CHAT-01**: Sticky bottom input bar — v1.0 Phase 4
+- ✓ **CHAT-02**: Messages sent to LLM API via HTTP POST — v1.0 Phase 4
+- ✓ **CHAT-03**: LLM response includes answer + emotion — v1.0 Phase 4
+- ✓ **CHAT-04**: Typing indicator during API response — v1.0 Phase 4
+- ✓ **CHAT-05**: Graceful API unavailability handling — v1.0 Phase 4
+- ✓ **CHAT-06**: Session chat history via Zustand — v1.0 Phase 4
+
+### Internationalization
+
+- ✓ **I18N-01**: app/[lang]/ routing with next-intl — v1.0 Phase 2
+- ✓ **I18N-02**: Language switcher (Vietnamese/English) — v1.0 Phase 2
+- ✓ **I18N-03**: All UI text externalized to translation files — v1.0 Phase 2
+- ✓ **I18N-04**: Language preference detected and persisted — v1.0 Phase 2
+- ✓ **I18N-05**: Static export generates /en/ and /vi/ route trees — v1.0 Phase 2
+
+### Visual & UX
+
+- ✓ **UX-01**: Consistent dark theme with lab aesthetic — v1.0 Phase 2 (replaced by THME-01 in v2)
+
+## Future Requirements
+
+Deferred beyond v2.0.
 
 ### Blog Enhancements
 
@@ -115,15 +144,17 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Light mode / theme toggle | Dark-only lab aesthetic is the brand identity |
+| Dark theme / theme toggle | White minimalist is the v2 brand identity |
 | Contact form | Links sufficient; no backend email service needed |
-| Real-time WebSocket chat | HTTP request/response is imperceptible for chatbot use case |
+| Real-time WebSocket chat | HTTP request/response sufficient for chatbot |
 | CMS / admin panel | .md files in repo, developer-managed |
 | User authentication | Public portfolio, no gated content |
-| Animated/video hero background | Static image; robot provides the motion |
-| Comment system on blog | Requires moderation; defer to v2 GitHub Discussions |
-| Mobile app / PWA | Web-only focus |
-| Multi-author blog | Personal portfolio, single author |
+| Video hero background | Static photo; robot provides the motion |
+| Parallax hero | Dated pattern, competes with marquee typography |
+| Three.js background effects | Competes with robot for GPU/visual attention |
+| Scroll-hijacking/snap | Hostile UX; Lenis provides smooth scroll without hijacking |
+| Infinite scroll for blog | Under 20 posts; pagination unnecessary |
+| Custom scrollbar | Lenis handles feel; native scrollbar auto-hides on macOS |
 
 ## Traceability
 
@@ -131,64 +162,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FNDN-01 | Phase 1 | N/A (old code removed) |
-| FNDN-02 | Phase 1 | N/A (old code removed) |
-| FNDN-04 | Phase 1 | N/A (old code removed) |
-| UX-05 | Phase 1 | N/A (old code removed) |
-| FNDN-03 | Phase 2 | Complete |
-| FNDN-05 | Phase 2 | Complete |
-| I18N-01 | Phase 2 | Complete |
-| I18N-02 | Phase 2 | Complete |
-| I18N-03 | Phase 2 | Complete |
-| I18N-04 | Phase 2 | Complete |
-| I18N-05 | Phase 2 | Complete |
-| UX-01 | Phase 2 | Complete |
-| ROBT-01 | Phase 3 | Complete |
-| ROBT-02 | Phase 3 | Complete |
-| ROBT-03 | Phase 3 | Complete |
-| ROBT-04 | Phase 3 | Complete |
-| ROBT-05 | Phase 3 | Complete |
-| CHAT-01 | Phase 4 | Complete |
-| CHAT-02 | Phase 4 | Complete |
-| CHAT-03 | Phase 4 | Complete |
-| CHAT-04 | Phase 4 | Complete |
-| CHAT-05 | Phase 4 | Complete |
-| CHAT-06 | Phase 4 | Complete |
-| HERO-01 | Phase 5 | Pending |
-| HERO-02 | Phase 5 | Pending |
-| HERO-03 | Phase 5 | Pending |
-| ABUT-01 | Phase 6 | Pending |
-| ABUT-02 | Phase 6 | Pending |
-| ABUT-03 | Phase 6 | Pending |
-| UX-02 | Phase 6 | Pending |
-| PROJ-01 | Phase 7 | Pending |
-| PROJ-02 | Phase 7 | Pending |
-| PROJ-03 | Phase 7 | Pending |
-| PROJ-04 | Phase 7 | Pending |
-| UX-03 | Phase 7 | Pending |
-| UX-04 | Phase 7 | Pending |
-| BLOG-01 | Phase 8 | Pending |
-| BLOG-02 | Phase 8 | Pending |
-| BLOG-03 | Phase 8 | Pending |
-| BLOG-04 | Phase 8 | Pending |
-| BLOG-05 | Phase 8 | Pending |
-| BLOG-06 | Phase 8 | Pending |
-| BLOG-07 | Phase 8 | Pending |
-| BLOG-08 | Phase 8 | Pending |
-| SEO-01 | Phase 9 | Pending |
-| SEO-02 | Phase 9 | Pending |
-| SEO-03 | Phase 9 | Pending |
-| SEO-04 | Phase 9 | Pending |
-| SEO-05 | Phase 9 | Pending |
-| PERF-01 | Phase 10 | Pending |
-| PERF-02 | Phase 10 | Pending |
-| PERF-03 | Phase 10 | Pending |
+| (populated by roadmapper) | | |
 
 **Coverage:**
-- v1 requirements: 49 total
-- Mapped to phases: 49
-- Unmapped: 0 ✓
+- v2 requirements: 42 total
+- Mapped to phases: 0
+- Unmapped: 42 ⚠️
 
 ---
-*Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 — traceability populated after roadmap creation*
+*Requirements defined: 2026-03-15*
+*Last updated: 2026-03-15 after initial definition*
