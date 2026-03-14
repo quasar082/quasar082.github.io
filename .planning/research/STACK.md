@@ -1,447 +1,311 @@
-# Technology Stack
+# Technology Stack: v2.0 Redesign Additions
 
-**Project:** RayQuasar Portfolio — AI Engineer with 3D Robot Chatbot
-**Researched:** 2026-03-13
-**Overall Confidence:** HIGH for core stack (versions verified against npm registry and GitHub releases); MEDIUM for blog pipeline (next-mdx-remote React 19 compat needs runtime verification)
-
----
-
-## Critical Constraint: Static Export
-
-Every library choice below is filtered through one non-negotiable constraint:
-
-```
-output: 'export'  →  GitHub Pages  →  No server, no middleware, no API routes
-```
-
-This eliminates: server-side i18n routing, Next.js API route proxies for chatbot, server-side search. It shapes every category below.
+**Project:** RayQuasar Portfolio v2.0 -- White Minimalist Redesign
+**Researched:** 2026-03-15
+**Overall Confidence:** HIGH (all versions verified against npm registry; API types extracted and inspected)
 
 ---
 
-## Current Stack (Existing — Keep)
+## Scope: New Packages Only
 
-| Technology | Version | Role |
-|------------|---------|------|
-| Next.js | 15.3.1 | Framework, App Router, static export |
-| React | 19.1.0 | UI rendering |
-| TypeScript | 5.8.3 | Type safety |
-| Tailwind CSS | 4.1.4 | Utility-first styling |
-| Framer Motion | 12.7.4 | DOM scroll animations, entrance effects |
-| Zustand | 5.0.3 | Global state management |
-| lucide-react | 0.488.0 | Icon library |
-| next-sitemap | 4.2.3 | Sitemap + robots.txt generation |
-| Turbopack | (bundled) | Dev server |
-| npm | — | Package manager |
+This document covers ONLY the new dependencies required for the v2.0 redesign features (GSAP animations, Lenis smooth scroll, text reveals, preloader, page transitions, marquee typography). The existing stack is validated and unchanged:
 
-All existing dependencies are kept as-is. New packages listed below are additive.
+| Existing (Keep As-Is) | Version | Role |
+|------------------------|---------|------|
+| Next.js | 16.1.6 | Framework, App Router |
+| React | 19.2.3 | UI rendering |
+| TypeScript | ^5 | Type safety |
+| Tailwind CSS | ^4 | Utility-first styling |
+| React Three Fiber | ^9.5.0 | 3D robot |
+| @react-three/drei | ^10.7.7 | 3D utilities |
+| Zustand | ^5.0.11 | Global state |
+| next-intl | ^4.8.3 | i18n |
+| Framer Motion | ^12.36.0 | **Retained** for component-level animations (chat panel, mobile menu, typing indicator) |
+| lucide-react | ^0.577.0 | Icons |
+
+**Framer Motion is NOT replaced.** It stays for the 4 components that use it today (MobileMenu, ChatBar, ChatPanel, TypingIndicator). GSAP handles the new scroll-driven, timeline-based, and page-level animations. This avoids a risky migration of working code.
 
 ---
 
-## New Packages: 3D Rendering
+## New Package 1: gsap -- 3.14.2
 
-### @react-three/fiber — 9.5.0
+**Purpose:** Professional animation engine for scroll-triggered animations, text reveals, preloader timeline, curtain transitions, marquee effects, and page transitions.
 
-**Purpose:** React renderer for Three.js. Declarative scene graph, hooks-based animation loop, full Three.js feature access.
+**Why GSAP, not more Framer Motion:**
+- GSAP's ScrollTrigger provides precise scroll-linked animations with scrubbing, pinning, and snap. Framer Motion's `whileInView` is binary (in/out) with no scrub control.
+- GSAP timelines compose complex multi-step sequences (preloader: fade text in, hold, fade out, curtain slide) declaratively. Framer Motion variants cannot express timeline sequencing with this level of control.
+- `SplitText` (now included free in gsap 3.14.2) splits DOM text into chars/words/lines for per-character reveal animations. This is core to the Dennis Snellenberg text reveal aesthetic.
+- GSAP is the de facto standard for award-winning portfolio sites. Dennis Snellenberg himself uses GSAP.
+- Performance: GSAP uses its own optimized render loop, bypasses React reconciliation for animation frames, and batches DOM writes.
 
-**Why this, not alternatives:**
-- Only mature React-native Three.js integration. Direct Three.js would mean managing a separate imperative scene outside React's component model.
-- Version 9.x is the React 19-compatible release (peer: `react >=19 <19.3`). Project has React 19.1.0 — fits cleanly.
-- `peerDependenciesMeta` marks all native/expo peers as optional, so web-only installs are clean.
-- Released 2025-12-30 (v9.5.0). Actively maintained by pmndrs.
+**What plugins are included in the free npm package (verified by unpacking gsap@3.14.2):**
+
+| Plugin | Use in v2.0 |
+|--------|------------|
+| ScrollTrigger | Scroll-linked animations for every section, parallax effects, pin preloader |
+| SplitText | Split headings/paragraphs into chars/words/lines for reveal animations |
+| Observer | Detect scroll/touch/pointer events for custom interactions |
+| Flip | Layout animation transitions (project card expansions) |
+| CustomEase | Custom easing curves matching the design reference |
+| MotionPathPlugin | Available if needed for decorative path animations |
+
+**License:** GSAP Standard "no charge" license. Permits free use on sites that are not sold as tools/templates to multiple end users. A personal portfolio qualifies. No license fee.
+
+**Last published:** 2025-12-12
 
 **Install:**
 ```bash
-npm install @react-three/fiber three
+npm install gsap
 ```
 
-**Confidence:** HIGH — verified via npm registry + GitHub release (v9.5.0, 2025-12-30).
+**Confidence:** HIGH -- version verified via npm registry. Plugin contents verified by unpacking the tarball and inspecting source files. SplitText confirmed as full implementation (not a stub).
 
 ---
 
-### three — 0.183.2
+## New Package 2: @gsap/react -- 2.1.2
 
-**Purpose:** Three.js core — 3D engine. GLTFLoader, AnimationMixer, WebGLRenderer.
+**Purpose:** Official GSAP React integration. Provides `useGSAP()` hook -- a drop-in replacement for `useLayoutEffect`/`useEffect` that automatically handles GSAP context creation and cleanup.
 
-**Why this version:** Latest stable as of 2026-03-13. R3F peer requires `>=0.156`; drei peer requires `>=0.159`. 0.183.2 satisfies both.
+**Why this is essential (not optional):**
+- Without `useGSAP()`, every component using GSAP must manually create a `gsap.context()`, register animations, and call `context.revert()` on unmount. This is error-prone and leads to memory leaks on route changes.
+- `useGSAP()` scopes all GSAP animations to a ref, so animations in one component cannot accidentally target elements in another.
+- Handles React 19 strict mode correctly (double-mount in dev won't create duplicate animations).
 
-**Confidence:** HIGH — verified npm registry.
-
----
-
-### @react-three/drei — 10.7.7
-
-**Purpose:** Utility components and helpers for R3F. Used for:
-- `useGLTF` — loads `.glb` / `.gltf` robot model with caching and preload support
-- `useGLTF.preload` — preloads model before Canvas mounts, eliminates pop-in
-- `useAnimations` — connects Three.js AnimationMixer to GLTF animation clips declaratively
-- `Environment` — IBL lighting without custom shader setup
-- `Suspense`-compatible `Html` — renders DOM fallback inside Canvas during load
-- `PerspectiveCamera` — declarative camera control
-
-**Why drei, not manual Three.js utilities:**
-- `useGLTF` handles the draco/meshopt decoder configuration that is otherwise a manual multi-step setup.
-- `useAnimations` eliminates boilerplate AnimationMixer setup; returns `{ actions, mixer }` keyed by clip name — maps directly to the `emotion → clip name` pattern in EmotionController.
-
-**Peer requirements:** `react ^19`, `three >=0.159`, `@react-three/fiber ^9.0.0` — all satisfied.
-
-**Released:** 2025-11-13 (v10.7.7).
-
-**Install:**
-```bash
-npm install @react-three/drei
-```
-
-**Confidence:** HIGH — verified npm registry + GitHub release.
-
----
-
-## New Packages: Internationalization
-
-### next-intl — 4.8.3
-
-**Purpose:** Full i18n solution for Next.js App Router. Translation hooks, locale-aware formatting (dates, numbers), type-safe message keys.
-
-**Static export compatibility:** CONFIRMED. The pattern is:
-
-```
-app/[lang]/layout.tsx   — generateStaticParams returns [{lang:'en'},{lang:'vi'}]
-app/[lang]/layout.tsx   — loads messages/[lang].json, wraps in NextIntlClientProvider
-```
-
-No middleware required. `setRequestLocale(locale)` enables static rendering per page. Official next-intl example `example-app-router` uses `generateStaticParams` in `[locale]/layout.tsx` — confirmed from source (amannn/next-intl GitHub, 2026-03-13).
-
-**Why next-intl, not alternatives:**
-- `react-i18next`: Framework-agnostic, more boilerplate for Next.js App Router patterns, no built-in static params helper.
-- `next-i18n-router`: Requires middleware — incompatible with static export.
-- Manual JSON + custom hook: No type safety, no ICU plural/date formatting, high maintenance.
-- `next-intl` is explicitly listed in Next.js official i18n docs as the recommended library for App Router.
-
-**Peer requirements:** `next ^12-16`, `react >=16.8 || >=19` — fully satisfied.
-
-**Released:** 2026-02-16 (v4.8.3). Actively maintained.
-
-**Install:**
-```bash
-npm install next-intl
-```
-
-**Integration note:** `middleware.ts` must NOT be created. Locale is URL-segment-only (`/en/`, `/vi/`). Root `app/page.tsx` does a client-side redirect to `/en`.
-
-**Confidence:** HIGH — version verified npm registry + GitHub release. Static export approach verified from official example source code.
-
----
-
-## New Packages: Blog Data Layer
-
-### gray-matter — 4.0.3
-
-**Purpose:** Parses YAML/TOML frontmatter from `.md` files. Returns `{ data, content }` where `data` is the typed frontmatter object (title, date, tags, description, slug).
-
-**Why gray-matter:**
-- Minimal, zero-dependency frontmatter parser. Used by virtually every Next.js static blog in the ecosystem.
-- Runs only at build time (`lib/blog.ts`). Zero runtime cost.
-- No configuration required; works with standard YAML frontmatter.
-
-**Why NOT velite:** Velite (v0.3.1, 752 GitHub stars, last release 2025-12-08) is a more opinionated content pipeline that competes with contentlayer. It requires esbuild, sharp, terser as peers and generates a `.velite/` output directory. For this project's needs (parse frontmatter + compile MDX), gray-matter + next-mdx-remote is simpler and fully under our control without build pipeline complexity.
-
-**Why NOT contentlayer:** Project archived in 2024. Community fork `contentlayer2` has uncertain maintenance. Already documented as an anti-pattern in ARCHITECTURE.md.
-
-**Install:**
-```bash
-npm install gray-matter
-```
-
-**Confidence:** HIGH — npm verified (v4.0.3). No peer deps. Stable since 2018.
-
----
-
-### next-mdx-remote — (latest compatible with React 19)
-
-**Purpose:** Compiles markdown / MDX content to React components at build time. Used in `app/[lang]/blog/[slug]/page.tsx` via the `/rsc` import (React Server Component mode).
-
-**Version note:** As of 2026-03-13, checking exact version requires npm lookup.
-
-```bash
-npm info next-mdx-remote version  # verify before install
-```
+**Peer requirements:** `gsap ^3.12.5` (satisfied by 3.14.2), `react >=17` (satisfied by 19.2.3).
 
 **Usage pattern:**
 ```typescript
-// app/[lang]/blog/[slug]/page.tsx (Server Component)
-import { compileMDX } from 'next-mdx-remote/rsc'
-import rehypePrettyCode from 'rehype-pretty-code'
-import remarkGfm from 'remark-gfm'
+'use client';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 
-const { content } = await compileMDX({
-  source: rawMdxString,
-  options: {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [[rehypePrettyCode, { theme: 'github-dark' }]],
-    },
-  },
-  components: { pre: CodeBlock, h2: HeadingWithAnchor },
-})
-```
+export function HeroSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-**Why next-mdx-remote, not @next/mdx:**
-- `@next/mdx` requires file-system-based MDX imports; doesn't support dynamic slug routing (`/blog/[slug]`).
-- `next-mdx-remote/rsc` works with string content at runtime in Server Components, which is what `generateStaticParams` + `getPostBySlug()` needs.
+  useGSAP(() => {
+    // All animations auto-scoped to containerRef
+    // Auto-cleaned up on unmount
+    gsap.from('.hero-title', {
+      y: 100,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+    });
+  }, { scope: containerRef });
 
-**Confidence:** MEDIUM — actively maintained, widely used with Next.js 15. React 19 compatibility: flagged for verification during Phase 5 implementation. If issues arise, `mdx-bundler` is the fallback.
-
----
-
-### remark-gfm — 4.0.1
-
-**Purpose:** Adds GitHub Flavored Markdown (tables, strikethrough, task lists, autolinks) to the remark pipeline.
-
-**Why:** Technical blog posts commonly use GFM tables for comparing options and task lists for roadmaps. Without remark-gfm, these render as plain text.
-
-**Install:**
-```bash
-npm install remark-gfm
-```
-
-**Confidence:** HIGH — npm verified. Standard remark plugin.
-
----
-
-### rehype-pretty-code — 0.14.3
-
-**Purpose:** Syntax highlighting for code blocks via Shiki. Provides:
-- Line highlighting with `{1,3-5}` notation
-- Word highlighting
-- Diff syntax (`+` / `-` line markers)
-- Filename captions
-- Copy-to-clipboard hook point
-
-**Why rehype-pretty-code + Shiki, not alternatives:**
-- `highlight.js`: CSS-class-based highlighting; less accurate, larger runtime payload.
-- `prism-react-renderer`: React-specific, requires runtime JS; rehype-pretty-code runs at build time.
-- `shiki` alone: Lower-level; rehype-pretty-code wraps it with the remark/rehype pipeline integration and adds the enhanced features above.
-
-**Peer requirement:** `shiki ^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0` — use shiki v4.0.2.
-
-**Install:**
-```bash
-npm install rehype-pretty-code shiki
-```
-
-**Confidence:** HIGH — npm verified. Peer requirement confirmed.
-
----
-
-### rehype-slug — 6.0.0
-
-**Purpose:** Adds `id` attributes to heading elements (`h2`, `h3`, etc.) based on their text content. Required for the Table of Contents anchor links to work.
-
-**Install:**
-```bash
-npm install rehype-slug
-```
-
-**Confidence:** HIGH — npm verified. Standard rehype plugin.
-
----
-
-### rehype-autolink-headings — 7.1.0
-
-**Purpose:** Adds anchor link icons to headings (uses the `id` from rehype-slug). Enables click-to-copy section links.
-
-**Install:**
-```bash
-npm install rehype-autolink-headings
-```
-
-**Confidence:** HIGH — npm verified.
-
----
-
-### reading-time — 1.5.0
-
-**Purpose:** Calculates estimated reading time from post content string. Added to `lib/blog.ts` frontmatter enrichment. Displayed in blog card and post header.
-
-**Why:** Standard blog UX expectation. Zero complexity to add.
-
-**Install:**
-```bash
-npm install reading-time
-```
-
-**Confidence:** HIGH — npm verified. No deps.
-
----
-
-## New Packages: Blog Styling
-
-### @tailwindcss/typography — 0.5.19
-
-**Purpose:** Provides the `prose` CSS class that styles bare HTML from MDX output (headings, paragraphs, code, blockquotes, lists, tables) with carefully tuned typographic defaults.
-
-**Why this is required:** Without it, MDX-rendered HTML inherits no Tailwind styles. `prose dark:prose-invert` applied to the blog post wrapper is the standard solution.
-
-**Tailwind v4 compatibility:** Confirmed — peer requires `tailwindcss >=3.0.0 || >=4.0.0-beta.1`. Project uses Tailwind v4.1.4.
-
-**Install:**
-```bash
-npm install @tailwindcss/typography
-```
-
-**Confidence:** HIGH — peer dependency explicitly lists Tailwind v4 support.
-
----
-
-## New Packages: Blog Search
-
-### fuse.js — 7.1.0
-
-**Purpose:** Client-side fuzzy search over blog post metadata (title, description, tags). Runs in the browser; no server needed.
-
-**Why fuse.js, not flexsearch:**
-- `flexsearch` (v0.8.212): Better full-text search performance at scale, but more complex API and larger bundle. Overkill for a blog with <100 posts.
-- `fuse.js`: Simple key-based fuzzy matching over an array of objects, 10-second integration. Blog index page pre-loads all `Post[]` metadata (not content) — ideal fuse.js use case.
-
-**Why not pagefind:**
-- Pagefind requires a separate CLI build step that indexes HTML output. With a Git-based deploy workflow, this adds friction without meaningful benefit at this scale.
-
-**Install:**
-```bash
-npm install fuse.js
-```
-
-**Confidence:** HIGH — npm verified (v7.1.0). Long-established library, no deps.
-
----
-
-## Chatbot: No New Packages
-
-The chatbot calls an external LLM API directly with `fetch()`. This is intentional.
-
-```typescript
-// lib/chatApi.ts
-export async function sendMessage(text: string): Promise<{ answer: string; emotion: string }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_LLM_API_URL}/api/v1/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: text }),
-  })
-  if (!res.ok) throw new Error('LLM API error')
-  return res.json()
+  return <div ref={containerRef}>...</div>;
 }
 ```
 
-**Why no AI SDK (Vercel AI SDK v4.x):**
-- AI SDK is designed for Next.js API routes with streaming (`useChat` hook calls `/api/chat` on the same Next.js server). Static export has no API routes.
-- The external LLM API returns `{ answer, emotion }` — a simple non-streaming JSON response. `fetch()` is sufficient.
-- Adding AI SDK just to wrap a `fetch()` call adds 200KB+ to the bundle with zero benefit.
+**Last published:** 2025-12-12
 
-**Why no `openai` npm package:**
-- The backend is the owner's own LLM service, not OpenAI directly. The client should call the backend API, not OpenAI.
-- Even if it were OpenAI, exposing the API key client-side (required with static export) is a security violation. The backend proxy handles that.
+**Install:**
+```bash
+npm install @gsap/react
+```
 
-**State management:** `useChatStore` (Zustand — already installed) handles messages array, loading state, error state. No additional library needed.
-
-**Confidence:** HIGH — architectural decision, no version ambiguity.
+**Confidence:** HIGH -- verified via npm registry. Peer deps confirmed compatible.
 
 ---
 
-## Alternatives Considered and Rejected
+## New Package 3: lenis -- 1.3.18
 
-| Category | Recommended | Alternative | Why Rejected |
-|----------|-------------|-------------|--------------|
-| 3D rendering | @react-three/fiber 9.x | Babylon.js React | No React renderer; imperative only; larger bundle |
-| 3D rendering | @react-three/fiber 9.x | A-Frame | VR-first, not designed for portfolio UX; no React integration |
-| i18n | next-intl 4.x | react-i18next | More boilerplate for Next.js App Router; no built-in static params helper |
-| i18n | next-intl 4.x | next-i18n-router | Requires middleware — blocks static export |
-| i18n | next-intl 4.x | Manual JSON + t() | No type safety, no plurals, no date formatting |
-| Blog data | gray-matter | contentlayer | Archived 2024; community fork uncertain maintenance |
-| Blog data | gray-matter | velite 0.3.x | Extra build pipeline (esbuild, sharp, terser peers); 752 stars = low adoption signal; gray-matter covers 100% of needs |
-| Blog MDX | next-mdx-remote | @next/mdx | Cannot do dynamic slug routing; file-system imports only |
-| Blog MDX | next-mdx-remote | mdx-bundler | More complex setup; dynamic bundle splitting not needed for static export |
-| Code highlighting | rehype-pretty-code + shiki | prism-react-renderer | Runtime JS highlighting; runs at build time is always better |
-| Code highlighting | rehype-pretty-code + shiki | highlight.js | CSS-class-based; less accurate; larger output |
-| Blog search | fuse.js | flexsearch | Complex API; overkill for <100 posts |
-| Blog search | fuse.js | pagefind | Requires extra CLI build step; friction in CI |
-| Blog search | fuse.js | Algolia/Typesense | Requires a running search server; incompatible with static export |
-| Chatbot | fetch() | Vercel AI SDK | Designed for API-route-based streaming; static export has no API routes |
-| Chatbot | fetch() | openai npm | Exposes API key client-side; overkill for a proxy call to owner's API |
+**Purpose:** Smooth scroll library that normalizes scroll behavior across browsers and devices. Provides the buttery-smooth, momentum-based scrolling that defines the Dennis Snellenberg aesthetic.
+
+**Why Lenis, not native CSS `scroll-behavior: smooth`:**
+- CSS `scroll-behavior: smooth` only affects programmatic scrolls (anchor clicks, `scrollTo()`). It does NOT smooth mousewheel/trackpad scrolling.
+- Lenis intercepts wheel/touch events and applies lerp-based (linear interpolation) smoothing to ALL scroll input, creating the characteristic momentum feel.
+- Lenis integrates with GSAP ScrollTrigger -- critical because ScrollTrigger needs to know the actual scroll position (which Lenis controls).
+
+**Why Lenis, not GSAP ScrollSmoother:**
+- ScrollSmoother is a GSAP Club (paid) plugin, NOT included in the free npm package.
+- Lenis is MIT-licensed and free.
+- Lenis is the community standard for smooth scroll; used by most award-winning portfolio sites alongside GSAP.
+
+**React integration (built-in):**
+Lenis ships with `lenis/react` subpath export providing `ReactLenis` component and `useLenis` hook:
+
+```typescript
+'use client';
+import { ReactLenis } from 'lenis/react';
+
+// In root layout or a client wrapper:
+export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.2 }}>
+      {children}
+    </ReactLenis>
+  );
+}
+```
+
+The `root` prop makes Lenis control `window` scroll (no wrapper div needed). The `ReactLenis` component provides context so any child can access the Lenis instance via `useLenis()`.
+
+**Lenis + ScrollTrigger bridge:**
+Lenis must sync its scroll position to ScrollTrigger. The standard pattern:
+
+```typescript
+'use client';
+import { useEffect } from 'react';
+import { useLenis } from 'lenis/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+export function ScrollTriggerSync() {
+  const lenis = useLenis();
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    // Sync Lenis scroll to ScrollTrigger on every frame
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Use Lenis's RAF for GSAP ticker
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.off('scroll', ScrollTrigger.update);
+    };
+  }, [lenis]);
+
+  return null;
+}
+```
+
+**Peer requirements:** `react >=17.0.0` (satisfied by 19.2.3). Other peers (`@nuxt/kit`, `vue`) are optional.
+
+**Last published:** 2026-03-04 (very actively maintained)
+
+**Install:**
+```bash
+npm install lenis
+```
+
+**Confidence:** HIGH -- version verified via npm registry. React types extracted and inspected from `dist/lenis-react.d.ts`. API confirmed: `ReactLenis`, `useLenis`, `LenisContext`.
+
+---
+
+## Do NOT Add These
+
+| Package | Why Not |
+|---------|---------|
+| `split-type` (0.3.4) | GSAP 3.14.2 now includes `SplitText` for free. No reason to add a separate text-splitting library. SplitText integrates natively with GSAP timelines. |
+| `locomotive-scroll` | Predecessor to Lenis (same team: darkroom.engineering). Lenis is the successor -- lighter, better maintained, cleaner API. |
+| `@studio-freight/lenis` | Old package name. Renamed to `lenis` under darkroom.engineering. Use `lenis` directly. |
+| `gsap-trial` | Unnecessary. All needed plugins (ScrollTrigger, SplitText, Observer, Flip, CustomEase) are in the free `gsap` package as of 3.12+. |
+| `smooth-scrollbar` | Heavier than Lenis, less ecosystem integration with ScrollTrigger. |
+| `react-transition-group` | GSAP timelines handle page transitions more powerfully. |
+| `@barba/core` | Page transition library designed for vanilla JS multi-page apps. Next.js App Router handles routing; GSAP handles the animation layer. |
+| Additional font packages | Existing `next/font` setup with local fonts (MarlinGeoSQ, Saprona) and Geist Mono is sufficient. Font choice is a design decision, not a stack one. If new fonts are needed for v2, add them via `next/font/local` or `next/font/google` -- no new npm packages required. |
+| `@tailwindcss/typography` | Already in STACK.md v1 scope for blog. Not a v2 redesign concern. |
+
+---
+
+## GSAP Plugin Registration (One-Time Setup)
+
+GSAP plugins must be registered once, globally. Create a single registration module:
+
+```typescript
+// src/lib/gsap.ts
+'use client';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import { Flip } from 'gsap/Flip';
+import { CustomEase } from 'gsap/CustomEase';
+import { Observer } from 'gsap/Observer';
+
+gsap.registerPlugin(ScrollTrigger, SplitText, Flip, CustomEase, Observer);
+
+export { gsap, ScrollTrigger, SplitText, Flip, CustomEase, Observer };
+```
+
+All components import from `@/lib/gsap` instead of directly from `gsap/...`. This ensures plugins are registered before use and provides a single place to configure defaults.
+
+---
+
+## Integration Architecture with Existing Stack
+
+### GSAP + React Three Fiber
+- No direct conflict. R3F manages its own render loop (`useFrame`). GSAP manages DOM animations.
+- The 3D robot in Section 2 can have its container scroll-triggered via GSAP ScrollTrigger while R3F handles the 3D rendering inside.
+- Do NOT use GSAP to animate Three.js objects directly -- use R3F's `useFrame` for that. GSAP controls the DOM wrapper visibility/position.
+
+### GSAP + Framer Motion (Coexistence)
+- Both can exist in the same project. The rule: Framer Motion owns component-level mount/unmount animations (AnimatePresence in chat, mobile menu). GSAP owns scroll-driven, timeline-based, and page-level animations.
+- Never use both on the same DOM element simultaneously. This causes conflicting transforms.
+- Framer Motion's `motion.div` manages its own transforms via style props. GSAP writes transforms directly to `element.style.transform`. If both target the same element, the last writer wins, causing jank.
+
+### GSAP + Zustand
+- Zustand stores can trigger GSAP animations. Example: preloader completion state in Zustand triggers hero entrance animation.
+- Pattern: Zustand store holds `isPreloaderDone: boolean`. Hero component watches it and starts GSAP timeline when true.
+
+### Lenis + Next.js App Router
+- `ReactLenis` with `root` prop wraps the content in the root layout's client boundary.
+- Lenis works with native browser scrolling position, so Next.js scroll restoration works normally.
+- On route change, call `lenis.scrollTo(0, { immediate: true })` to reset scroll position.
+
+### GSAP + Next.js SSR / Static Export
+- All GSAP code MUST be in `'use client'` components. GSAP accesses the DOM and cannot run server-side.
+- `gsap.registerPlugin()` must NOT run at module level in a server component -- always in a client module.
+- ScrollTrigger `invalidateOnRefresh: true` should be set for layouts that change on resize.
 
 ---
 
 ## Complete Install Command
 
 ```bash
-# 3D rendering
-npm install three @react-three/fiber @react-three/drei
-
-# i18n
-npm install next-intl
-
-# Blog data layer
-npm install gray-matter next-mdx-remote
-
-# Blog remark/rehype plugins
-npm install remark-gfm rehype-pretty-code shiki rehype-slug rehype-autolink-headings reading-time
-
-# Blog styling
-npm install @tailwindcss/typography
-
-# Blog search
-npm install fuse.js
+# v2.0 animation system (3 packages, that's it)
+npm install gsap @gsap/react lenis
 ```
 
-No dev-only packages required from this list — all are runtime or build-time production dependencies.
+No dev dependencies needed. All three are runtime dependencies.
 
 ---
 
-## Version Matrix (Verified 2026-03-13)
+## Version Matrix (Verified 2026-03-15)
 
-| Package | Version | Source | Date Verified |
-|---------|---------|--------|---------------|
-| @react-three/fiber | 9.5.0 | npm registry + GitHub release | 2026-03-13 |
-| @react-three/drei | 10.7.7 | npm registry + GitHub release | 2026-03-13 |
-| three | 0.183.2 | npm registry | 2026-03-13 |
-| next-intl | 4.8.3 | npm registry + GitHub release (2026-02-16) | 2026-03-13 |
-| gray-matter | 4.0.3 | npm registry | 2026-03-13 |
-| next-mdx-remote | (verify at install) | npm registry | 2026-03-13 |
-| remark-gfm | 4.0.1 | npm registry | 2026-03-13 |
-| rehype-pretty-code | 0.14.3 | npm registry | 2026-03-13 |
-| shiki | 4.0.2 | npm registry | 2026-03-13 |
-| rehype-slug | 6.0.0 | npm registry | 2026-03-13 |
-| rehype-autolink-headings | 7.1.0 | npm registry | 2026-03-13 |
-| reading-time | 1.5.0 | npm registry | 2026-03-13 |
-| @tailwindcss/typography | 0.5.19 | npm registry | 2026-03-13 |
-| fuse.js | 7.1.0 | npm registry | 2026-03-13 |
+| Package | Version | npm Published | React Compat | Notes |
+|---------|---------|---------------|--------------|-------|
+| gsap | 3.14.2 | 2025-12-12 | Framework-agnostic | Includes ScrollTrigger, SplitText, Flip, CustomEase, Observer |
+| @gsap/react | 2.1.2 | 2025-12-12 | `>=17` (React 19.2.3 OK) | Peer: `gsap ^3.12.5` |
+| lenis | 1.3.18 | 2026-03-04 | `>=17.0.0` (React 19.2.3 OK) | MIT license. Ships `lenis/react` subpath |
 
 ---
 
 ## Peer Dependency Compatibility Check
 
-| Library | React req | Next.js req | Three.js req | Status |
-|---------|-----------|-------------|--------------|--------|
-| @react-three/fiber 9.5.0 | >=19 <19.3 | — | >=0.156 | React 19.1.0 ✓, Three 0.183.2 ✓ |
-| @react-three/drei 10.7.7 | ^19 | — | >=0.159 | React 19.1.0 ✓, Three 0.183.2 ✓ |
-| next-intl 4.8.3 | >=16.8 \|\| >=19 | ^12-16 | — | React 19.1.0 ✓, Next 15.3.1 ✓ |
-| @tailwindcss/typography 0.5.19 | — | — | — | Tailwind 4.1.4 ✓ |
-| rehype-pretty-code 0.14.3 | — | — | — | shiki ^1-4 → 4.0.2 ✓ |
+| Library | React req | GSAP req | Status |
+|---------|-----------|----------|--------|
+| gsap 3.14.2 | (none) | -- | Framework-agnostic, no React peer |
+| @gsap/react 2.1.2 | `>=17` | `^3.12.5` | React 19.2.3 OK, gsap 3.14.2 OK |
+| lenis 1.3.18 | `>=17.0.0` | (none) | React 19.2.3 OK. Vue/Nuxt peers optional |
 
-All new packages are compatible with the existing stack.
+All new packages are compatible with the existing stack. Zero peer conflicts.
 
 ---
 
-## Environment Variables Required
+## Feature-to-Package Mapping
 
-```bash
-# .env.local (new additions)
-NEXT_PUBLIC_LLM_API_URL=http://localhost:8000   # chatbot backend base URL
-# NEXT_PUBLIC_BASE_PATH already exists
-
-# .env.production (new additions)
-NEXT_PUBLIC_LLM_API_URL=https://your-llm-api.example.com
-```
-
-No server-side env vars are used (static export means no server to read them).
+| v2.0 Feature | Primary Package | Specific API |
+|---------------|-----------------|-------------|
+| Smooth scroll (whole site) | lenis | `ReactLenis` with `root` prop |
+| Scroll-triggered section reveals | gsap | `ScrollTrigger` plugin |
+| Text reveal animations (clip-path) | gsap | `SplitText` + `gsap.from()` with `clipPath` |
+| Intro preloader sequence | gsap | `gsap.timeline()` with sequenced tweens |
+| Curtain transition (preloader -> hero) | gsap | `gsap.to()` animating `clipPath` or `y` transform |
+| Oversized marquee typography | gsap | `gsap.to()` with `xPercent` + `repeat: -1` |
+| Page transitions | gsap | `gsap.timeline()` triggered on route change |
+| Parallax effects | gsap | `ScrollTrigger` with `scrub: true` |
+| Pinned sections | gsap | `ScrollTrigger` with `pin: true` |
+| React cleanup/scoping | @gsap/react | `useGSAP()` hook with `scope` option |
+| Lenis + ScrollTrigger sync | lenis + gsap | `lenis.on('scroll', ScrollTrigger.update)` bridge |
 
 ---
 
@@ -449,29 +313,32 @@ No server-side env vars are used (static export means no server to read them).
 
 | Area | Level | Reason |
 |------|-------|--------|
-| 3D stack (R3F + drei) | HIGH | npm verified, GitHub release confirmed, React 19 peer deps satisfied |
-| i18n (next-intl) | HIGH | npm verified, GitHub release confirmed, static export pattern verified from official example source |
-| Blog data (gray-matter) | HIGH | npm verified, zero-dep, stable since 2018, universally used |
-| Blog MDX (next-mdx-remote) | MEDIUM | Actively maintained, widely used with Next 15. React 19 compat needs verification at install time |
-| Code highlighting (rehype-pretty-code + shiki) | HIGH | npm verified, peer compat confirmed |
-| Blog search (fuse.js) | HIGH | npm verified, long-established, no deps |
-| Chatbot (fetch only) | HIGH | Architectural decision, no version ambiguity |
+| GSAP core + plugins | HIGH | Version, contents, and source verified via npm registry + tarball inspection |
+| @gsap/react | HIGH | Peer deps verified; API confirmed from npm description |
+| Lenis | HIGH | Version verified; React types extracted and inspected from dist |
+| Lenis-GSAP integration | MEDIUM | Bridge pattern is well-documented by both communities but not verified from official docs (WebFetch unavailable). Pattern is stable and widely used. |
+| GSAP + Next.js App Router | MEDIUM | Client-only constraint is standard; official GSAP React guide exists but could not be fetched. Pattern confirmed by training data + npm metadata. |
+| SplitText free availability | HIGH | Confirmed by extracting actual source from gsap@3.14.2 tarball -- full implementation, not a stub |
+| License for portfolio use | HIGH | GSAP standard license field on npm explicitly says "no charge". Personal portfolio is covered. |
 
 ---
 
 ## Sources
 
-- npm registry (live queries, 2026-03-13): @react-three/fiber, @react-three/drei, three, next-intl, gray-matter, rehype-pretty-code, shiki, remark-gfm, rehype-slug, rehype-autolink-headings, reading-time, @tailwindcss/typography, fuse.js
-- GitHub API release verification (2026-03-13):
-  - pmndrs/react-three-fiber: v9.5.0 released 2025-12-30
-  - amannn/next-intl: v4.8.3 released 2026-02-16
-  - zce/velite: v0.3.1 released 2025-12-08 (investigated and rejected)
-- next-intl static export pattern: verified from `examples/example-app-router/src/app/[locale]/layout.tsx` in amannn/next-intl GitHub repo (2026-03-13) — `generateStaticParams` + `setRequestLocale` confirmed
-- next-intl `example-app-router-without-i18n-routing` example: confirmed as cookie-based approach (NOT suitable for static export — `cookies()` requires a server)
-- React Three Fiber README: pmndrs/react-three-fiber (fetched 2026-03-13)
-- Existing codebase: `.planning/codebase/STACK.md` (2026-03-13)
-- Project requirements: `.planning/PROJECT.md` (authoritative)
+- **npm registry** (live queries, 2026-03-15):
+  - `gsap@3.14.2` -- version, license, keywords, exports, dist-tags, publish date
+  - `@gsap/react@2.1.2` -- version, peerDependencies, description
+  - `lenis@1.3.18` -- version, license, peerDependencies, exports, publish date
+  - `split-type@0.3.4` -- version, description (investigated and rejected)
+- **Tarball inspection** (2026-03-15):
+  - `gsap@3.14.2`: Unpacked and verified ScrollTrigger.js (112.1kB), SplitText.js (17.3kB), Flip.js (49.1kB), Observer.js (26.1kB), CustomEase.js (11.4kB) are real implementations
+  - `lenis@1.3.18`: Extracted `dist/lenis-react.d.ts` and `dist/lenis.d.ts` -- confirmed ReactLenis, useLenis, LenisContext exports and full LenisOptions type
+- **Existing codebase** (2026-03-15):
+  - `package.json` -- confirmed Next.js 16.1.6, React 19.2.3, Framer Motion ^12.36.0
+  - `src/lib/fonts.ts` -- confirmed next/font local fonts setup
+  - `src/components/` -- confirmed Framer Motion used in 4 components only (MobileMenu, ChatBar, ChatPanel, TypingIndicator)
+- GSAP standard license: https://gsap.com/standard-license
 
 ---
 
-*Stack research: 2026-03-13*
+*Stack research for v2.0 redesign: 2026-03-15*

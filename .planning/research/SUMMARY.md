@@ -1,17 +1,17 @@
 # Project Research Summary
 
-**Project:** RayQuasar Portfolio — AI Engineer with 3D Robot Chatbot
-**Domain:** Interactive personal portfolio — 3D WebGL, LLM chatbot, bilingual content, markdown blog
-**Researched:** 2026-03-13
-**Confidence:** HIGH (core stack + architecture); MEDIUM (MDX/React 19 compat, next-intl static export edge cases)
+**Project:** RayQuasar / QuanMofii Portfolio v2.0 — White Minimalist Redesign
+**Domain:** Award-winning portfolio redesign (Dennis Snellenberg aesthetic) on existing Next.js + R3F stack
+**Researched:** 2026-03-15
+**Confidence:** HIGH
 
 ## Executive Summary
 
-This is a Next.js 15 static export portfolio deployed on GitHub Pages, distinguished by two centerpiece features no other personal portfolio combines: an interactive 3D robot character (React Three Fiber + GLTF) whose animations are driven by live LLM responses, and a bilingual (English/Vietnamese) presentation layer. The existing codebase is a functional single-page app with working scroll animations, SEO, and four hardcoded project cards — but it is missing the entire 3D subsystem, chatbot integration, i18n routing, and blog. The recommended approach is to build on the existing foundation in strict dependency order: restructure to `app/[lang]/` routing first, then the 3D robot and chatbot, then content sections, then the blog, and finally a SEO/performance polish pass.
+This v2.0 redesign adds a GSAP/Lenis animation system, Dennis Snellenberg-style white minimalist aesthetic, and intro preloader sequence onto an existing, working Next.js 16 App Router portfolio with React Three Fiber, Zustand, Framer Motion, and next-intl. Only three new npm packages are needed: `gsap` (3.14.2), `@gsap/react` (2.1.2), and `lenis` (1.3.18). All are verified against the npm registry, fully compatible with the existing React 19/Next.js 16 stack, and together they deliver scroll-triggered animations, smooth scroll, text reveals, the preloader sequence, and the marquee hero — the defining features of the target aesthetic. Framer Motion is explicitly retained for the four components that already use it (ChatBar, ChatPanel, MobileMenu, TypingIndicator); GSAP does not replace it.
 
-The most important architectural constraint is `output: 'export'`. This single decision eliminates middleware-based i18n, Next.js API route proxies for the chatbot, server-side search, and any CMS. Every library choice is filtered through this constraint. The recommended stack is well-resolved: `@react-three/fiber` 9.x + `@react-three/drei` 10.x for 3D (React 19 peer deps confirmed), `next-intl` 4.x for i18n (static export via `generateStaticParams` confirmed from official example), `gray-matter` + `next-mdx-remote/rsc` for blog, `fuse.js` for client-side search, and a plain `fetch()` wrapper for the chatbot. No AI SDK, no CMS, no WebSocket.
+The recommended execution order is driven by hard architectural dependencies: the Lenis + GSAP + ScrollTrigger integration must come first because every downstream animation component depends on it. The white theme CSS overhaul must come second because every new section component is built against the final visual system. The preloader comes third because it gates the entire experience and exposes any Lenis/GSAP initialization timing issues early. Only then do hero, robot relocation, content sections, and polish-tier features follow. Page transitions are explicitly deferred — they are the single highest-complexity, most fragile feature relative to their visual payoff and should not block the v2.0 launch.
 
-The highest-risk areas are the R3F + static export build crash (guaranteed if not guarded with `dynamic({ ssr: false })`), CORS configuration on the external LLM backend, and the existing pre-existing bugs (missing `"use client"` directives, broken `basePath` for asset URLs, hreflang 404s) that will compound any new feature if not fixed in Phase 1. The LLM's `emotion` response field must be validated and normalized before reaching the animation system — an unguarded string from an LLM is a runtime crash waiting to happen. These risks are all well-understood and have clear prevention strategies documented in PITFALLS.md.
+The critical risk cluster is the four-way interaction between Lenis smooth scroll, GSAP ScrollTrigger, the static export preloader, and the existing R3F Canvas. Each of these has a documented failure mode: scroll position desync, hydration mismatch, zombie ScrollTrigger instances after navigation, and WebGL context loss on Canvas remount. All four are preventable with known patterns (the `useGSAP` hook, CSS-class-based preloader visibility, `ScrollTrigger.refresh()` after preloader completion, and layout-level Canvas mounting). These patterns must be established as architectural constraints in Phase 1, not retrofitted later.
 
 ---
 
@@ -19,136 +19,170 @@ The highest-risk areas are the R3F + static export build crash (guaranteed if no
 
 ### Recommended Stack
 
-The existing stack (Next.js 15.3.1 / React 19.1.0 / TypeScript 5.8 / Tailwind CSS 4 / Framer Motion 12 / Zustand 5) is kept as-is. All new packages are additive and have been verified against npm registry and GitHub releases as of 2026-03-13.
+The existing stack is unchanged. Three packages are added for the animation system. GSAP 3.14.2 includes ScrollTrigger, SplitText, Flip, CustomEase, and Observer at no cost — the free npm package contains the full implementations (verified by tarball inspection). `@gsap/react` provides the `useGSAP()` hook, the mandatory React integration that handles GSAP context scoping and cleanup automatically. Lenis 1.3.18 provides smooth scroll via its `lenis/react` subpath (`ReactLenis`, `useLenis`) and must be driven by GSAP's ticker for perfect sync with ScrollTrigger.
 
-**Core new technologies:**
-- `@react-three/fiber` 9.5.0 + `three` 0.183.2 + `@react-three/drei` 10.7.7 — 3D robot rendering with GLTF support, animation mixer abstraction, and IBL lighting. R3F v9 is the React 19-compatible release. All peer deps satisfied.
-- `next-intl` 4.8.3 — i18n with `generateStaticParams` pattern (no middleware required). Official next-intl example confirms the static export approach with `[locale]/layout.tsx`.
-- `gray-matter` 4.0.3 + `next-mdx-remote` (latest) — Build-time frontmatter parsing + MDX compilation for blog. `contentlayer` rejected (archived 2024); `velite` rejected (low adoption, unnecessary complexity).
-- `rehype-pretty-code` 0.14.3 + `shiki` 4.0.2 + `remark-gfm` 4.0.1 + `rehype-slug` + `rehype-autolink-headings` — Blog content pipeline with build-time syntax highlighting. All run at build time, zero runtime JS cost.
-- `@tailwindcss/typography` 0.5.19 — `prose` class for MDX-rendered HTML. Confirmed Tailwind v4 compatibility.
-- `fuse.js` 7.1.0 — Client-side fuzzy search over blog metadata. No server needed. Appropriate scale (<100 posts).
-- `fetch()` only for chatbot — No Vercel AI SDK (designed for API routes; incompatible with static export). No `openai` package (would expose API key client-side). Zustand (`useChatStore`) already installed handles all state.
+See `.planning/research/STACK.md` for full version matrix, peer dependency checks, and feature-to-package mapping.
 
-**One version flag:** `next-mdx-remote` React 19 compatibility should be verified at install time. Fallback: `mdx-bundler`.
+**Core technologies (new additions only):**
+- `gsap@3.14.2`: Animation engine, ScrollTrigger, SplitText, Flip, CustomEase — primary animation runtime
+- `@gsap/react@2.1.2`: `useGSAP()` hook — mandatory for React lifecycle-safe GSAP usage
+- `lenis@1.3.18`: Smooth scroll — normalizes scroll across browsers, integrates with ScrollTrigger via GSAP ticker
+
+**Do not add:** `split-type`, `locomotive-scroll`, `@barba/core`, `react-transition-group`, `gsap-trial`. All are unnecessary given the free GSAP package contents and the existing Next.js App Router setup.
+
+---
 
 ### Expected Features
 
-**Must have (table stakes):**
-- Hero section with name + role — already partially exists; needs robot integration
-- About / story section — stub exists; needs real content
-- Projects showcase (data-driven, not hardcoded) + CV download (basePath bug fix required)
-- Contact/social links, responsive design, fast load (sub-3s), SEO fundamentals
-- Scroll animations (Framer Motion, already in use), consistent dark theme, loading screen extended for 3D
+See `.planning/research/FEATURES.md` for full specifications, effort estimates, and implementation patterns.
 
-**Should have (differentiators — what makes this memorable):**
-- Interactive 3D robot with emotion-based animations driven by LLM response — the centerpiece; no comparable portfolio does this
-- Chatbot that lets recruiters "interview" the portfolio owner via the robot character
-- Technical blog with MDX, code highlighting, TOC, tag filtering — demonstrates ongoing thought leadership
-- Bilingual (Vietnamese + English) — rare among Vietnamese AI engineers; signals professionalism
-- "Lab aesthetic" visual identity (dark grid/caro background, consistent CSS token system)
-- Project detail pages with case studies (not just screenshots)
-- Structured data (JSON-LD Person + Article schema) for SEO Knowledge Panel
+**Must have (table stakes) — Priority 1-3:**
+- White/warm-white CSS theme system — entire visual identity; everything depends on it
+- Lenis smooth scroll — hallmark of premium portfolios; required for ScrollTrigger sync
+- Oversized display typography (`clamp()` fluid sizing) — core aesthetic signal
+- Scroll-triggered text reveals (clip-path / line-by-line) — universal pattern for minimalist portfolios
+- Full-viewport hero with centered photo and marquee name — first impression; establishes the aesthetic
+- Minimal navigation redesign — existing dark nav is incompatible with white theme
+- Intro preloader sequence (text fade to curtain reveal) — narrative entrance; defines the experience
+- 3D robot in dedicated Section 2 (relocated from hero) — gives robot a proper showcase stage
+- Centered floating transparent chat bar redesign — redesign from dark right-aligned to glass centered
 
-**Defer to v2+:**
-- Blog search (Fuse.js) — defer until >10 posts exist; 1 day to add but low ROI early
-- RSS feed — post-blog-launch nicety
-- Blog series grouping — defer until 2+ posts share a series
-- Analytics (Plausible or similar) — only if traffic data becomes a goal
+**Should have (differentiators):**
+- Scroll-velocity-linked marquee speed — marquee reacts to scroll energy
+- Magnetic hover effects on nav/buttons — Dennis Snellenberg signature micro-interaction
+- Custom cursor — expected at Awwwards tier
+- Section dividers with animated shapes — visual rhythm between content blocks
+- Grain/noise texture overlay — warmth; prevents sterile white look
+- Hover underline slide animations on nav links
 
-**Explicit anti-features (do not build):**
-- Light mode toggle, contact form backend, real-time WebSocket chat, CMS/admin panel, user auth, animated video hero background, comment system on blog
+**Defer to post-launch:**
+- Page transitions — highest complexity, most fragile with App Router, moderate visual payoff
+- Infinite scroll / pagination — unnecessary with current content volume
+- Dark mode / theme toggle — contradicts the v2 design commitment
+- Parallax on hero background images — dated pattern, competes with marquee
+
+---
 
 ### Architecture Approach
 
-The architecture follows a layered model: App Router routing shell (`app/[lang]/`) wraps all routes and provides the IntlProvider and ChatWidget portal; section components compose the home page scroll experience; the 3D robot subsystem (RobotCanvas, RobotScene, RobotModel, EmotionController) is isolated in `components/robot/` and communicates with the chatbot subsystem exclusively via `useRobotStore` (Zustand); the blog data layer (`lib/blog.ts` + `lib/mdx.ts`) is fully build-time and independent of all other subsystems. The directory structure separates robot, chat, blog, and shared UI into distinct component folders.
+The architecture is organized around a single new client-side provider hierarchy wrapping the existing layout: `SmoothScrollProvider` (Lenis + ScrollTrigger bridge) wraps `PreloaderGate` (preloader overlay logic) which wraps the existing `Header`, `<main>{children}`, and `ChatBar`. This hierarchy ensures Lenis initializes at layout level (singleton scroll controller — never per page), the preloader gates the whole experience, and ChatBar stays outside the GSAP-animated `<main>` to prevent Framer Motion/GSAP transform conflicts. The page content structure changes from a single hero section with inline robot to a sequential section layout: HeroSection, RobotSection, AboutSection, ProjectsSection, BlogSection, Footer.
+
+See `.planning/research/ARCHITECTURE.md` for full component inventory, data flow diagrams, code patterns, and build order.
 
 **Major components:**
-1. `app/[lang]/layout.tsx` — HTML shell, IntlProvider, ChatWidget portal, SEO metadata
-2. `RobotCanvas` + `RobotModel` + `EmotionController` — isolated R3F renderer, GLTF + AnimationMixer, emotion-to-clip mapping
-3. `useChatStore` + `useRobotStore` (Zustand) — the state bridge that crosses the R3F Canvas boundary (React Context cannot cross this boundary; Zustand can)
-4. `ChatWidget` + `chatApi` — sticky chat UI + plain `fetch()` to external LLM endpoint
-5. `lib/blog.ts` + `lib/mdx.ts` — build-time frontmatter parsing and MDX compilation; fully static
-6. `messages/en.json` + `messages/vi.json` — i18n dictionaries; loaded at layout level
+1. `SmoothScrollProvider` (new) — Lenis `ReactLenis root` + ScrollTrigger bridge via `useLenis(() => ScrollTrigger.update())`
+2. `PreloaderGate` + `Preloader` (new) — CSS-class-based overlay; GSAP timeline; `ScrollTrigger.refresh()` on complete
+3. `HeroSection` (new) — photo + GSAP marquee + entrance animations; no robot
+4. `RobotSection` (new) — `RobotCanvas` relocated here; GSAP scroll-triggered entrance on wrapper div
+5. `TextReveal` + `ScrollReveal` (new) — reusable `useGSAP` animation wrappers for all content sections
+6. `TransitionLink` (new, stretch) — GSAP exit/enter animation on route changes; defer to post-launch
 
-**Key isolation rule:** R3F's `<Canvas>` creates its own React root. React Context from the DOM tree is not accessible inside it. Zustand (module-level closure) is the only correct bridge.
+**Unchanged components:** RobotCanvas, RobotScene, RobotModel, useRobotStore, useChatStore, ChatBar, ChatPanel, ChatBubble, ChatInput, PromptChips, TypingIndicator, services/chat.ts. The entire R3F and chat subsystem is encapsulated and animation-framework agnostic.
+
+---
 
 ### Critical Pitfalls
 
-1. **R3F + static export SSR crash (C-1)** — `window is not defined` at build time. Prevention: every R3F import must be wrapped in `dynamic(() => import(...), { ssr: false })`. This will silently fail in dev (Turbopack handles it) and only crash in `npm run build`. Must be the first task of the 3D phase.
+See `.planning/research/PITFALLS.md` for full prevention patterns, warning signs, and recovery costs.
 
-2. **i18n middleware incompatibility with static export (C-2)** — Middleware is a server concept; static export has no server. Do NOT create `middleware.ts`. Use `app/[lang]/` + `generateStaticParams` only. The existing `layout.tsx` already declares hreflang alternates for `/vi` and `/en` that 404 — fix or remove before adding more.
+1. **ScrollTrigger zombie instances on route change** — Always use `useGSAP()` from `@gsap/react`, never raw `useEffect` + `gsap.to()`. The hook creates a scoped `gsap.context()` that auto-reverts on unmount. Establish this as the only allowed pattern in Phase 1 before writing any animation.
 
-3. **GLTF model 404 in production (C-3)** — Same `basePath` bug as the existing CV download. Create a `useModelPath()` hook that applies `NEXT_PUBLIC_BASE_PATH` to all asset URLs. Apply to every `useGLTF()` call.
+2. **Lenis + ScrollTrigger scroll position desync** — Drive Lenis from GSAP's ticker (`gsap.ticker.add((time) => lenis.raf(time * 1000))`), pipe Lenis scroll events to `ScrollTrigger.update`, set `gsap.ticker.lagSmoothing(0)`. Must be wired in `SmoothScrollProvider` before any ScrollTrigger animations are written.
 
-4. **AnimationMixer memory leak on unmount (C-4)** — Three.js WebGL resources do not GC automatically. Use `drei`'s `useAnimations` hook (handles mixer lifecycle) and add explicit geometry/material dispose on component cleanup. Use opacity toggle instead of conditional render to keep the Canvas mounted.
+3. **Preloader hydration mismatch on static export** — Use CSS class on `<html>` (`preloader-active`) to hide content, not React state. The HTML for both server and client is identical; JS removes the class after preloader completes. This prevents the flash-of-content that makes preloaders look broken.
 
-5. **Chatbot CORS failure in production (M-6)** — `fetch()` from GitHub Pages to the LLM backend will be blocked unless the backend sets `Access-Control-Allow-Origin: https://rayquasar18.github.io`. This is a backend configuration dependency. Implement fallback mock mode for when the API is unreachable. Coordinate before writing integration code.
+4. **GSAP and Framer Motion fighting over transforms** — Maintain a hard boundary: GSAP owns scroll-driven, timeline, and page-level animations; Framer Motion owns component mount/unmount (ChatPanel, MobileMenu). Never apply both to the same DOM element. Keep ChatBar and its Framer Motion components as siblings of `<main>`, not children.
 
-6. **Pre-existing bugs compound new features (N-4 / CONCERNS.md)** — Missing `"use client"` on `IntroduceSection` and `ProjectSection`, broken `basePath` on CV download, `metadata.title.template` misconfiguration, and scroll magic numbers (`h-[1100vh]`, hardcoded offsets) will all break silently when new routes and sections are added. Must be fixed in Phase 1.
+5. **R3F Canvas remount loses WebGL context** — Mount `RobotCanvas` at a stable DOM position; do not conditionally render it in different parent sections. Use CSS visibility or ScrollTrigger `onToggle` to show/hide it. Each remount re-downloads the .glb, re-uploads GPU buffers, and risks the iOS 8-context limit.
+
+6. **ScrollTrigger.refresh() not called after preloader** — All trigger positions are calculated from hidden elements (zero dimensions) during the preloader. `ScrollTrigger.refresh()` must be called in the preloader's `onComplete` callback with a 1-frame delay (`requestAnimationFrame`) to let React commit DOM changes first.
 
 ---
 
 ## Implications for Roadmap
 
-Research is unambiguous about build order. Dependencies are hard: the `[lang]` route structure must exist before any page can use i18n; the `useRobotStore` must exist before the chatbot can control animations; blog routing requires the `[lang]` prefix. Recommended phase structure below mirrors the dependency graph directly.
+Based on the dependency graph from FEATURES.md and the architectural constraints from ARCHITECTURE.md and PITFALLS.md, the following phase structure is recommended. The ordering is not stylistic preference — it is driven by hard technical dependencies.
 
-### Phase 1: Foundation — Codebase Cleanup + i18n Routing
-**Rationale:** Every subsequent feature depends on the `app/[lang]/` route structure. This phase also eliminates the pre-existing bugs that would compound all future work. It produces no visible user-facing changes but is the structural prerequisite for everything else.
-**Delivers:** `app/[lang]/layout.tsx` with `generateStaticParams`, `next-intl` setup, `messages/en.json` + `messages/vi.json` skeletons, Header language switcher, dark theme CSS token system, fixed `"use client"` directives, fixed CV download basePath, removed/corrected hreflang alternates, scroll math refactor (`useRef`-measured heights, named scroll constants).
-**Addresses features:** Bilingual i18n, dark lab aesthetic, working links (hreflang fix), CV download
-**Avoids pitfalls:** C-2 (no middleware), N-4 (fix client directives), M-4 (scroll refactor before new sections), existing basePath bug
-**Research flag:** Standard Next.js pattern — skip `/gsd:research-phase`. The `generateStaticParams` + `next-intl` static export approach is confirmed from official sources.
+### Phase 1: Animation Infrastructure
+**Rationale:** Every animation in v2.0 depends on GSAP, Lenis, and their synchronization being correct. Installing packages and wiring the provider hierarchy first means every subsequent phase can write animations immediately without re-architecting. This is also where all four critical pitfalls are mitigated at the source.
+**Delivers:** `SmoothScrollProvider` with working Lenis + ScrollTrigger bridge; `useGSAP` pattern established as the only allowed GSAP hook; `gsap.registerPlugin()` centralized in `src/lib/gsap.ts`; Lenis working with existing Header, ChatBar, and R3F Canvas; static export GSAP guard in place.
+**Addresses:** Smooth scroll (Lenis table stake), GSAP base (required by all animation features)
+**Avoids:** P1 (zombie ScrollTriggers), P2 (Lenis/ScrollTrigger desync), P4 (GSAP/Framer Motion conflict), P7 (flash of native scroll)
+**Research flag:** Standard patterns — skip `/gsd:research-phase`
 
-### Phase 2: 3D Robot + Chatbot (The Centerpiece)
-**Rationale:** This is the core differentiator. Building it while the codebase is minimal reduces conflict surface. The robot's `RobotCanvas` + `useRobotStore` can be built with a placeholder primitive (box geometry) before the `.glb` file is delivered. The chatbot can be built against a mock endpoint. These two subsystems are co-dependent (chatbot drives robot emotion) and belong in the same phase.
-**Delivers:** Full robot subsystem (`RobotCanvas`, `RobotScene`, `RobotModel`, `EmotionController`, `useRobotStore`), full chatbot subsystem (`ChatWidget`, `ChatInput`, `ChatMessage`, `useChatStore`, `chatApi`), mock fallback mode for API unavailability, emotion validation/normalization, WebGL cleanup on unmount.
-**Uses:** `@react-three/fiber`, `three`, `@react-three/drei`, `useGLTF.preload()`, `useAnimations`, `dynamic({ ssr: false })`, Zustand (existing), `fetch()`
-**Avoids pitfalls:** C-1 (dynamic import), C-3 (useModelPath hook), C-4 (useAnimations + dispose), C-5 (dvh units, safe-area-inset, real iOS test), M-1 (emotion validation), M-3 (bundle-analyzer audit), M-6 (CORS coordination), N-3 (keep Canvas mounted)
-**Research flag:** Needs `/gsd:research-phase` if the `.glb` animation clip names are unknown before implementation — clip names must match the `RobotEmotion` TypeScript union type exactly. Also flag CORS resolution as a blocking external dependency.
+### Phase 2: White Theme CSS Overhaul
+**Rationale:** All new section components must be built against the final visual system. Building sections before the theme means double-work. This phase has no animation dependencies — it is a pure CSS token and component restyling task.
+**Delivers:** Complete replacement of dark theme CSS variables in `globals.css` with white minimalist tokens; all existing components (Header, ChatBar, ChatPanel) restyled for light backgrounds; WCAG AA contrast validated; oversized display typography system (`clamp()` fluid sizing) in place.
+**Addresses:** White theme (table stake), oversized display typography (table stake)
+**Avoids:** Technical debt of building sections twice on the wrong theme
+**Research flag:** Standard patterns — skip `/gsd:research-phase`
 
-### Phase 3: Hero Section Redesign
-**Rationale:** Short phase; requires Phase 2's `RobotCanvas` and `useRobotStore` to exist. Integrates the 3D robot into the scroll-driven hero layout with the static black hole background.
-**Delivers:** `HeroSection` rebuilt with static background image + `RobotCanvas` overlay (`position: absolute`, `gl.alpha = true`), scroll-driven robot transform, proper z-index layering.
-**Avoids pitfalls:** Anti-pattern of full-page fixed canvas; existing fragile `h-[1100vh]` already fixed in Phase 1.
-**Research flag:** Standard CSS layering + R3F Canvas — skip research.
+### Phase 3: Preloader Sequence
+**Rationale:** The preloader gates the entire experience and exposes Lenis/GSAP initialization timing issues early. Building it third (immediately after infrastructure and theme) means timing bugs surface before the entire section library is built against a broken initialization sequence.
+**Delivers:** `PreloaderGate` + `Preloader` components integrated into layout; GSAP timeline text sequence ("Welcome to the party" to "Quasar" to curtain reveal); CSS-class-based preloader visibility (no hydration mismatch); scroll lock during preloader; `ScrollTrigger.refresh()` on completion; sessionStorage skip for return visits.
+**Addresses:** Loading/preloader (table stake), intro preloader sequence (differentiator)
+**Avoids:** P3 (hydration mismatch), P6 (ScrollTrigger wrong positions after preloader)
+**Research flag:** Standard patterns — skip `/gsd:research-phase`
 
-### Phase 4: Content Sections
-**Rationale:** IntroduceSection, AboutSection, ProjectSection are independent of the 3D/chat subsystems and only require Phase 1 (for i18n hooks). They can proceed immediately after Phase 1 is complete, in parallel with Phase 2 if developer bandwidth allows. Project detail pages require routing setup but are self-contained.
-**Delivers:** Rebuilt IntroduceSection (storytelling format), AboutSection (skills + experience), data-driven ProjectSection (replaces hardcoded 4 cards), project detail pages (`app/[lang]/projects/[slug]/page.tsx`), scroll animations audit across all new sections.
-**Addresses features:** About/story section, projects showcase, project detail pages
-**Research flag:** Standard content sections — skip research.
+### Phase 4: Hero Section
+**Rationale:** The hero is the first thing users see after the preloader. It establishes the visual language for all subsequent sections and contains the marquee — the most visually distinctive feature. The robot is removed from the hero here; RobotSection is deferred to Phase 5.
+**Delivers:** `HeroSection` with full-viewport layout, centered photo, oversized marquee name (GSAP infinite loop with optional velocity-link), role text, scroll indicator, GSAP entrance animations; robot removed from hero area.
+**Addresses:** Full-viewport hero (table stake), oversized display typography (table stake), marquee name scroll (differentiator)
+**Avoids:** Overcrowding the hero with both robot and marquee (explicit anti-feature)
+**Research flag:** Standard patterns — skip `/gsd:research-phase`
 
-### Phase 5: Blog System
-**Rationale:** The blog data layer (gray-matter, mdx processing) is fully independent of 3D, chatbot, and content sections. It only requires Phase 1 routing for `app/[lang]/blog/` structure. Isolating it to its own phase avoids the Turbopack/MDX compatibility risk bleeding into other features.
-**Delivers:** `lib/blog.ts` (frontmatter parsing), `lib/mdx.ts` (MDX compilation), `content/blog/` directory structure (locale-per-directory), blog index page with tag filter, blog post detail page with TOC + code highlighting + `generateMetadata()` for OG images, `BlogSection` home preview, `@tailwindcss/typography` prose styling. Blog search (Fuse.js) deferred until >10 posts.
-**Avoids pitfalls:** M-2 (locale-per-directory content structure), M-5 (next-mdx-remote over @next/mdx for Turbopack compat), N-1 (generateMetadata with absolute URLs), N-5 (pre-built search-index.json at build time)
-**Research flag:** Verify `next-mdx-remote` React 19 compatibility at the start of this phase before writing any blog content pipeline. If incompatible, switch to `mdx-bundler`.
+### Phase 5: Robot Section Restructure
+**Rationale:** The robot relocation is an architectural decision (Canvas mount strategy) that must be correct before building any surrounding content. Moving it at this stage — before About/Projects/Footer are built — means the surrounding section structure is fresh and the DOM is not yet tightly coupled. The key risk (WebGL context on remount) must be resolved here.
+**Delivers:** `RobotSection` component; `RobotCanvas` relocated from hero to Section 2; GSAP scroll-triggered entrance on wrapper div; Canvas mount strategy confirmed; chat to robot emotion flow verified working in new position; R3F + GSAP coexistence verified.
+**Addresses:** 3D robot in dedicated Section 2 (differentiator)
+**Avoids:** P5 (R3F Canvas remount / WebGL context loss)
+**Research flag:** Needs validation — Canvas mount strategy (layout-level vs. section-level) should be tested with a spike. Mark for `/gsd:research-phase` if Canvas remount behavior is unclear before planning.
 
-### Phase 6: SEO + Performance Polish
-**Rationale:** SEO requires final page content and structure to be complete. Performance optimization (bundle analysis, lazy loading audit) requires all features to be in place so measurements are accurate.
-**Delivers:** OG images per blog post and project page, JSON-LD Article schema per post + Person schema cleanup, sitemap extended to include all blog and project routes, `@next/bundle-analyzer` audit (Three.js chunk target: <200KB gzipped), Lighthouse audit and remediation, final mobile testing on real iOS device.
-**Research flag:** Standard SEO patterns — skip research. Performance targets are already defined.
+### Phase 6: Content Sections + Scroll Animations
+**Rationale:** All infrastructure, theme, preloader, hero, and robot are in place. This phase builds the remaining content sections and applies reusable animation patterns consistently.
+**Delivers:** `AboutSection`, `ProjectsSection`, `BlogSection` (preview), `Footer`; `TextReveal` and `ScrollReveal` reusable components; scroll-triggered text reveals on all section headings; project card fade-up animations; footer with large display CTA; i18n wired for all sections.
+**Addresses:** Scroll-triggered text reveals (table stake), generous whitespace (table stake), responsive design (table stake), section numbering, text weight contrast, hover underline animations
+**Avoids:** Animation fatigue (animating every element is an explicit anti-feature); scroll-jacking (anti-feature)
+**Research flag:** i18n + animation integration needs attention — Vietnamese text lengths differ; `ScrollTrigger.refresh()` must be called on locale change. Otherwise standard patterns.
+
+### Phase 7: Polish and Micro-interactions
+**Rationale:** Ship-blocking features are complete. This phase adds the differentiating micro-interactions that elevate the site to Awwwards tier. All items are additive — nothing breaks if any one is cut.
+**Delivers:** Magnetic hover effects on nav and CTA buttons (GSAP `quickTo()`); custom cursor; scroll-velocity-linked marquee speed; grain/noise texture overlay; section dividers with animated shapes; hover underline slide animations; Dennis Snellenberg design details (rounded image masks, monospace accent text, smooth color section transitions).
+**Addresses:** Cursor-following interactions (table stake), magnetic hover (differentiator), scroll-velocity animations (differentiator), section dividers (differentiator)
+**Avoids:** Overbuilding polish before core content is solid
+**Research flag:** Standard patterns — skip `/gsd:research-phase`
+
+### Phase 8: Page Transitions (Stretch Goal — Post-Launch)
+**Rationale:** Explicitly deferred. This is the highest-complexity, most fragile feature relative to visual payoff. The site is primarily a single-page scroll experience; actual route changes are infrequent. Ship v2.0 without this and add it in a dedicated post-launch phase.
+**Delivers:** `TransitionLink` component; page transition overlay in layout; GSAP exit/enter timeline on route changes; tested with static export.
+**Addresses:** Page transitions (differentiator)
+**Avoids:** Blocking launch on a feature known to be brittle with Next.js App Router
+**Research flag:** Needs `/gsd:research-phase` — no built-in App Router transition API; `TransitionLink` + overlay approach has known timing heuristics that need live validation.
+
+---
 
 ### Phase Ordering Rationale
 
-- Phase 1 is a structural prerequisite for all other phases — route shape determines all file paths
-- Phases 2 and 4 can run in parallel after Phase 1 (no shared dependencies), but Phase 2 is higher risk and should be prioritized
-- Phase 3 is a short integration phase that gates on Phase 2
-- Phase 5 is deliberately isolated — blog is the highest-complexity content pipeline and benefits from a clean stable base
-- Phase 6 cannot begin until all content is final — premature performance work is wasted
+- Phases 1-3 are pure prerequisites. No animation can be correctly written before Phase 1; no component can be correctly styled before Phase 2; no timing issue can be caught early without Phase 3.
+- Phases 4-6 follow FEATURES.md Priority 1-3 ordering exactly, which is itself derived from the feature dependency graph: hero depends on theme and animation infra; robot depends on hero being separated; content sections depend on robot being positioned.
+- Phase 7 is explicitly deferred polish. All Phase 7 features are `should-have` or `differentiator` tier, not `table stakes`.
+- Phase 8 (page transitions) is a post-launch stretch. FEATURES.md and ARCHITECTURE.md both independently recommend deferral, and PITFALLS.md rates recovery cost as HIGH if implemented incorrectly.
+
+---
 
 ### Research Flags
 
 **Needs `/gsd:research-phase` during planning:**
-- Phase 2 (3D Robot): GLTF animation clip names must match the `RobotEmotion` TypeScript union before implementation. If the `.glb` file is not yet available, use a placeholder and note this as a blocking external dependency.
-- Phase 5 (Blog): Verify `next-mdx-remote` version against React 19 before committing to the pipeline.
+- **Phase 5 (Robot Section):** Canvas mount strategy for the WebGL context remount issue needs a code spike before planning commits to either approach (layout-level Canvas vs. stable-position section Canvas). Behavior on iOS Safari is not covered by training data with sufficient confidence.
+- **Phase 8 (Page Transitions):** The `TransitionLink` + overlay approach is architecturally sound but timing-heuristic-based. The App Router `router.push` timing relative to the enter animation needs live verification.
 
-**Standard patterns (skip research-phase):**
-- Phase 1 (i18n Foundation): Official Next.js + next-intl docs confirm the exact pattern.
-- Phase 3 (Hero Redesign): CSS layering + R3F Canvas overlay is documented.
-- Phase 4 (Content Sections): Standard React sections with i18n hooks.
-- Phase 6 (SEO/Polish): Established Next.js metadata patterns.
+**Standard patterns — skip `/gsd:research-phase`:**
+- **Phase 1:** Lenis + GSAP integration is well-documented; `useGSAP` hook is official. Verified from npm registry.
+- **Phase 2:** CSS variable overhaul and Tailwind v4 `@theme inline` are standard.
+- **Phase 3:** GSAP timeline + CSS-class preloader pattern is architecturally sound and well-tested.
+- **Phase 4:** Marquee loop and GSAP entrance animations are established patterns.
+- **Phase 6:** `TextReveal` / `ScrollReveal` with `useGSAP` + `ScrollTrigger` are standard.
+- **Phase 7:** GSAP `quickTo()` for magnetic effects, CSS `::after` for hover underlines — standard.
 
 ---
 
@@ -156,43 +190,41 @@ Research is unambiguous about build order. Dependencies are hard: the `[lang]` r
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All versions verified against npm registry (2026-03-13). Peer dep matrix fully resolved. One flag: next-mdx-remote React 19 compat needs runtime verification at install. |
-| Features | HIGH | Table stakes are industry standard. Differentiators are owner-defined in PROJECT.md (authoritative). Anti-features are explicitly scoped out. |
-| Architecture | HIGH | Static export constraint is non-negotiable and shapes all decisions. R3F Canvas isolation + Zustand bridge is canonical community pattern. i18n pattern confirmed from official next-intl example source. |
-| Pitfalls | HIGH | Derived from direct codebase audit (CONCERNS.md) + domain knowledge. The C-1/C-2/C-3 pitfalls are deterministic and have verified prevention strategies. |
+| Stack | HIGH | All three new packages verified against npm registry; tarball inspection confirmed SplitText free availability; peer deps confirmed compatible with React 19.2.3 |
+| Features | HIGH | Table stakes are industry-standard patterns; differentiators are well-documented GSAP/CSS techniques applied to a unique context; anti-features explicitly scoped in project requirements |
+| Architecture | MEDIUM-HIGH | `useGSAP` hook and Lenis `root` mode are HIGH confidence (official packages, npm-verified); Preloader in App Router and Lenis `root` + ScrollTrigger without scrollerProxy are MEDIUM (architecturally sound, training data, could not verify against live docs) |
+| Pitfalls | HIGH | Codebase-verified integration analysis; all seven critical pitfalls are rooted in documented GSAP, Lenis, R3F, and Next.js behaviors with clear prevention patterns and stated recovery costs |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **`.glb` animation clip names unknown:** The `RobotEmotion` TypeScript union and `EmotionController` clip mapping depend on knowing the exact clip names embedded in the `.glb` file. This is a blocking external dependency. Resolution: get the `.glb` file early in Phase 2, run `console.log(gltf.animations.map(a => a.name))` to extract clip names, define the enum before building `EmotionController`.
-- **LLM backend CORS headers:** The chatbot only works if the backend sets `Access-Control-Allow-Origin` for the GitHub Pages domain. This must be coordinated with the backend provider before Phase 2 integration work begins. Risk if not done: silent production failure.
-- **`next-mdx-remote` React 19 compatibility:** Widely used and actively maintained, but the exact React 19 peer dep compatibility should be verified at install time (Phase 5). The fallback is `mdx-bundler`.
-- **Blog content strategy for Vietnamese:** Architecture recommends `content/blog/en/` and `content/blog/vi/` directory structure. Initially, English-only is acceptable; Vietnamese posts can be added per-slug later. This decision should be made explicit in Phase 5 planning to avoid a later migration.
+- **Lenis `root` mode + ScrollTrigger sync without scrollerProxy:** The modern (v1.x) pattern is that `scrollerProxy` is no longer needed. Validate this in Phase 1 with a simple ScrollTrigger pin test before writing all scroll animations.
+- **R3F Canvas remount strategy on iOS Safari:** WebGL context limit (8 contexts) on iOS is documented but the specific behavior when remounting a Three.js Canvas via React reconciler has not been live-tested in this codebase. Validate in Phase 5 spike before committing to the section-level Canvas approach.
+- **`ScrollTrigger.refresh()` after preloader timing:** The `requestAnimationFrame` vs. `setTimeout(fn, 100)` delay for letting React commit DOM changes is a heuristic. Validate in Phase 3 that trigger positions are correct on first scroll after preloader completion.
+- **i18n (Vietnamese) + text reveal animations:** Vietnamese text is significantly longer than English for the same content. SplitText / word-split reveals may overflow or clip incorrectly. Validate in Phase 6 by testing all section headings with the `vi` locale active.
 
 ---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- npm registry live queries (2026-03-13) — all package versions verified
-- GitHub release API (2026-03-13): pmndrs/react-three-fiber v9.5.0, amannn/next-intl v4.8.3
-- Next.js official i18n docs (fetched 2026-03-13): https://nextjs.org/docs/app/guides/internationalization
-- next-intl `example-app-router` source (amannn/next-intl GitHub, 2026-03-13) — confirms `generateStaticParams` + `setRequestLocale` for static export
-- Existing codebase audit: `.planning/codebase/STACK.md`, `ARCHITECTURE.md`, `CONCERNS.md`, `INTEGRATIONS.md`, `STRUCTURE.md`
-- Project requirements: `.planning/PROJECT.md` (authoritative, owner-defined)
+- npm registry queries (2026-03-15): `gsap@3.14.2`, `@gsap/react@2.1.2`, `lenis@1.3.18` — versions, peer deps, license, publish dates
+- Tarball inspection (2026-03-15): `gsap@3.14.2` ScrollTrigger.js (112.1kB), SplitText.js (17.3kB), Flip.js (49.1kB), Observer.js (26.1kB), CustomEase.js (11.4kB) confirmed as full implementations; `lenis@1.3.18` `dist/lenis-react.d.ts` confirmed `ReactLenis`, `useLenis`, `LenisContext` exports
+- Existing codebase (2026-03-15): `package.json`, `src/app/[lang]/layout.tsx`, `src/components/chat/ChatBar.tsx`, `src/components/robot/RobotCanvas.tsx`, `src/lib/fonts.ts`, `next.config.ts` (`output: 'export'`)
+- GSAP standard license: https://gsap.com/standard-license — confirmed free for personal portfolio use
 
 ### Secondary (MEDIUM confidence)
-- R3F Canvas isolation behavior and Zustand bridge pattern — community consensus, documented R3F behavior
-- `next-mdx-remote/rsc` compatibility with Next.js 15 / React 19 — widely used, actively maintained, not runtime-verified for this exact version combination
-- `next-intl` static export full feature parity — confirmed in docs, minor edge cases possible during implementation
+- GSAP ScrollTrigger docs: gsap.com/docs/v3/Plugins/ScrollTrigger — trigger lifecycle, refresh, kill (training data)
+- GSAP React guide: gsap.com/resources/React — `useGSAP` hook, `gsap.context()` pattern (training data)
+- Lenis + GSAP integration: github.com/darkroomengineering/lenis README — ScrollTrigger sync pattern (training data)
+- Next.js static export docs: nextjs.org/docs — `output: 'export'` constraints (training data)
+- Dennis Snellenberg design reference: dennissnellenberg.com — design patterns (training data, Awwwards-documented)
 
-### Tertiary (needs validation at implementation)
-- `next-mdx-remote` React 19 peer dep — verify at `npm install` time
-- GLTF animation clip names in the owner-provided `.glb` file — unknown until file is received
-- LLM backend CORS configuration for `https://rayquasar18.github.io` — external dependency, not under portfolio codebase control
+### Tertiary (LOW confidence — needs live validation)
+- iOS Safari WebGL context limit behavior on Canvas remount — training data, validate in Phase 5 spike
+- Lenis `root` mode + ScrollTrigger without `scrollerProxy` in Lenis v1.3.x — training data, validate in Phase 1
 
 ---
-
-*Research completed: 2026-03-13*
+*Research completed: 2026-03-15*
 *Ready for roadmap: yes*

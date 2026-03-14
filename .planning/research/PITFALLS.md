@@ -1,396 +1,480 @@
-# Domain Pitfalls
+# Pitfalls Research
 
-**Project:** RayQuasar Portfolio — AI Engineer with 3D Robot Chatbot
-**Domain:** Interactive portfolio — 3D WebGL, LLM chatbot, markdown blog, i18n
-**Researched:** 2026-03-13
-**Confidence:** HIGH (based on deep codebase audit + domain knowledge; web search unavailable)
+**Domain:** Adding GSAP/Lenis animations, preloader, and white minimalist redesign to existing Next.js 16 + R3F portfolio
+**Researched:** 2026-03-15
+**Confidence:** HIGH (codebase-verified integration analysis; web search unavailable -- based on deep domain knowledge of GSAP, Lenis, R3F, and Next.js App Router)
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites, broken deploys, or broken centerpiece features.
+### Pitfall 1: GSAP ScrollTrigger Instances Not Killed on Route Change / Component Unmount
 
----
+**What goes wrong:**
+GSAP ScrollTrigger creates global scroll listeners and pin/scrub bindings that attach to the DOM. In React, when components unmount (route change, conditional render, React Strict Mode double-mount in dev), ScrollTrigger instances survive because they are registered globally on `ScrollTrigger.getAll()`. Orphaned triggers fire callbacks on elements that no longer exist, causing "Cannot read properties of null" errors, phantom scroll-locking, and animations targeting stale DOM nodes.
 
-### Pitfall C-1: React Three Fiber + Next.js Static Export SSR Crash
+This codebase is especially vulnerable because the page is a single-route SPA (`/[lang]/page.tsx` renders everything), but the v2 redesign will add blog post routes (`/[lang]/blog/[slug]`). Navigating between the main page and a blog post will unmount all GSAP-animated sections without cleanup.
 
-**What goes wrong:** Three.js and React Three Fiber (R3F) access browser globals (`window`, `document`, `WebGLRenderingContext`) at module load time. In Next.js static export mode (`output: 'export'`), the build step runs in Node.js where these globals don't exist. Importing R3F without a dynamic import guard causes the entire build to crash with `ReferenceError: window is not defined` or silently corrupts the HTML output.
+**Why it happens:**
+Developers use `useEffect` with GSAP timelines and forget that ScrollTrigger instances are not automatically garbage-collected when the React component unmounts. GSAP operates outside React's lifecycle. Without explicit `scrollTrigger.kill()` or `gsap.context().revert()`, every mount creates new triggers while old ones persist.
 
-**Why it happens:** The existing codebase uses `"use client"` on `page.tsx` as a blanket boundary, which currently works because there's no WebGL. Adding R3F naively follows the same pattern — but `"use client"` does not prevent SSR execution during static export; it only marks the component as client-interactive for the React model. R3F's Canvas and Three.js internals still execute at build time.
+**How to avoid:**
+Use GSAP's official `useGSAP` hook (from `@gsap/react`) instead of raw `useEffect`. It automatically creates a `gsap.context()` scoped to a ref and calls `context.revert()` on unmount, which kills all GSAP animations and ScrollTrigger instances created within that context.
 
-**Consequences:** Build fails in CI. Entire site is undeployable until fixed. The issue only surfaces in `npm run build`, not during `npm run dev` (Turbopack dev server handles this differently).
-
-**Prevention:**
 ```tsx
-// WRONG — crashes static export build
-import { Canvas } from "@react-three/fiber"
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// CORRECT — lazy import bypasses SSR
-import dynamic from "next/dynamic"
-const RobotCanvas = dynamic(() => import("@/components/RobotCanvas"), {
-  ssr: false,
-  loading: () => <RobotFallback />, // show placeholder during hydration
-})
-```
-Every file that imports `@react-three/fiber`, `@react-three/drei`, or `three` directly must either be inside a `dynamic(() => import(...), { ssr: false })` call or itself be lazily imported. Even utility files that import Three.js types need care with `typeof window !== 'undefined'` guards.
+gsap.registerPlugin(ScrollTrigger);
 
-**Detection:** Run `npm run build` locally before merging. The crash is deterministic and immediate.
+function AnimatedSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-**Phase:** Phase that adds the 3D robot — must be resolved on day one of that phase.
+  useGSAP(() => {
+    // All GSAP code here is auto-scoped to containerRef
+    // and auto-cleaned on unmount
+    gsap.from(".reveal-text", {
+      y: 100,
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".reveal-text",
+        start: "top 80%",
+      },
+    });
+  }, { scope: containerRef }); // scope limits selector queries to this container
 
----
-
-### Pitfall C-2: i18n + Static Export Incompatibility (next-intl Configuration)
-
-**What goes wrong:** The most natural i18n setup for Next.js App Router — locale segments in the URL path (e.g., `/en/`, `/vi/`) managed by middleware — does not work with `output: 'export'`. Next.js middleware runs on the edge runtime, which is incompatible with static HTML export. Attempting to use `next-intl` (or any middleware-based i18n library) with the standard routing configuration will either crash the build or silently produce a site that serves only the default locale.
-
-**Why it happens:** The existing project uses `output: 'export'` (GitHub Pages static hosting). The `CONCERNS.md` audit already flagged that `metadata.alternates.languages` declares `/vi` and `/en` routes that don't exist — confirming this is unimplemented and will be a trap.
-
-**Consequences:** Either the build breaks, or the site deploys with broken locale links and 404s on alternate-language URLs that are already declared in the existing `layout.tsx` hreflang metadata.
-
-**Prevention:** Use `next-intl`'s "without i18n routing" mode (also called "setup without middleware"):
-- Do NOT set up middleware-based locale routing
-- Use a single locale context provided at the page level
-- Use URL query params (`?lang=vi`) or a client-side language switcher backed by `localStorage` + React context
-- Generate separate static pages via `generateStaticParams` if path-based locale is truly required (e.g., `/vi/blog/[slug]`)
-- Update the existing `layout.tsx` hreflang `alternates.languages` to point to real paths that will be generated, or remove them until implemented
-
-**Detection:** Attempt `npm run build` with any middleware-using i18n library. The build will fail or warn about middleware incompatibility with static export.
-
-**Phase:** i18n implementation phase. Must be the first decision made before writing any translation strings.
-
----
-
-### Pitfall C-3: GLTF Model Asset Not Found in GitHub Pages Static Export
-
-**What goes wrong:** The `.glb` robot model file placed in `public/` resolves correctly in `npm run dev` (`/robot.glb`) but returns 404 in GitHub Pages production because GitHub Pages serves the site from a sub-path (e.g., `https://rayquasar18.github.io/`) and the `basePath` and `assetPrefix` are injected at build time via `NEXT_PUBLIC_BASE_PATH`.
-
-**Why it happens:** The existing codebase already has this exact bug for `ButtonDownloadCV` (documented in `CONCERNS.md`): the CV download link is hardcoded as `/HaMinhQuan_CV.pdf` and ignores `NEXT_PUBLIC_BASE_PATH`. The R3F model loader (`useGLTF` from `@react-three/drei` or `GLTFLoader` directly) uses a plain string URL that will have the same problem if written naively as `useGLTF('/robot.glb')`.
-
-**Consequences:** The robot model fails to load silently in production (no visible error to the user), the 3D canvas renders an empty scene, and the centerpiece feature is broken for all production visitors.
-
-**Prevention:**
-```tsx
-// WRONG
-useGLTF('/robot.glb')
-
-// CORRECT — matches BaseImage/BaseVideo pattern already established
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
-useGLTF(`${basePath}/robot.glb`)
-```
-Create a `useModelPath(path: string)` hook that applies the base path, mirroring the `BaseImage`/`BaseVideo` pattern already in the codebase. Apply this hook to every `useGLTF` / `useTexture` / external asset call in the 3D component.
-
-**Detection:** Deploy to GitHub Pages and open browser DevTools Network tab — look for 404 on `.glb` and `.bin` assets.
-
-**Phase:** 3D robot phase — validate in production deploy as a blocking acceptance criterion.
-
----
-
-### Pitfall C-4: GLTF Animation Mixer Memory Leak on Component Unmount
-
-**What goes wrong:** Three.js `AnimationMixer` and WebGL resources (geometry buffers, textures, materials) are not automatically garbage collected when a React component unmounts. If the 3D robot component is unmounted and remounted (e.g., on navigation to a blog page and back, or via React Strict Mode's double-mount in development), the old animation mixer and WebGL objects remain in memory, causing progressively increasing GPU memory usage and potential crashes on mobile.
-
-**Why it happens:** R3F handles the render loop, but resource cleanup is the developer's responsibility. GLTF files contain geometry and textures that are registered on the WebGL context. Animation mixers hold references to action clips. None of these clean up automatically on React component unmount.
-
-**Consequences:** Memory leak on mobile browsers. Potential GPU context loss ("WebGL context lost" error) after several page navigations. Especially problematic because the robot is the centerpiece — it's always visible.
-
-**Prevention:**
-```tsx
-// In the robot component's cleanup
-useEffect(() => {
-  return () => {
-    // Dispose geometry and materials from the GLTF scene
-    gltf.scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        object.geometry.dispose()
-        if (Array.isArray(object.material)) {
-          object.material.forEach((m) => m.dispose())
-        } else {
-          object.material.dispose()
-        }
-      }
-    })
-    // Stop and uncache the mixer
-    mixer?.stopAllAction()
-    mixer?.uncacheRoot(gltf.scene)
-  }
-}, [gltf, mixer])
-```
-Use `useGLTF.preload('/robot.glb')` to cache the model at app start, avoiding re-fetch on remount. Use `drei`'s `useAnimations` hook which handles mixer lifecycle automatically.
-
-**Detection:** Open Chrome DevTools Memory tab → take heap snapshot → navigate away and back → take another snapshot → compare retained GPU memory.
-
-**Phase:** 3D robot phase — add cleanup code before the phase is considered done.
-
----
-
-### Pitfall C-5: Chatbot Input Breaks Scroll Behavior and Mobile Viewport
-
-**What goes wrong:** A sticky bottom chat input bar creates a persistent element at the bottom of the viewport. On mobile browsers (iOS Safari, Android Chrome), the virtual keyboard pushes the viewport up when focused, causing the sticky element to appear above the keyboard instead of at the true bottom. Additionally, the fixed/sticky chat bar overlaps page content — particularly the footer and the last section — without proper `padding-bottom` compensation on the page layout.
-
-**Why it happens:** The existing codebase uses `h-[1100vh]` hardcoded scroll height and brittle pixel math for scroll animations (flagged in `CONCERNS.md`). A sticky overlay at the bottom will interact with these scroll calculations unexpectedly.
-
-**Consequences:** On iOS, the chat bar hides behind the keyboard. Footer content is obscured. On desktop, the chat bar covers the last ~64px of every section during scroll. The robot animation offsets that depend on scroll position will be wrong because the viewport effective height changes when the keyboard opens.
-
-**Prevention:**
-- Use CSS `env(safe-area-inset-bottom)` for the sticky bar bottom offset on iOS
-- Use `dvh` (dynamic viewport height) instead of `vh` for full-height sections: `h-[110dvh]` instead of `h-[1100vh]`
-- Add `pb-[chatbar-height]` to the main page container whenever the chatbar is visible
-- Test on an actual iOS device, not just Chrome DevTools mobile emulator (they behave differently with virtual keyboard)
-- Use `window.visualViewport` resize events to reposition the chat bar when the keyboard opens
-
-**Detection:** Open on iPhone Safari, tap the chat input, observe whether the send button is accessible above the keyboard.
-
-**Phase:** Chatbot implementation phase — must test on real mobile device before completing the phase.
-
----
-
-## Moderate Pitfalls
-
-Mistakes that cause degraded experience or significant rework, but not total failure.
-
----
-
-### Pitfall M-1: LLM Emotion Response Not Validated — Robot Stuck in Wrong Animation
-
-**What goes wrong:** The LLM backend returns `{ answer: string, emotion: string }`. If the `emotion` field contains an unexpected value (a hallucinated emotion name, empty string, null, or a value not matching any animation clip name in the GLTF file), the robot either plays nothing or throws a runtime error. Since the portfolio IS the resume, a frozen or errored robot on load makes the first impression catastrophic.
-
-**Why it happens:** LLMs occasionally return values outside their prompted constraints. The connection between backend emotion strings and GLTF animation clip names is implicit — a mismatch is undetectable until runtime.
-
-**Prevention:**
-```typescript
-// Define the canonical emotion set as a type
-type RobotEmotion = 'idle' | 'happy' | 'thinking' | 'excited' | 'sad'
-const VALID_EMOTIONS = new Set<RobotEmotion>(['idle', 'happy', 'thinking', 'excited', 'sad'])
-
-function parseEmotion(raw: string): RobotEmotion {
-  const normalized = raw.toLowerCase().trim() as RobotEmotion
-  return VALID_EMOTIONS.has(normalized) ? normalized : 'idle'
+  return <div ref={containerRef}>...</div>;
 }
 ```
-- Define the exact animation clip names that exist in the `.glb` file as a TypeScript enum
-- Validate and normalize the `emotion` string from the API response before passing it to the animation controller
-- Default to `'idle'` animation for any unknown value — never let the animation system receive an unrecognized action name
 
-**Detection:** Mock the API to return `{ answer: "test", emotion: "INVALID_VALUE" }` — the robot should gracefully fall back to idle.
+Critical rule: NEVER use raw `useEffect` + `gsap.to()` without a `gsap.context()`. The `useGSAP` hook handles this automatically.
 
-**Phase:** Chatbot + robot integration phase.
+**Warning signs:**
+- Console warnings about ScrollTrigger targeting elements that don't exist
+- Scroll behavior breaks after navigating to blog and back
+- Animations fire on wrong elements after React Strict Mode double-mount in dev
+- `ScrollTrigger.getAll().length` grows after each navigation
 
----
-
-### Pitfall M-2: Blog i18n Conflicts — Untranslated Content Falls Through to Wrong Language
-
-**What goes wrong:** With both Vietnamese and English blog posts from `.md` files, the routing and content-matching logic can serve an English-language blog post to a Vietnamese-language visitor (or vice versa) if the locale resolution is not strict. This is especially common when a post only exists in one language — the fallback behavior must be intentional.
-
-**Why it happens:** Static blog generation (`generateStaticParams`) must enumerate all locale + slug combinations. If a post only has a Vietnamese version, the English route for that slug either 404s or silently falls back to the Vietnamese content with the wrong locale context (broken UI strings).
-
-**Prevention:**
-- Keep blog content in a directory structure that makes the locale explicit: `content/blog/en/[slug].md` and `content/blog/vi/[slug].md`
-- In `generateStaticParams`, only generate a route if the post file exists for that locale
-- Show a "Post not available in English" page with a link to the Vietnamese version rather than a 404 or silent fallback
-- Never mix translated UI strings (from i18n messages) with untranslated markdown content in the same component without making the distinction explicit in types
-
-**Detection:** Write a post only in Vietnamese. Try to access the English URL for that post — what happens?
-
-**Phase:** Blog implementation phase.
+**Phase to address:**
+Animation system setup phase (first phase that introduces GSAP). Establish the `useGSAP` pattern as the only allowed way to create GSAP animations. No raw `useEffect` + GSAP.
 
 ---
 
-### Pitfall M-3: Bundle Size Explosion from Three.js / R3F
+### Pitfall 2: Lenis Smooth Scroll Breaks ScrollTrigger Scroll Position Calculations
 
-**What goes wrong:** `three` is a large library (~600KB min+gzip). `@react-three/fiber` and `@react-three/drei` add more. If imported naively (even with `ssr: false`), they inflate the initial JavaScript bundle that blocks page interactivity, causing the Lighthouse Performance score — already at risk from the existing eager-loaded videos — to drop significantly.
+**What goes wrong:**
+Lenis intercepts native browser scroll and creates its own virtual scroll position. GSAP ScrollTrigger, by default, reads `window.scrollY` for trigger calculations. When Lenis is active, `window.scrollY` updates asynchronously (Lenis uses `requestAnimationFrame` to lerp the scroll position), so ScrollTrigger reads stale values. This causes triggers to fire at wrong positions, pin calculations to be off by hundreds of pixels, and scrub animations to jitter or skip.
 
-**Why it happens:** Next.js code-splitting works per route. Since the whole portfolio is one route (`/`), everything lands in the same bundle unless explicitly split with `dynamic`. Even `dynamic({ ssr: false })` still loads the Three.js chunk on initial page load if not structured correctly.
+The existing codebase is a static export site -- there is no server-side scroll state. All scroll logic runs client-side, making this mismatch the single most likely cause of "animations feel broken" during development.
 
-**Consequences:** Poor Lighthouse score on a portfolio site that is itself the resume. Recruiters on mobile will see a slow-loading page.
+**Why it happens:**
+Lenis and ScrollTrigger each have their own scroll tracking. Without explicit synchronization, they fight over who controls scroll position reporting. Lenis uses transform-based smooth scrolling by default (translating a wrapper element), but ScrollTrigger reads native scroll position.
 
-**Prevention:**
-- Use `dynamic` import with a loading placeholder that matches the space the robot will occupy — the Three.js bundle only loads after the initial HTML/CSS paints
-- Configure `drei`'s tree-shaking: import only what you use (`import { useGLTF } from '@react-three/drei'`, not the entire lib)
-- Use `@react-three/drei`'s `Preload` component to fetch the model in the background after initial render
-- Set performance budgets: Three.js chunk should not exceed 200KB gzipped in the initial page load
-- Verify with `next build` output — check the route's First Load JS size shown in the build summary
+**How to avoid:**
+Synchronize Lenis with ScrollTrigger using the official integration pattern. Lenis v1.1+ provides a direct ScrollTrigger integration:
 
-**Detection:** Run `npm run build` and inspect the "First Load JS" column in the output. Run Lighthouse on the deployed site.
+```tsx
+// In a top-level provider or layout component
+import Lenis from "lenis";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-**Phase:** 3D robot phase. Set up bundle analysis with `@next/bundle-analyzer` at the start.
+function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const lenis = new Lenis();
 
----
+    // Connect Lenis scroll position to ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
 
-### Pitfall M-4: Scroll Animation Magic Numbers Break When New Sections Are Added
+    // Use GSAP ticker to drive Lenis (replaces Lenis's own RAF loop)
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000); // GSAP ticker time is in seconds, Lenis expects ms
+    });
+    gsap.ticker.lagSmoothing(0); // Prevent GSAP from throttling the RAF
 
-**What goes wrong:** The existing `HeroSection.tsx` uses hardcoded scroll progress offsets (`0.07`, `0.02`, `0.15`) and a `h-[1100vh]` total section height. Adding a sticky chatbar, a blog section, or the About section (currently a stub) changes the scroll geometry, breaking all existing scroll-triggered animations.
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(lenis.raf);
+    };
+  }, []);
 
-**Why it happens:** Already documented in `CONCERNS.md` as a fragile area. The robot's idle/reaction animations will also need to be tied to scroll position (e.g., "look at the user" when the user reaches the hero section). If the robot animation is wired to the same brittle scroll offsets, it will be doubly fragile.
+  return <>{children}</>;
+}
+```
 
-**Prevention:**
-- Before adding any new sections, refactor `HeroSection.tsx` to use `useRef`-measured section height instead of `h-[1100vh]`
-- Replace the `95` pixel header magic number with a measured `useRef` on the header element
-- Named scroll regions: define `HERO_SCROLL_RANGE = { start: 0, end: 0.3 }` constants instead of inline floats
-- Robot animations tied to scroll should reference the hero section's scroll range by reading its `offsetTop` / `offsetHeight`, not hardcoded values
+The key insight: drive Lenis from GSAP's ticker (not Lenis's own `requestAnimationFrame`), and pipe Lenis scroll events into `ScrollTrigger.update`. This ensures both systems share the same timing source and scroll position.
 
-**Detection:** Add a new section above the HeroSection and observe whether existing animations still trigger at the right scroll positions.
+**Warning signs:**
+- ScrollTrigger animations fire 50-200px too early or too late
+- Pin animations jitter when scrolling slowly
+- Scrub animations feel "laggy" compared to scroll input
+- `ScrollTrigger.refresh()` temporarily fixes positions (confirms sync issue)
 
-**Phase:** Must be addressed in the phase immediately before adding new sections (likely an early refactor phase).
-
----
-
-### Pitfall M-5: MDX / Markdown Processing Inflates Build Time and Adds Complexity
-
-**What goes wrong:** Adding MDX for the blog brings a new content processing pipeline (remark/rehype plugins for TOC generation, syntax highlighting, frontmatter parsing) that conflicts with Next.js App Router's expectations for how content is loaded. The most common mistake is using `next-mdx-remote` in Server Components without properly handling the async/await boundary, or using `@next/mdx` which requires custom webpack config that conflicts with Turbopack (the current dev server).
-
-**Why it happens:** The project uses Turbopack for dev (`next dev --turbopack`). Turbopack has limited support for custom webpack loader configurations. MDX processing plugins (especially `rehype-pretty-code` for syntax highlighting) often require webpack-level loaders that simply don't work with Turbopack in 2025-2026.
-
-**Consequences:** Blog posts fail to build, or Turbopack dev server breaks requiring a fallback to `next dev` (without `--turbopack`), or syntax highlighting doesn't work in development but works in production (very confusing debugging experience).
-
-**Prevention:**
-- Use `next-mdx-remote` rather than `@next/mdx` — it processes MDX at the page level without webpack config changes, making it Turbopack-compatible
-- Do all MDX processing in Server Components / `generateStaticParams` — keep the React client boundary well below the content processing
-- Test syntax highlighting (`rehype-pretty-code` or `shiki`) explicitly with Turbopack in dev mode before committing to it
-- If Turbopack proves incompatible with a required rehype plugin, add `--turbopack` only conditionally: `"dev": "next dev"` (drop Turbopack) while tracking the plugin's compatibility status
-
-**Detection:** Add a test `.md` file with a code block and run `npm run dev`. Check whether syntax highlighting renders correctly in development.
-
-**Phase:** Blog implementation phase — resolve Turbopack compatibility before writing any blog content.
+**Phase to address:**
+Animation system setup phase. The Lenis + ScrollTrigger sync must be the very first thing configured, before any ScrollTrigger-dependent animation is written. Baking this into a `SmoothScrollProvider` that wraps the entire app prevents every downstream animation from inheriting the bug.
 
 ---
 
-### Pitfall M-6: Chatbot API CORS Failure in Production (Static Site + External LLM Backend)
+### Pitfall 3: Preloader Causes Hydration Mismatch in Next.js Static Export
 
-**What goes wrong:** The LLM backend API (`test/api/v1/...`) is a separate server. The portfolio is deployed on GitHub Pages (a different origin). When the chatbot's JavaScript sends a `fetch()` to the LLM backend from the user's browser, the browser enforces CORS. If the LLM backend does not return the correct `Access-Control-Allow-Origin` header for the GitHub Pages domain, every chatbot request will be blocked by the browser with a CORS error — not a network error, so no helpful message is shown to the user.
+**What goes wrong:**
+The intro preloader (black screen -> text sequence -> curtain reveal) requires the page to start in a "hidden" state (content invisible, preloader visible). In Next.js static export, the HTML is pre-rendered at build time with all content visible. When React hydrates, if the component state says "preloader active, content hidden" but the HTML says "content visible", React throws a hydration mismatch warning and may re-render the entire page, causing a visible flash of unstyled content (FOUC) before the preloader kicks in.
 
-**Why it happens:** Portfolio is a fully static frontend at `https://rayquasar18.github.io`. There is no Next.js API route (`/api/*`) to proxy requests through — `output: 'export'` disables API routes entirely. All LLM API calls go directly from the browser to the backend.
+This is especially bad for a portfolio: the recruiter sees a flash of the full page, then it goes black for the preloader, then reveals again. It looks like a bug.
 
-**Consequences:** The chatbot appears to "not respond" to the user. No error is visible in the UI because `fetch()` rejects with a generic network error, not a CORS-specific message. This is a silent production failure.
+**Why it happens:**
+Next.js `output: 'export'` generates static HTML at build time. The server render has no concept of "preloader state." The initial HTML will always render with content visible. The preloader state is JavaScript-only, initialized after hydration.
 
-**Prevention:**
-- **Backend requirement:** The LLM backend MUST return `Access-Control-Allow-Origin: https://rayquasar18.github.io` (or `*` for public APIs) — coordinate this with the backend provider before integration
-- **Defensive frontend:** Wrap all chatbot fetch calls in try/catch and display a user-friendly "Could not connect to assistant" message for any network-level failure
-- **Local development:** Use a proxy in `next.config.ts`'s `rewrites` for dev-only CORS bypass (rewrites work in dev server even with `output: 'export'`)
-- **Fallback mode:** Implement a mock response mode that activates when the API is unreachable, keeping the robot animated with canned responses instead of a broken empty state
+**How to avoid:**
+Use CSS to hide content initially, not React state. This avoids the hydration mismatch entirely because both server HTML and client agree on the visual state:
 
-**Detection:** Deploy to GitHub Pages, open DevTools Network tab, send a chat message, look for CORS errors in both the Console and Network tabs.
+```css
+/* In globals.css -- hides main content until preloader completes */
+.preloader-active main {
+  visibility: hidden; /* not display:none -- preserves layout for ScrollTrigger */
+}
+```
 
-**Phase:** Chatbot implementation phase — verify CORS headers with the backend provider before writing the integration code.
+```tsx
+// In the preloader component
+function Preloader() {
+  useEffect(() => {
+    // Run preloader animation sequence
+    const tl = gsap.timeline({
+      onComplete: () => {
+        document.documentElement.classList.remove("preloader-active");
+        ScrollTrigger.refresh(); // Recalculate after layout is visible
+      },
+    });
+    // ... preloader animation keyframes
+  }, []);
+}
+```
 
----
+```tsx
+// In layout.tsx -- add class to html element at build time
+<html lang={lang} className="preloader-active">
+```
 
-## Minor Pitfalls
+The `preloader-active` class is on the HTML element in both server and client HTML (no mismatch). CSS hides the content. JavaScript removes the class after the preloader animation completes. No React state involved in the visibility toggle.
 
-Mistakes that are annoying and time-consuming to fix but don't break core functionality.
+**Warning signs:**
+- Brief flash of page content before preloader appears
+- React hydration mismatch warnings in console
+- Preloader animation starts from wrong state (half-visible content)
+- Content layout shifts after preloader completes (because elements measured before visibility)
 
----
-
-### Pitfall N-1: OG Image and SEO Metadata Broken for Blog Posts
-
-**What goes wrong:** The existing `layout.tsx` has a single hardcoded `share_img.png` for all OG/Twitter card metadata. Blog posts need their own OG images. Next.js App Router supports `generateMetadata()` per page, but each blog post's OG image URL must include the base path and be an absolute URL — otherwise social media crawlers (LinkedIn, Twitter) fail to display the preview card.
-
-**Prevention:**
-- Each blog post page should export `generateMetadata()` returning absolute image URLs
-- OG image URL pattern: `${siteUrl}${basePath}/blog/og/${slug}.png` — generate fallback OG images programmatically using `@vercel/og` or pre-generate per-post images at build time
-- Test OG tags with [opengraph.xyz](https://www.opengraph.xyz) before launch
-
-**Phase:** Blog implementation phase.
-
----
-
-### Pitfall N-2: Language Switcher Flashes Wrong Language on Page Load
-
-**What goes wrong:** If the active language is stored in `localStorage` (client-side only), there will be a flash of the default language (likely Vietnamese) before the JavaScript loads and reads `localStorage` to apply English. For a portfolio visited by recruiters, seeing the wrong language for 200ms before correction looks unprofessional.
-
-**Prevention:**
-- Use a cookie for language preference instead of `localStorage` — cookies are sent with the initial HTTP request, allowing the server/build to render the correct language
-- In static export, use an inline `<script>` in `layout.tsx` that reads `localStorage` synchronously and sets a `data-lang` attribute on `<html>` before React hydrates — similar to the "dark mode flash prevention" pattern
-
-**Phase:** i18n implementation phase.
-
----
-
-### Pitfall N-3: Three.js WebGL Context Limit on iOS Safari
-
-**What goes wrong:** iOS Safari limits the number of simultaneous WebGL contexts per browser tab to 8 (and per page to fewer in practice). If the 3D robot's Canvas component is unmounted and remounted multiple times without proper disposal, each mount creates a new WebGL context. After hitting the limit, new canvases silently fail to render.
-
-**Prevention:**
-- Keep the robot's `<Canvas>` mounted persistently at the page level rather than mounting/unmounting it as the user scrolls
-- Use visibility/opacity to hide the canvas instead of conditional rendering: `<div className={isVisible ? 'opacity-100' : 'opacity-0'}>`
-- Never create more than one R3F Canvas on the page simultaneously
-
-**Phase:** 3D robot phase.
+**Phase to address:**
+Preloader/intro phase. Must be implemented before other animation phases because ScrollTrigger measurements depend on content being visible when `ScrollTrigger.refresh()` runs.
 
 ---
 
-### Pitfall N-4: `"use client"` Boundary Fragility — Existing Bug Will Compound
+### Pitfall 4: GSAP and Framer Motion Fight Over the Same Element's Transform
 
-**What goes wrong:** The codebase audit in `CONCERNS.md` flagged that `IntroduceSection` and `ProjectSection` are missing `"use client"` directives and only work because `page.tsx` has it. Adding 3D components and chatbot (both inherently client-only) will push more components toward requiring client context. As new routes are added (blog post pages), `page.tsx` for those routes will NOT have `"use client"`, and the existing fragile pattern will break.
+**What goes wrong:**
+The existing codebase uses Framer Motion for ChatPanel (slide-up animation via `motion.div` with `y` transform), MobileMenu (AnimatePresence), and TypingIndicator (scale animation). GSAP also uses CSS `transform` for animations. When both libraries animate the same element or parent/child elements, they overwrite each other's transform values on every frame, causing:
+- Elements snapping to wrong positions
+- Animations stuttering or freezing mid-way
+- Exit animations (AnimatePresence) not playing because GSAP has overwritten the transform
 
-**Prevention:**
-- Fix the missing `"use client"` directives in `IntroduceSection` and `ProjectSection` in the first development phase, before adding new features
-- Establish a rule: every component that uses hooks (`useState`, `useRef`, `useEffect`, motion hooks) must declare `"use client"` explicitly, regardless of what the parent page does
-- This is a first-phase hygiene task, not a separate pitfall to solve later
+This codebase has a specific risk: the ChatPanel uses `motion.div` with `y: '100%'` for slide-up, and it sits inside the layout alongside GSAP-animated sections. If GSAP animates the layout wrapper's transform (e.g., for page transitions), the ChatPanel's Framer Motion animation will be relative to the wrong transform origin.
 
-**Phase:** Phase 1 (codebase cleanup) — must be done before any new features are added.
+**Why it happens:**
+Both GSAP and Framer Motion write to `element.style.transform`. CSS transforms are a single property (not composable) -- you cannot have two independent transform values on one element. Whichever library writes last "wins" that frame, overwriting the other's value.
 
----
+**How to avoid:**
+Draw a hard boundary: GSAP owns scroll-triggered and page-level animations; Framer Motion owns component-level mount/unmount animations (AnimatePresence). Never let them touch the same DOM element.
 
-### Pitfall N-5: Blog Search with Static Export — Client-Side Only, No Server Index
+Practical rules for this codebase:
+1. **ChatPanel, MobileMenu, TypingIndicator** -- keep Framer Motion. These are mount/unmount animations where AnimatePresence excels.
+2. **Text reveals, scroll animations, preloader, page transitions** -- use GSAP exclusively. These are timeline-based and scroll-coupled.
+3. **Never wrap a Framer Motion `motion.*` element inside a GSAP-animated parent** that transforms. If GSAP transforms a section, ensure any Framer Motion children within that section are nested inside a non-transformed wrapper div.
+4. **ChatBar is in layout.tsx** (outside `<main>`) -- this is correct. The preloader and page transitions should only target `<main>`, never the layout-level chat or header.
 
-**What goes wrong:** Blog search must be entirely client-side because there is no server. The naive implementation downloads all blog post metadata on every page load for search to work, which becomes slow as the blog grows. The alternative (a search service like Algolia) adds a third-party dependency and cost.
+```tsx
+// layout.tsx structure that respects boundaries
+<body>
+  <Header />           {/* GSAP: nav animations */}
+  <main id="smooth-wrapper"> {/* GSAP: all scroll + page transitions */}
+    {children}
+  </main>
+  <ChatBar />          {/* Framer Motion: AnimatePresence slide-up */}
+  <Preloader />        {/* GSAP: timeline sequence */}
+</body>
+```
 
-**Prevention:**
-- Use `fuse.js` (fuzzy search, ~24KB) with a pre-built search index generated at build time
-- Generate `public/search-index.json` during the Next.js build by reading all markdown files and indexing their title, tags, and excerpt
-- The client downloads the index once and searches in-memory — acceptable for a personal blog with <100 posts
-- Never search the full post body client-side; index only metadata fields
+**Warning signs:**
+- ChatPanel slide-up animation stutters or doesn't play
+- Elements "jump" to unexpected positions after animations complete
+- AnimatePresence exit animations skip entirely (element just disappears)
+- Console warnings from Framer Motion about unexpected transform values
 
-**Phase:** Blog implementation phase.
-
----
-
-## Phase-Specific Warnings
-
-| Phase Topic | Likely Pitfall | Mitigation |
-|-------------|---------------|------------|
-| 3D robot integration | C-1: SSR crash on build | `dynamic({ ssr: false })` wrapper — first task of the phase |
-| 3D robot integration | C-3: GLTF 404 on GitHub Pages | Apply `NEXT_PUBLIC_BASE_PATH` via a `useModelPath()` hook |
-| 3D robot integration | C-4: Memory leak on unmount | Use `useAnimations` from drei; dispose geometry on cleanup |
-| 3D robot integration | M-3: Bundle size explosion | `@next/bundle-analyzer` audit; dynamic import structure |
-| 3D robot integration | N-3: iOS WebGL context limit | Keep Canvas mounted, use opacity toggle not conditional render |
-| Chatbot integration | C-5: Mobile sticky bar keyboard overlap | Use `dvh` units, `safe-area-inset`, real iOS device testing |
-| Chatbot integration | M-1: Invalid emotion crashes animation | Validate/normalize emotion string before animating |
-| Chatbot integration | M-6: CORS failure on GitHub Pages | Coordinate CORS headers with backend before writing fetch code |
-| i18n implementation | C-2: Middleware incompatible with static export | Use next-intl "without routing" mode; no middleware |
-| i18n implementation | N-2: Language flash on load | Cookie-based locale or inline script to set `data-lang` before hydration |
-| Blog implementation | M-2: Untranslated posts fallback wrong | Directory-per-locale structure; explicit missing-translation page |
-| Blog implementation | M-5: MDX/Turbopack incompatibility | Test rehype plugins with Turbopack in dev before committing |
-| Blog implementation | N-1: OG images broken for posts | `generateMetadata()` with absolute URLs per post |
-| Blog implementation | N-5: Client-side search bloat | Pre-built `search-index.json` at build time; `fuse.js` |
-| All phases | N-4: Missing "use client" compounds | Fix existing violations in Phase 1 before adding any features |
-| All phases | M-4: Scroll magic numbers break | Refactor HeroSection scroll math before adding new sections |
-| All phases | C-2 (existing): hreflang 404s | Remove or implement `/vi` and `/en` alternates from `layout.tsx` |
+**Phase to address:**
+Animation system setup phase. Define the GSAP/Framer Motion boundary in the first commit, before writing any animations. Document which components belong to which system.
 
 ---
 
-## Pre-existing Bugs to Fix Before Adding Features
+### Pitfall 5: R3F Canvas Remount Loses WebGL Context When Moving Robot Between Sections
 
-These are documented in `.planning/codebase/CONCERNS.md` and will compound new feature bugs if not resolved first:
+**What goes wrong:**
+In v1, the RobotCanvas lives inline in the page. In v2, the robot moves to a dedicated Section 2. If this is implemented by conditionally rendering the `<RobotCanvas>` component in a different DOM location (removing from hero, adding to Section 2), React unmounts the old Canvas and mounts a new one. Each mount creates a new WebGL context, re-downloads and re-parses the GLTF model, and re-initializes the animation mixer. On iOS Safari, this is especially bad: the old context may not be properly released, counting toward the 8-context limit.
 
-| Bug | File | Risk if Not Fixed |
-|-----|------|-------------------|
-| Missing `"use client"` on `IntroduceSection`, `ProjectSection` | `src/components/sections/` | Breaks silently when any new route lacks `"use client"` on page.tsx |
-| `ButtonDownloadCV` ignores `NEXT_PUBLIC_BASE_PATH` | `src/components/ButtonDownloadCV.tsx` | CV download breaks in production — same pattern will be repeated for robot model URL |
-| `metadata.title.template` misconfigured | `src/app/layout.tsx` | Blog post pages will show wrong titles in browser tabs and search results |
-| hreflang `/vi` and `/en` routes don't exist | `src/app/layout.tsx` | SEO penalty; 404s on declared alternate URLs |
-| `LoadingScreen` dual-trigger + no real asset-readiness signal | `src/components/LoadingScreen.tsx` | When 3D model takes time to load, loading screen dismisses before robot is ready |
-| Scroll magic numbers tied to `h-[1100vh]` | `src/components/sections/HeroSection.tsx` | Any new section or sticky chatbar breaks all scroll animations |
+More subtly, the existing `useGLTF.preload(MODEL_PATH)` at module scope in RobotModel.tsx caches the model data, but the WebGL-side resources (GPU buffers, compiled shaders) are per-context and must be re-uploaded to the new context.
+
+**Why it happens:**
+React's reconciler sees a Canvas in a different parent as a different component instance. R3F's Canvas creates a new Three.js WebGLRenderer on every mount. There is no built-in way to "move" a WebGL context between DOM elements.
+
+**How to avoid:**
+Keep the Canvas mounted at layout level and use CSS to position it over the correct section:
+
+```tsx
+// layout.tsx -- Canvas is always mounted
+<body>
+  <Header />
+  <main>{children}</main>
+  <RobotCanvas className="pointer-events-none fixed inset-0 z-10" />
+  <ChatBar />
+</body>
+```
+
+```tsx
+// In the robot component, use scroll position to control visibility/position
+useGSAP(() => {
+  ScrollTrigger.create({
+    trigger: "#robot-section",
+    start: "top center",
+    end: "bottom center",
+    onToggle: (self) => {
+      // Show/hide robot canvas, adjust camera position
+      robotStore.setVisible(self.isActive);
+    },
+  });
+}, { scope: containerRef });
+```
+
+The Canvas is always in the DOM (no unmount/remount). CSS `pointer-events: none` prevents it from blocking scroll. ScrollTrigger controls when it is visible and interactive. The 3D camera can be animated to "move" the robot to appear in the correct section without remounting the Canvas.
+
+Alternative: if the robot must only appear in Section 2, keep the Canvas conditionally rendered BUT in the same DOM position every time (no parent change). Use `opacity-0` and `pointer-events-none` to hide it when not in the robot section, rather than unmounting.
+
+**Warning signs:**
+- Robot takes 1-3 seconds to appear after scrolling to Section 2 (re-initialization)
+- Brief black/white flash in the Canvas area during remount
+- "WebGL context lost" errors in console on iOS after several scroll cycles
+- Animation state resets (robot always starts in idle instead of maintaining emotion)
+
+**Phase to address:**
+Layout restructuring phase. The Canvas mount strategy must be decided before building Section 2. This is an architectural decision, not a fix-later issue.
 
 ---
+
+### Pitfall 6: ScrollTrigger.refresh() Not Called After Preloader Completes, Breaking All Scroll Positions
+
+**What goes wrong:**
+ScrollTrigger calculates trigger positions (`start`, `end`) based on element positions at the time `ScrollTrigger.create()` runs. If content is hidden during the preloader (via `visibility: hidden`, `display: none`, or off-screen position), elements have zero or wrong dimensions. Every ScrollTrigger created before the preloader finishes will have incorrect trigger positions. Text reveal animations fire immediately instead of on scroll. Pinned sections are offset by the full viewport height.
+
+This is the most common "everything was working until we added the preloader" bug.
+
+**Why it happens:**
+The preloader hides content while GSAP initializes. ScrollTrigger reads `getBoundingClientRect()` on hidden elements and gets `{top: 0, height: 0}`. All triggers think they are at the top of the page.
+
+**How to avoid:**
+Two-part strategy:
+
+1. **Use `visibility: hidden` (not `display: none`)** for hidden content during preloader. `visibility: hidden` preserves layout dimensions, so ScrollTrigger can still measure elements correctly.
+
+2. **Call `ScrollTrigger.refresh()` after the preloader animation completes:**
+```tsx
+const preloaderTimeline = gsap.timeline({
+  onComplete: () => {
+    // Content is now visible, force ScrollTrigger to recalculate
+    ScrollTrigger.refresh();
+  },
+});
+```
+
+3. **Defer ScrollTrigger creation until after preloader** for critical animations. Use a global state flag:
+```tsx
+const useAppStore = create((set) => ({
+  preloaderComplete: false,
+  setPreloaderComplete: () => set({ preloaderComplete: true }),
+}));
+
+// In animated sections:
+const preloaderComplete = useAppStore((s) => s.preloaderComplete);
+useGSAP(() => {
+  if (!preloaderComplete) return; // Don't create triggers yet
+  // ... ScrollTrigger animations
+}, { dependencies: [preloaderComplete], scope: containerRef });
+```
+
+**Warning signs:**
+- All scroll animations play immediately on page load instead of on scroll
+- Pinned sections are offset or overlap
+- Animations work correctly on page refresh but not on first visit (with preloader)
+- `ScrollTrigger.refresh()` fixes everything (confirms this is the issue)
+
+**Phase to address:**
+Preloader phase AND animation phase. The preloader must signal completion to the animation system. This is a cross-cutting concern that must be designed upfront, not patched later.
+
+---
+
+### Pitfall 7: Static Export + Lenis Creates Flash of Native Scroll Before Smooth Scroll Initializes
+
+**What goes wrong:**
+With `output: 'export'`, the HTML is static. When the page loads, the browser uses native scroll behavior until JavaScript hydrates and Lenis initializes. If the user starts scrolling before Lenis is ready (which is likely on slower connections), they experience native scroll for 200-500ms, then a jarring "snap" as Lenis takes over and applies its smooth interpolation. On a minimalist portfolio where smooth scroll is a key design element, this jank is very noticeable.
+
+Combined with the preloader, this creates a timing nightmare: preloader runs (no scroll possible), preloader completes, Lenis initializes, ScrollTrigger refreshes -- each of these happens asynchronously and the order matters.
+
+**Why it happens:**
+Static HTML has no JavaScript influence on scroll behavior. Lenis is a JavaScript-only solution. The gap between HTML render and JS execution is the "uncanny valley."
+
+**How to avoid:**
+Lock scroll during the preloader and only enable Lenis after the preloader completes:
+
+```css
+/* Prevent scroll until preloader is done */
+html.preloader-active {
+  overflow: hidden;
+}
+```
+
+```tsx
+// Lenis initialization happens AFTER preloader
+function SmoothScrollProvider() {
+  const preloaderComplete = useAppStore((s) => s.preloaderComplete);
+
+  useEffect(() => {
+    if (!preloaderComplete) return;
+
+    document.documentElement.classList.remove("preloader-active");
+    // Now init Lenis
+    const lenis = new Lenis({ /* options */ });
+    // ... sync with ScrollTrigger
+    return () => lenis.destroy();
+  }, [preloaderComplete]);
+}
+```
+
+This way, native scroll never happens (overflow: hidden during preloader), and Lenis takes control from the start of scrollable interaction. The user never experiences the native -> smooth transition.
+
+**Warning signs:**
+- Scroll feels different in first 500ms vs. after
+- Visible "jump" in scroll position when Lenis initializes
+- ScrollTrigger triggers fire during the transition window
+
+**Phase to address:**
+Animation system setup phase. The initialization sequence (preloader -> Lenis -> ScrollTrigger.refresh) must be architecturally defined before any animations are written.
+
+---
+
+## Technical Debt Patterns
+
+Shortcuts that seem reasonable but create long-term problems.
+
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Using `useEffect` + `gsap.to()` instead of `useGSAP` hook | Faster to write, no new dependency | Memory leaks, zombie ScrollTriggers on navigation | Never -- `@gsap/react` is 2KB and prevents the #1 GSAP+React bug |
+| Inline ScrollTrigger configs instead of shared constants | Fast prototyping | When sections reorder or new sections added, every trigger offset breaks | Only during initial prototyping; refactor before phase completion |
+| Hardcoding preloader duration instead of timeline callbacks | Simple timing | If any animation asset loads slower than the hardcoded time, preloader dismisses too early or too late | Never -- always use `onComplete` callbacks |
+| Using `transform: translateY()` for Lenis scroll wrapper | Native-feeling smooth scroll | Breaks `position: fixed` elements (header, chat bar) inside the wrapper | Never for this project -- the chat bar and header are fixed-position |
+| Keeping Framer Motion AnimatePresence for sections that GSAP should own | Avoid rewriting working code | Two animation libraries fighting on the same elements | Only for components that GSAP never touches (chat, mobile menu) |
+| Separate Lenis and GSAP ticker loops | Each library manages its own RAF | Double RAF overhead, scroll position desync | Never -- always drive Lenis from GSAP's ticker |
+
+## Integration Gotchas
+
+Common mistakes when connecting these specific technologies.
+
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| GSAP + Next.js App Router | Registering plugins (`gsap.registerPlugin(ScrollTrigger)`) inside components, causing re-registration | Register plugins once at app entry point (e.g., in a top-level provider or layout-level `useEffect`) |
+| Lenis + `position: fixed` elements | Wrapping fixed elements (header, chat bar) inside Lenis scroll container, causing them to scroll instead of stay fixed | Only wrap scrollable content in the Lenis container; fixed elements must be siblings, not children |
+| GSAP + Tailwind CSS v4 | Using GSAP to animate Tailwind utility classes (e.g., `gsap.to(el, { className: "opacity-100" })`) -- Tailwind classes are not animatable | Use GSAP to animate CSS properties directly (`gsap.to(el, { opacity: 1 })`). Tailwind for static states, GSAP for animation values |
+| R3F Canvas + white background | Canvas defaults to transparent but alpha compositing with a white page background makes 3D objects look washed out | Set Canvas `gl={{ alpha: true }}` and ensure the Canvas container has `background: transparent`. Adjust 3D lighting for white surroundings instead of dark |
+| Lenis + mobile touch scroll | Lenis on mobile adds input lag compared to native scroll, making the site feel sluggish | Disable Lenis on mobile/touch devices: `new Lenis({ gestureOrientation: 'vertical', touchMultiplier: 0 })` or check `window.matchMedia('(pointer: coarse)')` to skip Lenis entirely |
+| GSAP ScrollTrigger + dynamic content (i18n) | ScrollTrigger positions calculated with English text lengths become wrong when user switches to Vietnamese (different text lengths) | Call `ScrollTrigger.refresh()` after language switch. Connect to `next-intl` locale change event |
+| Preloader + `useGLTF.preload()` | Preloader finishes before 3D model is downloaded, user sees empty canvas for seconds | Preloader should wait for BOTH its animation sequence AND the model load (use drei's `useProgress` to track) |
+
+## Performance Traps
+
+Patterns that work in development but fail in production or on target devices.
+
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Too many ScrollTrigger instances (one per animated element) | Scroll feels janky, FPS drops below 30 | Batch animations: one ScrollTrigger per section, use `gsap.utils.toArray()` to animate all children in a single timeline | More than 20-30 active ScrollTriggers on page |
+| Lenis smooth scroll on low-end mobile | Touch scroll input lag >100ms, feels unresponsive | Disable Lenis on devices with `(pointer: coarse)` or below a performance threshold | Any mobile device with <4GB RAM |
+| GSAP + R3F both running RAF loops | Double requestAnimationFrame overhead, GPU contention | Share a single RAF: use `gsap.ticker.add()` to drive R3F's render loop, or vice versa. R3F's `<Canvas frameloop="demand">` + manual invalidation | Noticeable on mobile, especially during scroll animations + 3D rendering simultaneously |
+| Unoptimized text reveal animations (clip-path on large text) | Text reveal animation causes layout thrashing, CLS issues | Use `will-change: transform` on animated elements. Prefer `transform` + `overflow: hidden` over `clip-path` for text reveals | Pages with 10+ text reveal animations |
+| Loading GSAP, Lenis, Three.js, Framer Motion all eagerly | Initial JS bundle exceeds 500KB, TTI >3s on 3G | Code-split: GSAP + Lenis load with the main page. Three.js loads on intersection (already done via `ssr: false` dynamic import). Framer Motion loads with chat/menu (already lazy via component code-splitting) | First visit on slow connection |
+
+## UX Pitfalls
+
+Common user experience mistakes in animation-heavy portfolio redesigns.
+
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| Preloader too long (>3s) | Recruiters bounce before seeing content. Portfolio preloaders are not like Awwwards showcase sites -- the audience has low patience | Keep preloader under 2 seconds. If 3D model isn't loaded, show page without robot and load it in background |
+| Smooth scroll disables browser "find on page" (Ctrl+F) | Users cannot search for keywords on the page | Lenis v1.1+ supports native browser search. Verify this works after integration |
+| Text reveal animations block content reading | User scrolls to a section and has to wait 800ms for text to reveal before reading | Keep reveal durations under 400ms. Use `stagger` (50-100ms between elements) not sequential timelines |
+| Scroll-jacking (overriding scroll speed/direction) | Feels broken, not premium. Users try to scroll past a section and get stuck | Never use `scrollTrigger: { scrub: true, pin: true }` on content sections. Pins are acceptable only for hero parallax effects |
+| Chat bar animation competes with page transition animation | Two things animate simultaneously, feels chaotic | Chat bar should be static (no entrance animation) during page transitions. Use a coordination flag in Zustand |
+| White theme makes 3D robot look flat | Robot loses depth and visual impact against white background | Use dramatic directional lighting, subtle shadows, and a very slight off-white or gradient background behind the robot section |
+
+## "Looks Done But Isn't" Checklist
+
+Things that appear complete but are missing critical pieces.
+
+- [ ] **Lenis integration:** Smooth scroll works on desktop -- but verify mobile touch scroll isn't laggy. Test on real iPhone/Android.
+- [ ] **ScrollTrigger animations:** Animations play on scroll -- but verify they recalculate correctly after window resize and orientation change. Call `ScrollTrigger.refresh()` on resize.
+- [ ] **Preloader sequence:** Preloader plays beautifully -- but verify it doesn't replay on browser back-navigation (use `sessionStorage` flag to skip on revisit).
+- [ ] **Text reveals:** Text reveals look great in English -- but verify Vietnamese text (often longer) doesn't overflow or clip incorrectly mid-animation.
+- [ ] **GSAP cleanup:** Animations work in production -- but verify no memory leaks by navigating between pages 10+ times in Chrome DevTools Performance monitor.
+- [ ] **White theme + Canvas:** Robot renders on white background -- but verify it looks correct on different monitors (white vs warm-white calibration varies). Test on both sRGB and wide-gamut displays.
+- [ ] **Chat redesign:** New centered floating chat bar looks perfect -- but verify `useChatStore` persistence still works (messages survive page reload, streaming state resets correctly).
+- [ ] **Preloader + 3D model:** Preloader waits for model load -- but verify behavior when model fails to load (network error). Preloader should still complete with a graceful fallback.
+- [ ] **i18n + animations:** Language switch works -- but verify `ScrollTrigger.refresh()` is called after locale change (text length differences shift element positions).
+- [ ] **Static export:** `npm run build` succeeds -- but verify GSAP does not reference `window` or `document` at import time. Use dynamic import or `typeof window !== 'undefined'` guards.
+
+## Recovery Strategies
+
+When pitfalls occur despite prevention, how to recover.
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| ScrollTrigger zombie instances | LOW | Add `ScrollTrigger.killAll()` in route change cleanup. Refactor to `useGSAP` hook. Takes 1-2 hours per component. |
+| Lenis + ScrollTrigger desync | MEDIUM | Requires rewriting the initialization sequence. Add the `lenis.on('scroll', ScrollTrigger.update)` sync. ~4 hours to retrofit. |
+| Hydration mismatch from preloader | MEDIUM | Refactor from React-state-based visibility to CSS-class-based visibility. ~2-4 hours. |
+| GSAP/Framer Motion transform conflict | HIGH | Requires identifying every conflicting element and either migrating to GSAP-only or restructuring the DOM to isolate Framer Motion components. Can take 1-2 days if spread across many components. |
+| R3F Canvas remount issues | HIGH | Requires architectural change to Canvas mount strategy. Moving from per-section Canvas to layout-level Canvas affects component structure. ~1 day refactor. |
+| ScrollTrigger wrong positions after preloader | LOW | Add `ScrollTrigger.refresh()` call after preloader completes. 15 minutes if the preloader has an `onComplete` callback. |
+| Flash of native scroll before Lenis | LOW | Add `overflow: hidden` on `html` during preloader. 30 minutes. |
+
+## Pitfall-to-Phase Mapping
+
+How roadmap phases should address these pitfalls.
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| P1: ScrollTrigger zombie instances | Animation system setup | Navigate to blog and back 5 times. Check `ScrollTrigger.getAll().length` stays constant. |
+| P2: Lenis + ScrollTrigger desync | Animation system setup | Scroll slowly through all sections. Verify triggers fire at visually correct positions. No jitter on pinned elements. |
+| P3: Preloader hydration mismatch | Preloader implementation | Load page on slow 3G throttle. No flash of content before preloader. No React hydration warnings in console. |
+| P4: GSAP/Framer Motion transform conflict | Animation system setup | Open ChatPanel while a GSAP page animation is playing. Both animate correctly without interference. |
+| P5: R3F Canvas remount | Layout restructuring | Scroll to robot section, away, and back 10 times. No re-download of .glb model. No WebGL context warnings. Robot maintains emotion state. |
+| P6: ScrollTrigger.refresh after preloader | Preloader + animation integration | Full page load with preloader. All scroll animations fire at correct positions on first scroll. |
+| P7: Flash of native scroll | Animation system setup | Load page. Scroll is locked during preloader. First scroll after preloader feels smooth (Lenis). |
+| Lenis mobile performance | Animation system + responsive testing | Test on real iPhone SE. Scroll should feel native-smooth, not laggy. |
+| GSAP static export compatibility | Animation system setup | `npm run build` succeeds. No `window is not defined` errors. |
+| i18n + ScrollTrigger refresh | i18n + animation integration | Switch language. Scroll animations still fire at correct positions for new text lengths. |
 
 ## Sources
 
-- `.planning/codebase/CONCERNS.md` — Codebase audit (2026-03-13): existing bugs, fragile areas, performance bottlenecks
-- `.planning/codebase/ARCHITECTURE.md` — Architecture analysis: static export, single-route SPA, no server
-- `.planning/codebase/STACK.md` — Technology stack: Next.js 15.3.1, React 19, static export, GitHub Pages
-- `.planning/codebase/INTEGRATIONS.md` — External integration audit: GitHub Pages deployment, CORS context
-- `.planning/PROJECT.md` — Project requirements: robot + chatbot architecture, i18n scope, blog requirements
-- Domain knowledge: React Three Fiber SSR behavior, Three.js WebGL context management, Next.js static export constraints, LLM API integration patterns, markdown blog architecture (MEDIUM confidence — training data, verified against codebase context)
+- Existing codebase analysis: `src/components/robot/RobotCanvas.tsx` (dynamic import pattern), `src/components/chat/ChatBar.tsx` (Framer Motion usage), `src/app/[lang]/layout.tsx` (layout structure), `next.config.ts` (`output: 'export'`)
+- GSAP official React guide: gsap.com/resources/React/ -- `useGSAP` hook, `gsap.context()` pattern (HIGH confidence)
+- GSAP ScrollTrigger documentation: gsap.com/docs/v3/Plugins/ScrollTrigger/ -- trigger lifecycle, refresh(), kill() (HIGH confidence)
+- Lenis GitHub repository: github.com/darkroomengineering/lenis -- ScrollTrigger integration pattern (HIGH confidence)
+- React Three Fiber documentation: docs.pmnd.rs -- Canvas lifecycle, WebGL context management (HIGH confidence)
+- Next.js static export documentation: nextjs.org/docs/app/building-your-application/deploying/static-exports (HIGH confidence)
+- Domain experience: GSAP + Framer Motion coexistence patterns, preloader timing sequences, white-theme 3D rendering considerations (MEDIUM confidence -- training data, verified against codebase architecture)
+
+---
+*Pitfalls research for: v2.0 redesign -- GSAP/Lenis animation system, preloader, minimalist redesign on existing Next.js 16 + R3F portfolio*
+*Researched: 2026-03-15*
