@@ -25,7 +25,7 @@ export default function RootPage() {
 
   return (
     <html>
-      <body style={{backgroundColor: '#030712', margin: 0}} />
+      <body style={{backgroundColor: '#FAFAF8', margin: 0}} />
     </html>
   );
 }

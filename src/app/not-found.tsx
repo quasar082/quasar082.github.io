@@ -3,19 +3,14 @@ export default function NotFound() {
     <html>
       <body
         style={{
-          backgroundColor: '#030712',
-          color: '#f0fdf4',
+          backgroundColor: '#FAFAF8',
+          color: '#1A1A1A',
           fontFamily: 'system-ui, -apple-system, sans-serif',
           margin: 0,
           minHeight: '100dvh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: [
-            'linear-gradient(to right, rgba(16, 185, 129, 0.12) 1px, transparent 1px)',
-            'linear-gradient(to bottom, rgba(16, 185, 129, 0.12) 1px, transparent 1px)',
-          ].join(', '),
-          backgroundSize: '40px 40px',
         }}
       >
         <main style={{textAlign: 'center', padding: '2rem'}}>
@@ -24,7 +19,7 @@ export default function NotFound() {
               fontSize: '6rem',
               fontWeight: 300,
               margin: '0 0 1rem',
-              color: '#34d399',
+              color: '#888580',
               lineHeight: 1,
             }}
           >
@@ -42,7 +37,7 @@ export default function NotFound() {
           <p
             style={{
               fontSize: '1rem',
-              color: '#a3a3a3',
+              color: '#666460',
               margin: '0 0 2rem',
               maxWidth: '24rem',
             }}
@@ -59,10 +54,10 @@ export default function NotFound() {
             <a
               href="/en/"
               style={{
-                color: '#34d399',
+                color: '#444444',
                 textDecoration: 'none',
                 padding: '0.5rem 1.25rem',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                border: '1px solid rgba(136, 133, 128, 0.3)',
                 borderRadius: '0.5rem',
                 transition: 'background-color 150ms ease-out',
               }}
@@ -72,10 +67,10 @@ export default function NotFound() {
             <a
               href="/vi/"
               style={{
-                color: '#34d399',
+                color: '#444444',
                 textDecoration: 'none',
                 padding: '0.5rem 1.25rem',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                border: '1px solid rgba(136, 133, 128, 0.3)',
                 borderRadius: '0.5rem',
                 transition: 'background-color 150ms ease-out',
               }}

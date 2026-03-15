@@ -26,7 +26,7 @@ export function ChatBubble({message}: {message: ChatMessage}) {
       <div
         className={`max-w-[80%] px-4 py-2 ${
           isUser
-            ? 'rounded-2xl rounded-br-sm bg-accent text-surface-base'
+            ? 'rounded-2xl rounded-br-sm bg-greige-900 text-white'
             : 'rounded-2xl rounded-bl-sm bg-surface-overlay text-text-primary'
         }`}
       >
