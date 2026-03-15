@@ -43,4 +43,5 @@ next-env.d.ts
 # claude code / agent internals
 .claude/
 .agents/
+.planning/
 skills-lock.json
