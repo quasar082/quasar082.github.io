@@ -27,7 +27,7 @@ export function ChatBubble({message}: {message: ChatMessage}) {
         className={`max-w-[80%] px-4 py-2 ${
           isUser
             ? 'rounded-2xl rounded-br-sm bg-greige-900 text-white'
-            : 'rounded-2xl rounded-bl-sm bg-surface-overlay text-text-primary'
+            : 'rounded-2xl rounded-bl-sm bg-white/40 text-text-primary'
         }`}
       >
         <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">

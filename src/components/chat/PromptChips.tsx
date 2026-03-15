@@ -23,7 +23,7 @@ export function PromptChips({onSelect}: {onSelect: (prompt: string) => void}) {
           key={chip}
           type="button"
           onClick={() => onSelect(chip)}
-          className="rounded-md border border-accent px-3 py-1.5 text-sm text-accent transition-colors hover:bg-accent hover:text-surface-base"
+          className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-text-secondary transition-colors hover:bg-white/30 hover:text-text-primary"
         >
           {chip}
         </button>

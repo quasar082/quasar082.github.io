@@ -7,13 +7,12 @@ import {useTranslations} from 'next-intl';
 import {useChatStore} from '@/stores/useChatStore';
 import {isApiConfigured, sendMessage} from '@/services/chat';
 import {ChatBubble} from './ChatBubble';
-import {ChatInput} from './ChatInput';
 import {TypingIndicator} from './TypingIndicator';
 import {PromptChips} from './PromptChips';
 
 /**
- * Expanded chat overlay panel with message list, header, and input.
- * Slides up from the bottom with spring animation via framer-motion.
+ * Transparent glassmorphism chat panel that floats above the input bar.
+ * Slides up with spring animation via framer-motion AnimatePresence.
  */
 export function ChatPanel({onClose}: {onClose: () => void}) {
   const t = useTranslations('Chat');
@@ -41,14 +40,14 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
 
   return (
     <motion.div
-      initial={{y: '100%', opacity: 0}}
+      initial={{y: 20, opacity: 0}}
       animate={{y: 0, opacity: 1}}
-      exit={{y: '100%', opacity: 0}}
+      exit={{y: 20, opacity: 0}}
       transition={{type: 'spring', damping: 25, stiffness: 300}}
-      className="flex w-full flex-col overflow-hidden rounded-t-xl border border-border bg-surface-elevated md:w-[400px]"
+      className="w-full md:w-[500px] mb-2 flex flex-col overflow-hidden rounded-2xl bg-white/60 backdrop-blur-md border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.05)]"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="flex items-center justify-between border-b border-white/20 px-4 py-3">
         <h2 className="font-display text-sm font-medium text-text-primary">
           Robot Assistant
         </h2>
@@ -57,7 +56,7 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
             type="button"
             onClick={handleClear}
             aria-label={t('clear')}
-            className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-surface-overlay hover:text-text-secondary"
+            className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-white/30 hover:text-text-secondary"
           >
             <Trash2 className="size-4" />
           </button>
@@ -65,7 +64,7 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
             type="button"
             onClick={onClose}
             aria-label={t('close')}
-            className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-surface-overlay hover:text-text-secondary"
+            className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-white/30 hover:text-text-secondary"
           >
             <X className="size-4" />
           </button>
@@ -74,7 +73,7 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
 
       {/* Demo mode notice */}
       {!isApiConfigured && (
-        <div className="border-b border-border bg-surface-overlay px-4 py-1.5 text-center text-xs text-text-muted">
+        <div className="border-b border-white/20 bg-white/30 px-4 py-1.5 text-center text-xs text-text-muted">
           {t('demoNotice')}
         </div>
       )}
@@ -82,7 +81,7 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
       {/* Message list */}
       <div
         ref={scrollRef}
-        className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3 max-h-[60vh] md:max-h-[60vh] max-[767px]:max-h-[70vh]"
+        className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3 max-h-[60vh] md:max-h-[50vh]"
       >
         {isEmpty ? (
           <>
@@ -99,9 +98,6 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
         )}
         {isStreaming && <TypingIndicator />}
       </div>
-
-      {/* Footer input */}
-      <ChatInput />
     </motion.div>
   );
 }

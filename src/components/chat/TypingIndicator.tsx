@@ -9,7 +9,7 @@ import {motion} from 'framer-motion';
 export function TypingIndicator() {
   return (
     <div className="flex justify-start">
-      <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm bg-surface-overlay px-4 py-3">
+      <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm bg-white/40 px-4 py-3">
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}
