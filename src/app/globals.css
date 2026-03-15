@@ -2,47 +2,44 @@
 
 /* === PRIMITIVE TOKENS === */
 :root {
-  /* Green/Emerald palette */
-  --green-50: #ecfdf5;
-  --green-100: #d1fae5;
-  --green-200: #a7f3d0;
-  --green-300: #6ee7b7;
-  --green-400: #34d399;
-  --green-500: #10b981;
-  --green-600: #059669;
-  --green-700: #047857;
-  --green-800: #065f46;
-  --green-900: #064e3b;
+  /* Warm white surface palette */
+  --warm-white: #FAFAF8;
+  --warm-white-elevated: #F5F5F0;
+  --warm-white-overlay: #EFEFEA;
 
-  /* Gray/Surface palette */
-  --gray-950: #030712;
-  --gray-900: #0a0f1a;
-  --gray-800: #111827;
-  --gray-700: #1f2937;
-  --gray-600: #374151;
+  /* Greige palette (warm gray) */
+  --greige-900: #1A1A1A;
+  --greige-800: #2A2A28;
+  --greige-700: #444444;
+  --greige-600: #666460;
+  --greige-500: #888580;
+  --greige-400: #A8A5A0;
+  --greige-300: #C8C5C0;
+  --greige-200: #E0DEDA;
+  --greige-100: #ECEAE6;
 }
 
 /* === SEMANTIC TOKENS (registered with Tailwind) === */
 @theme inline {
   /* Surfaces */
-  --color-surface-base: var(--gray-950);
-  --color-surface-elevated: var(--gray-900);
-  --color-surface-overlay: var(--gray-800);
+  --color-surface-base: var(--warm-white);
+  --color-surface-elevated: var(--warm-white-elevated);
+  --color-surface-overlay: var(--warm-white-overlay);
 
   /* Text */
-  --color-text-primary: #f0fdf4;
-  --color-text-secondary: #a3a3a3;
-  --color-text-muted: #6b7280;
-  --color-text-accent: var(--green-400);
+  --color-text-primary: var(--greige-900);
+  --color-text-secondary: var(--greige-700);
+  --color-text-muted: var(--greige-500);
+  --color-text-accent: var(--greige-600);
 
   /* Accent */
-  --color-accent: var(--green-500);
-  --color-accent-hover: var(--green-400);
-  --color-accent-muted: var(--green-900);
+  --color-accent: var(--greige-500);
+  --color-accent-hover: var(--greige-900);
+  --color-accent-muted: var(--greige-100);
 
   /* Borders */
-  --color-border: rgba(16, 185, 129, 0.15);
-  --color-border-hover: rgba(16, 185, 129, 0.3);
+  --color-border: rgba(136, 133, 128, 0.15);
+  --color-border-hover: rgba(136, 133, 128, 0.3);
 
   /* Spacing */
   --spacing-section: 8rem;
@@ -53,7 +50,16 @@
   --font-body: var(--font-marlin);
   --font-mono: var(--font-geist-mono);
 
-  /* Typography scale */
+  /* Typography scale -- fluid display */
+  --text-display-xl: clamp(4rem, 2rem + 5.33vw, 10rem);
+  --text-display-lg: clamp(3.5rem, 1.75rem + 4.67vw, 8rem);
+  --text-display-md: clamp(2.5rem, 1.5rem + 2.67vw, 5rem);
+  --text-display-sm: clamp(2rem, 1.25rem + 2vw, 3.5rem);
+
+  /* Display font weight */
+  --font-weight-display: 300;
+
+  /* Typography scale -- fixed body */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -70,6 +76,9 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+
+  /* Greige primitives as Tailwind utilities */
+  --color-greige-900: var(--greige-900);
 }
 
 /* === BASE STYLES === */
@@ -77,18 +86,19 @@ body {
   background-color: var(--color-surface-base);
   color: var(--color-text-primary);
   font-family: var(--font-body), sans-serif;
-  background-image:
-    linear-gradient(
-      to right,
-      rgba(16, 185, 129, 0.12) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(16, 185, 129, 0.12) 1px,
-      transparent 1px
-    );
-  background-size: 40px 40px;
+}
+
+/* Grain texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
 /* Base link styles */
@@ -101,7 +111,7 @@ a:hover {
   color: var(--color-accent-hover);
 }
 
-/* Scrollbar (dark themed) */
+/* Scrollbar (light themed) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -112,10 +122,10 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gray-700);
+  background: var(--greige-300);
   border-radius: var(--radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-600);
+  background: var(--greige-400);
 }
