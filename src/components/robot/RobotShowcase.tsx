@@ -4,6 +4,7 @@ import {useRef} from 'react';
 import {useTranslations} from 'next-intl';
 import {gsap, useGSAP} from '@/lib/gsap';
 import {RobotCanvas} from '@/components/robot/RobotCanvas';
+import {SectionNumber} from '@/components/animations/SectionNumber';
 
 export function RobotShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -31,6 +32,9 @@ export function RobotShowcase() {
       ref={sectionRef}
       className="mx-auto max-w-[1200px] px-4 py-24 sm:px-6"
     >
+      <div className="mb-4 text-center">
+        <SectionNumber number="01" />
+      </div>
       <h2
         className="text-center font-display text-text-primary"
         style={{

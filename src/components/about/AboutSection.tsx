@@ -2,6 +2,7 @@
 
 import {useTranslations} from 'next-intl';
 import {TextReveal} from '@/components/animations/TextReveal';
+import {SectionNumber} from '@/components/animations/SectionNumber';
 
 export function AboutSection() {
   const t = useTranslations('About');
@@ -9,6 +10,9 @@ export function AboutSection() {
   return (
     <section className="px-6 py-section md:px-8">
       <div className="mx-auto max-w-[800px]">
+        <div className="mb-4">
+          <SectionNumber number="02" />
+        </div>
         <TextReveal
           as="h2"
           type="words"
