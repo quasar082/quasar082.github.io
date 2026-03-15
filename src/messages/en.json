@@ -60,7 +60,12 @@
     "searchPlaceholder": "Search posts...",
     "allTags": "All",
     "noResults": "No posts found matching your criteria.",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "toc": "Table of Contents",
+    "series": "Series",
+    "previousPart": "Previous",
+    "nextPart": "Next",
+    "backToBlog": "Back to Blog"
   },
   "Chat": {
     "placeholder": "Type a message...",

@@ -60,7 +60,12 @@
     "searchPlaceholder": "Tim kiem bai viet...",
     "allTags": "Tat ca",
     "noResults": "Khong tim thay bai viet phu hop.",
-    "readMore": "Doc them"
+    "readMore": "Doc them",
+    "toc": "Muc luc",
+    "series": "Chuoi bai viet",
+    "previousPart": "Truoc",
+    "nextPart": "Tiep",
+    "backToBlog": "Quay lai Blog"
   },
   "Chat": {
     "placeholder": "Nhập tin nhắn...",
