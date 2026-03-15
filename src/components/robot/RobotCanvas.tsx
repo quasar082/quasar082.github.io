@@ -18,7 +18,7 @@ const RobotScene = dynamic(() => import('./RobotScene'), {
 
 export function RobotCanvas() {
   return (
-    <div className="relative h-[400px] w-full md:h-[600px]">
+    <div className="relative h-[400px] w-full md:h-[600px]" data-lenis-prevent>
       <RobotScene />
     </div>
   );

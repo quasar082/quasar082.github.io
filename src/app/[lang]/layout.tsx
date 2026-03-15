@@ -5,6 +5,7 @@ import {routing} from '@/i18n/routing';
 import {marlinGeo, saprona, geistMono} from '@/lib/fonts';
 import {Header} from '@/components/Header';
 import {ChatBar} from '@/components/chat/ChatBar';
+import {SmoothScrollProvider} from '@/components/providers/SmoothScrollProvider';
 import type {Metadata} from 'next';
 
 export function generateStaticParams() {
@@ -53,11 +54,13 @@ export default async function LocaleLayout({
         className={`${marlinGeo.variable} ${saprona.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider locale={lang} messages={messages}>
-          <Header />
-          <main className="pt-16">
-            {children}
-          </main>
-          <ChatBar />
+          <SmoothScrollProvider>
+            <Header />
+            <main className="pt-16">
+              {children}
+            </main>
+            <ChatBar />
+          </SmoothScrollProvider>
         </NextIntlClientProvider>
       </body>
     </html>
