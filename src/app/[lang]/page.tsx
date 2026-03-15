@@ -2,6 +2,7 @@
 
 import {HeroSection} from '@/components/hero/HeroSection';
 import {RobotShowcase} from '@/components/robot/RobotShowcase';
+import {AboutSection} from '@/components/about/AboutSection';
 
 export default function HomePage() {
   return (
@@ -11,6 +12,11 @@ export default function HomePage() {
 
       {/* Section 2: Robot Showcase */}
       <RobotShowcase />
+
+      {/* Section 3: About */}
+      <div id="about">
+        <AboutSection />
+      </div>
     </div>
   );
 }

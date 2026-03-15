@@ -50,19 +50,19 @@ export function Header() {
               {t('home')}
             </Link>
             <Link
-              href="/"
+              href="/#about"
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
               {t('about')}
             </Link>
             <Link
-              href="/"
+              href="/projects"
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
               {t('projects')}
             </Link>
             <Link
-              href="/"
+              href="/blog"
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
               {t('blog')}

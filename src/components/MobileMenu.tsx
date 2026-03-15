@@ -32,21 +32,21 @@ export function MobileMenu({isOpen, onClose}: MobileMenuProps) {
               {t('home')}
             </Link>
             <Link
-              href="/"
+              href="/#about"
               onClick={onClose}
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
               {t('about')}
             </Link>
             <Link
-              href="/"
+              href="/projects"
               onClick={onClose}
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
               {t('projects')}
             </Link>
             <Link
-              href="/"
+              href="/blog"
               onClick={onClose}
               className="text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
             >
