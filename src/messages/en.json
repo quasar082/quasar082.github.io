@@ -46,6 +46,13 @@
     "heading": "Meet My Robot Assistant",
     "cta": "Say hello \u2014 it responds with emotions!"
   },
+  "Blog": {
+    "heading": "Blog",
+    "searchPlaceholder": "Search posts...",
+    "allTags": "All",
+    "noResults": "No posts found matching your criteria.",
+    "readMore": "Read more"
+  },
   "Chat": {
     "placeholder": "Type a message...",
     "send": "Send",
