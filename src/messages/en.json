@@ -32,6 +32,12 @@
     "description": "The page you're looking for doesn't exist or has been moved.",
     "homeLink": "Go Home"
   },
+  "About": {
+    "heading": "About Me",
+    "story1": "I'm Quan, an AI Engineer who believes technology should feel human. My journey started with a curiosity about how machines understand language, and it led me deep into the world of natural language processing and large language models.",
+    "story2": "Today, I design and build intelligent systems that go beyond simple automation. From orchestrating multi-agent workflows to architecting retrieval-augmented generation pipelines, I focus on making AI that's reliable, explainable, and genuinely useful.",
+    "expertise": "My core expertise spans NLP, LLM fine-tuning and orchestration, multi-agent system design, and RAG architecture. I'm passionate about bridging the gap between cutting-edge research and production-ready applications that real people use every day."
+  },
   "Footer": {
     "copyright": "Ha Minh Quan. All rights reserved."
   },

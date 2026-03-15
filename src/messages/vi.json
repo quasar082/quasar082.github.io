@@ -32,6 +32,12 @@
     "description": "Trang bạn đang tìm không tồn tại hoặc đã được di chuyển.",
     "homeLink": "Về Trang Chủ"
   },
+  "About": {
+    "heading": "Ve Toi",
+    "story1": "Minh la Quan, mot AI Engineer tin rang cong nghe nen mang cam giac con nguoi. Hanh trinh cua minh bat dau tu su to mo ve cach may tinh hieu ngon ngu, va no dan minh di sau vao the gioi xu ly ngon ngu tu nhien va cac mo hinh ngon ngu lon.",
+    "story2": "Ngay nay, minh thiet ke va xay dung cac he thong thong minh vuot xa tu dong hoa don gian. Tu dieu phoi cac quy trinh lam viec da tac nhan den kien truc cac duong ong RAG, minh tap trung vao viec tao ra AI dang tin cay, giai thich duoc va thuc su huu ich.",
+    "expertise": "Chuyen mon cot loi cua minh bao gom NLP, tinh chinh va dieu phoi LLM, thiet ke he thong da tac nhan, va kien truc RAG. Minh dam me thu hep khoang cach giua nghien cuu tien tien va cac ung dung san sang cho san xuat ma moi nguoi su dung hang ngay."
+  },
   "Footer": {
     "copyright": "Hà Minh Quân. Bảo lưu mọi quyền."
   },
