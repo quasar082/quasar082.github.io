@@ -69,13 +69,8 @@ export default async function LocaleLayout({
   return (
     <html lang={lang}>
       <body
-        className={`${marlinGeo.variable} ${saprona.variable} ${geistMono.variable} antialiased preloader-pending`}
+        className={`${marlinGeo.variable} ${saprona.variable} ${geistMono.variable} antialiased`}
       >
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=window.location.pathname;var isHome=(p==='/'||p==='/en'||p==='/en/'||p==='/vi'||p==='/vi/');if(!isHome||sessionStorage.getItem('rq-preloader-seen')==='true'){document.body.classList.remove('preloader-pending');var el=document.querySelector('[data-preloader]');if(el)el.style.display='none'}}catch(e){document.body.classList.remove('preloader-pending')}})();`,
-          }}
-        />
         <NextIntlClientProvider locale={lang} messages={messages}>
           <SmoothScrollProvider>
             <Preloader />
