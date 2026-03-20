@@ -8,7 +8,11 @@
     "home": "Trang Chủ",
     "about": "Giới Thiệu",
     "projects": "Dự Án",
-    "blog": "Blog"
+    "blog": "Blog",
+    "menu": "Menu",
+    "close": "Close",
+    "letsTalk": "Let's Talk",
+    "switchLang": "Switch to English"
   },
   "Hero": {
     "greeting": "Xin chào, mình là Quân",

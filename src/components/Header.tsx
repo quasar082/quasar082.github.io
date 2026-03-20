@@ -1,107 +1,83 @@
 'use client';
 
-import {useState, useEffect} from 'react';
-import {useTranslations} from 'next-intl';
-import {Menu, X} from 'lucide-react';
-import {Link} from '@/i18n/navigation';
+import {useState, useCallback} from 'react';
+import {useLocale, useTranslations} from 'next-intl';
+import {usePathname, useRouter} from '@/i18n/navigation';
 import {TransitionLink} from '@/components/transitions/TransitionLink';
 import {MagneticHover} from '@/components/animations/MagneticHover';
-import {LanguageSwitcher} from './LanguageSwitcher';
-import {MobileMenu} from './MobileMenu';
-
-const SCROLL_THRESHOLD = 20;
+import {MenuOverlay} from './MenuOverlay';
 
 export function Header() {
   const t = useTranslations('Header');
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > SCROLL_THRESHOLD);
-    };
+  const toggleLocale = useCallback(() => {
+    const next = locale === 'en' ? 'vi' : 'en';
+    localStorage.setItem('preferred-locale', next);
+    router.replace(pathname, {locale: next});
+  }, [locale, router, pathname]);
 
-    window.addEventListener('scroll', handleScroll, {passive: true});
-    return () => window.removeEventListener('scroll', handleScroll);
+  const toggleMenu = useCallback(() => {
+    setMenuOpen(prev => !prev);
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
-        scrolled
-          ? 'bg-surface-base/80 backdrop-blur-md border-b border-border'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="flex h-16 items-center justify-between px-6 md:px-8">
-        {/* Brand mark -- text-only minimal logo */}
-        <MagneticHover strength={10}>
-          <TransitionLink
-            href="/"
-            className="font-display text-lg tracking-wider uppercase text-text-primary"
-          >
-            Quasar
-          </TransitionLink>
-        </MagneticHover>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+        <div className="flex h-16 items-center justify-between px-6 md:px-8 pointer-events-auto">
+          {/* Left: Brand mark */}
+          <MagneticHover strength={10}>
+            <TransitionLink
+              href="/"
+              className="font-display text-lg tracking-wider uppercase text-text-primary"
+            >
+              Quasar
+            </TransitionLink>
+          </MagneticHover>
 
-        {/* Desktop nav + language switcher */}
-        <div className="hidden items-center gap-8 md:flex">
-          <nav className="flex items-center gap-8">
+          {/* Right: 3 buttons */}
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* 1. Language toggle */}
             <MagneticHover>
-              <TransitionLink
-                href="/"
-                className="slide-underline text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
+              <button
+                onClick={toggleLocale}
+                className="text-sm uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors"
+                aria-label={t('switchLang')}
               >
-                {t('home')}
-              </TransitionLink>
+                {locale === 'en' ? 'VI' : 'EN'}
+              </button>
             </MagneticHover>
+
+            {/* 2. Let's Talk mailto */}
             <MagneticHover>
-              <Link
-                href="/#about"
-                className="slide-underline text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
+              <a
+                href="mailto:contact@example.com"
+                className="text-sm uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors"
+                aria-label="Send email"
               >
-                {t('about')}
-              </Link>
+                {t('letsTalk')}
+              </a>
             </MagneticHover>
+
+            {/* 3. Menu toggle */}
             <MagneticHover>
-              <TransitionLink
-                href="/projects"
-                className="slide-underline text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
+              <button
+                onClick={toggleMenu}
+                className="text-sm uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors"
+                aria-expanded={menuOpen}
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               >
-                {t('projects')}
-              </TransitionLink>
+                {menuOpen ? t('close') : t('menu')}
+              </button>
             </MagneticHover>
-            <MagneticHover>
-              <TransitionLink
-                href="/blog"
-                className="slide-underline text-sm uppercase tracking-wider text-text-secondary transition-colors duration-150 hover:text-text-primary"
-              >
-                {t('blog')}
-              </TransitionLink>
-            </MagneticHover>
-          </nav>
-          <LanguageSwitcher />
+          </div>
         </div>
+      </header>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-text-secondary transition-colors duration-150 hover:text-text-primary md:hidden"
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? (
-            <X className="size-6" />
-          ) : (
-            <Menu className="size-6" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <MobileMenu
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-      />
-    </header>
+      <MenuOverlay isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   );
 }
