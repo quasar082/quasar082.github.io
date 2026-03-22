@@ -1,5 +1,6 @@
 import {HeroSection} from '@/components/hero/HeroSection';
 import {AboutSection} from '@/components/about/AboutSection';
+import {AchievementsSection} from '@/components/achievements/AchievementsSection';
 import {SvgDivider} from '@/components/animations/SvgDivider';
 import {buildAlternates} from '@/lib/metadata';
 import {personJsonLd, safeJsonLd} from '@/lib/jsonld';
@@ -43,6 +44,11 @@ export default async function HomePage({
       {/* About */}
       <div id="about">
         <AboutSection />
+      </div>
+
+      {/* Achievements */}
+      <div id="achievements">
+        <AchievementsSection />
       </div>
     </div>
   );
