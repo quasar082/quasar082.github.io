@@ -85,7 +85,7 @@ export function PillButton({
 
   const commonProps = {
     ref,
-    className: `inline-flex items-center cursor-pointer select-none font-body text-[13px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
+    className: `inline-flex items-center cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
     style: {
       backgroundColor: style.bg,
       color: style.text,
@@ -120,8 +120,8 @@ export function PillButton({
       {dots === 'double' && (
         <span
           ref={dotsRef}
-          className="flex items-center"
-          style={{gap: '3px', flexShrink: 0}}
+          className="flex items-center justify-center"
+          style={{width: '13px', height: '13px', gap: '3px', flexShrink: 0}}
         >
           <span
             style={{

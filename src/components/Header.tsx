@@ -15,11 +15,16 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
 
   const toggleLocale = useCallback(() => {
     const next = locale === 'en' ? 'vi' : 'en';
     localStorage.setItem('preferred-locale', next);
-    router.replace(pathname, {locale: next});
+    try {
+      router.replace(pathname, {locale: next});
+    } catch {
+      window.location.href = `/${next}${pathname}`;
+    }
   }, [locale, router, pathname]);
 
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), []);
@@ -37,7 +42,7 @@ export function Header() {
         {/* Left: Logo */}
         <TransitionLink
           href="/"
-          className="font-body text-[20px] font-medium uppercase tracking-[0.1em] transition-colors duration-200"
+          className="font-body text-[24px] font-medium uppercase tracking-[0.1em] transition-colors duration-200"
           style={{color: 'var(--greige-900)'}}
           onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
             (e.currentTarget as HTMLElement).style.color = 'var(--greige-700)';
@@ -50,11 +55,11 @@ export function Header() {
         </TransitionLink>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2">
+        <div ref={actionsRef} className="flex items-center gap-2">
           {/* Language Toggle - circle */}
           <button
             onClick={toggleLocale}
-            className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full text-[13px] font-medium uppercase tracking-[0.08em] font-body cursor-pointer select-none transition-colors duration-300"
+            className="flex items-center justify-center w-10 h-10 rounded-full text-[15px] font-medium uppercase tracking-[0.08em] font-body cursor-pointer select-none transition-colors duration-300"
             style={{backgroundColor: 'var(--warm-white-overlay)', color: 'var(--greige-900)'}}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'var(--greige-200)';
@@ -64,6 +69,7 @@ export function Header() {
             }}
             aria-label={t('switchLang')}
             type="button"
+            suppressHydrationWarning
           >
             {locale === 'en' ? 'VI' : 'EN'}
           </button>
@@ -93,7 +99,7 @@ export function Header() {
       </div>
 
       {/* Dropdown Menu */}
-      <DropdownMenu isOpen={menuOpen} onClose={closeMenu} />
+      <DropdownMenu isOpen={menuOpen} onClose={closeMenu} actionsRef={actionsRef} />
     </header>
   );
 }

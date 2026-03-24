@@ -46,7 +46,7 @@ export function NavLink({label, isActive, onClick}: NavLinkProps) {
       type="button"
       role="menuitem"
       aria-current={isActive ? 'true' : undefined}
-      className="nav-link flex items-center justify-between w-full font-body text-[15px] font-normal uppercase tracking-[0.04em] cursor-pointer"
+      className="nav-link flex items-center justify-between w-full font-body text-[18px] font-normal uppercase tracking-[0.04em] cursor-pointer"
       style={{
         height: '44px',
         padding: '0 12px',

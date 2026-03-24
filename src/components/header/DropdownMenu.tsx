@@ -1,6 +1,6 @@
 'use client';
 
-import {useRef, useEffect, useCallback} from 'react';
+import {useRef, useEffect, useCallback, useState, type RefObject} from 'react';
 import {gsap, useGSAP} from '@/lib/gsap';
 import {useLenis} from 'lenis/react';
 import {useTranslations} from 'next-intl';
@@ -10,56 +10,162 @@ import {useActiveSection, NAV_SECTIONS} from './useActiveSection';
 interface DropdownMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  actionsRef: RefObject<HTMLDivElement | null>;
 }
 
-export function DropdownMenu({isOpen, onClose}: DropdownMenuProps) {
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const activeSection = useActiveSection();
-  const t = useTranslations('Header');
-  const lenis = useLenis();
+/* ─── Arrow icon with TextRoll-style hover ─── */
+function ArrowIcon({color = 'currentColor'}: {color?: string}) {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 12 12"
+      fill="none"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 9L9 3M9 3H4M9 3V8" />
+    </svg>
+  );
+}
+
+function ExternalButton({
+  href,
+  label,
+  variant,
+}: {
+  href: string;
+  label: string;
+  variant: 'light' | 'dark';
+}) {
+  const btnRef = useRef<HTMLAnchorElement>(null);
+  const arrowWrapRef = useRef<HTMLSpanElement>(null);
   const reducedMotion = useRef(false);
 
   useEffect(() => {
     reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
 
+  const isLight = variant === 'light';
+  const bg = isLight ? 'var(--warm-white-elevated)' : 'var(--greige-900)';
+  const hoverBg = isLight ? 'var(--greige-200)' : 'var(--greige-700)';
+  const textColor = isLight ? 'var(--greige-900)' : 'var(--warm-white)';
+
+  const handleMouseEnter = useCallback(() => {
+    const el = btnRef.current;
+    if (!el) return;
+    el.style.backgroundColor = hoverBg;
+    if (reducedMotion.current) return;
+    const arrows = arrowWrapRef.current?.querySelectorAll('.arrow-roll');
+    if (arrows) {
+      gsap.to(arrows, {y: '-100%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
+    }
+  }, [hoverBg]);
+
+  const handleMouseLeave = useCallback(() => {
+    const el = btnRef.current;
+    if (!el) return;
+    el.style.backgroundColor = bg;
+    if (reducedMotion.current) return;
+    const arrows = arrowWrapRef.current?.querySelectorAll('.arrow-roll');
+    if (arrows) {
+      gsap.to(arrows, {y: '0%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
+    }
+  }, [bg]);
+
+  return (
+    <a
+      ref={btnRef}
+      href={href}
+      target={href.startsWith('mailto:') ? undefined : '_blank'}
+      rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+      role="menuitem"
+      className="dropdown-item flex items-center justify-between h-12 px-4 rounded-xl font-body text-[15px] font-medium uppercase tracking-[0.06em] cursor-pointer"
+      style={{
+        backgroundColor: bg,
+        color: textColor,
+        transition: 'background-color 200ms ease',
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span>{label}</span>
+      {/* Arrow with TextRoll-style animation */}
+      <span
+        ref={arrowWrapRef}
+        style={{overflow: 'hidden', position: 'relative', height: '14px', width: '14px'}}
+      >
+        <span className="arrow-roll" style={{display: 'block'}}>
+          <ArrowIcon color={textColor} />
+        </span>
+        <span className="arrow-roll" style={{display: 'block'}}>
+          <ArrowIcon color={textColor} />
+        </span>
+      </span>
+    </a>
+  );
+}
+
+/* ─── Main dropdown ─── */
+export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const activeSection = useActiveSection();
+  const t = useTranslations('Header');
+  const lenis = useLenis();
+  const reducedMotion = useRef(false);
+  const [dropdownWidth, setDropdownWidth] = useState<number>(0);
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  // Measure actions container width
+  useEffect(() => {
+    if (!actionsRef.current) return;
+    const measure = () => {
+      const w = actionsRef.current?.offsetWidth ?? 0;
+      setDropdownWidth(w);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [actionsRef]);
+
   // Build GSAP timeline
   useGSAP(
     () => {
-      const el = dropdownRef.current;
+      const el = wrapperRef.current;
       if (!el) return;
+
+      const items = el.querySelectorAll('.dropdown-item, .dropdown-card');
 
       if (reducedMotion.current) {
         const tl = gsap.timeline({paused: true});
-        tl.fromTo(el, {opacity: 0}, {opacity: 1, duration: 0.01});
+        tl.fromTo(items, {opacity: 0}, {opacity: 1, duration: 0.01});
         tlRef.current = tl;
         return;
       }
 
       const tl = gsap.timeline({paused: true});
 
-      // Step 1: Container fade + slide + scale
       tl.fromTo(
-        el,
-        {opacity: 0, y: -8, scale: 0.97},
-        {opacity: 1, y: 0, scale: 1, duration: 0.25, ease: 'power2.out'},
+        items,
+        {opacity: 0, y: 12},
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.05,
+          duration: 0.3,
+          ease: 'power2.out',
+        },
       );
-
-      // Step 2: Nav links stagger
-      tl.fromTo(
-        '.nav-link',
-        {opacity: 0, y: 8},
-        {opacity: 1, y: 0, stagger: 0.04, duration: 0.3, ease: 'power2.out'},
-        0.1,
-      );
-
-      // Step 3: External section fade
-      tl.fromTo('.dropdown-externals', {opacity: 0}, {opacity: 1, duration: 0.2, ease: 'power2.out'}, 0.25);
 
       tlRef.current = tl;
     },
-    {scope: dropdownRef},
+    {scope: wrapperRef},
   );
 
   // Play/reverse on isOpen change
@@ -77,7 +183,7 @@ export function DropdownMenu({isOpen, onClose}: DropdownMenuProps) {
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
-        const firstLink = dropdownRef.current?.querySelector<HTMLButtonElement>('.nav-link');
+        const firstLink = wrapperRef.current?.querySelector<HTMLButtonElement>('.nav-link');
         firstLink?.focus();
       }, 250);
       return () => clearTimeout(timer);
@@ -101,7 +207,7 @@ export function DropdownMenu({isOpen, onClose}: DropdownMenuProps) {
     if (!isOpen) return;
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
-      const el = dropdownRef.current;
+      const el = wrapperRef.current;
       if (!el) return;
       const focusable = el.querySelectorAll<HTMLElement>('button, a, [tabindex]:not([tabindex="-1"])');
       if (focusable.length === 0) return;
@@ -119,7 +225,7 @@ export function DropdownMenu({isOpen, onClose}: DropdownMenuProps) {
     return () => document.removeEventListener('keydown', handleTab);
   }, [isOpen]);
 
-  // Nav link click handler - uses Lenis scrollTo (NOT GSAP ScrollToPlugin)
+  // Nav link click handler
   const handleNavClick = useCallback(
     (scrollTarget: string | number) => {
       onClose();
@@ -142,120 +248,79 @@ export function DropdownMenu({isOpen, onClose}: DropdownMenuProps) {
     [onClose, lenis],
   );
 
+  const widthStyle = dropdownWidth > 0 ? {width: `${dropdownWidth}px`} : {width: '280px'};
+
   return (
     <>
       {/* Click-outside overlay */}
       {isOpen && <div className="fixed inset-0 z-[48]" onClick={onClose} aria-hidden="true" />}
 
-      {/* Dropdown container */}
+      {/* Dropdown wrapper: 3 separate floating elements stacked */}
       <div
-        ref={dropdownRef}
+        ref={wrapperRef}
         id="header-dropdown"
         role="menu"
         aria-hidden={!isOpen}
-        className="absolute right-4 sm:right-6 lg:right-8 z-[49] w-[280px] max-w-[calc(100vw-32px)] rounded-2xl p-2"
+        className="absolute right-4 sm:right-6 lg:right-8 z-[49] flex flex-col gap-2"
         style={{
           top: '100%',
           marginTop: '8px',
-          backgroundColor: '#FFFFFF',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)',
-          opacity: 0,
           pointerEvents: isOpen ? 'auto' : 'none',
+          ...widthStyle,
+          maxWidth: 'calc(100vw - 32px)',
         }}
       >
-        {/* Nav links section */}
-        <nav className="p-1">
-          {NAV_SECTIONS.map(({label, scrollTarget}) => (
-            <NavLink
-              key={label}
-              label={t(label)}
-              isActive={activeSection === label}
-              onClick={() => handleNavClick(scrollTarget)}
-            />
-          ))}
-        </nav>
-
-        {/* External buttons section */}
+        {/* Card 1: Nav links */}
         <div
-          className="dropdown-externals mt-2 pt-2 flex flex-col gap-1"
-          style={{borderTop: '1px solid rgba(136,133,128,0.15)'}}
+          className="dropdown-card dropdown-item rounded-2xl p-2"
+          style={{
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)',
+            opacity: 0,
+          }}
         >
-          {/* Blog - light external button */}
-          <a
-            href="/blog"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="menuitem"
-            aria-label="Open Blog in new tab"
-            className="flex items-center justify-between h-11 px-4 rounded-xl font-body text-[13px] font-medium uppercase tracking-[0.06em] transition-colors duration-200 cursor-pointer"
-            style={{backgroundColor: 'var(--warm-white-elevated)', color: 'var(--greige-900)'}}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--warm-white-overlay)';
-              const arrow = e.currentTarget.querySelector('.ext-arrow') as HTMLElement;
-              if (arrow) arrow.style.opacity = '1';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--warm-white-elevated)';
-              const arrow = e.currentTarget.querySelector('.ext-arrow') as HTMLElement;
-              if (arrow) arrow.style.opacity = '0';
-            }}
-          >
-            <span>{t('blog')}</span>
-            <span className="ext-arrow transition-opacity duration-200" style={{opacity: 0}}>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 9L9 3M9 3H4M9 3V8" />
-              </svg>
-            </span>
-          </a>
+          <nav>
+            {NAV_SECTIONS.map(({label, scrollTarget}) => (
+              <NavLink
+                key={label}
+                label={t(label)}
+                isActive={activeSection === label}
+                onClick={() => handleNavClick(scrollTarget)}
+              />
+            ))}
+          </nav>
+        </div>
 
-          {/* GitHub - dark external button */}
-          <a
+        {/* Button 2: Contact / Let's Talk */}
+        <div
+          className="dropdown-item"
+          style={{
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.03)',
+            opacity: 0,
+          }}
+        >
+          <ExternalButton
+            href="mailto:haminhquan12c7@gmail.com"
+            label={t('letsTalk')}
+            variant="light"
+          />
+        </div>
+
+        {/* Button 3: GitHub */}
+        <div
+          className="dropdown-item"
+          style={{
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.03)',
+            opacity: 0,
+          }}
+        >
+          <ExternalButton
             href="https://github.com/rayquasar18"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="menuitem"
-            aria-label="Open GitHub in new tab"
-            className="flex items-center justify-between h-11 px-4 rounded-xl font-body text-[13px] font-medium uppercase tracking-[0.06em] transition-colors duration-200 cursor-pointer"
-            style={{backgroundColor: 'var(--greige-900)', color: 'var(--warm-white)'}}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--greige-800)';
-              const arrow = e.currentTarget.querySelector('.ext-arrow') as HTMLElement;
-              if (arrow) arrow.style.opacity = '1';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--greige-900)';
-              const arrow = e.currentTarget.querySelector('.ext-arrow') as HTMLElement;
-              if (arrow) arrow.style.opacity = '0';
-            }}
-          >
-            <span>{t('github')}</span>
-            <span
-              className="ext-arrow transition-opacity duration-200"
-              style={{opacity: 0, color: 'var(--warm-white)'}}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 9L9 3M9 3H4M9 3V8" />
-              </svg>
-            </span>
-          </a>
+            label={t('github')}
+            variant="dark"
+          />
         </div>
       </div>
     </>
