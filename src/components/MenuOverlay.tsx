@@ -2,7 +2,6 @@
 
 import {useRef, useEffect, useCallback} from 'react';
 import {gsap, useGSAP} from '@/lib/gsap';
-import {useLenis} from 'lenis/react';
 import {useTranslations} from 'next-intl';
 import {TransitionLink} from '@/components/transitions/TransitionLink';
 
@@ -22,7 +21,6 @@ export function MenuOverlay({isOpen, onClose}: MenuOverlayProps) {
   const t = useTranslations('Header');
   const containerRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const lenis = useLenis();
 
   useGSAP(
     () => {
@@ -86,17 +84,11 @@ export function MenuOverlay({isOpen, onClose}: MenuOverlayProps) {
     if (!tl) return;
 
     if (isOpen) {
-      lenis?.stop();
-      document.body.style.overflow = 'hidden';
       tl.timeScale(1).play();
     } else {
       tl.timeScale(1.4).reverse();
-      tl.eventCallback('onReverseComplete', () => {
-        lenis?.start();
-        document.body.style.overflow = '';
-      });
     }
-  }, [isOpen, lenis]);
+  }, [isOpen]);
 
   // Escape key handler
   useEffect(() => {

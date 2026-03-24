@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { useLenis } from 'lenis/react';
+import { useScrollLock } from '@/hooks/useScrollLock';
 
 const PRELOADER_KEY = 'rq-preloader-seen';
 const HOMEPAGE_ROUTES = ['/', '/en', '/en/', '/vi', '/vi/'];
@@ -25,7 +25,7 @@ export default function Preloader() {
   const containerRef = useRef<HTMLDivElement>(null);
   const text1Ref = useRef<HTMLDivElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
+  const { lock, unlock } = useScrollLock();
 
   const [phase, setPhase] = useState<'pending' | 'animate' | 'done'>('pending');
 
@@ -51,18 +51,18 @@ export default function Preloader() {
 
   // Lock scroll during animation
   useEffect(() => {
-    if (phase === 'animate' && lenis) {
-      lenis.stop();
+    if (phase === 'animate') {
+      lock();
     }
-  }, [lenis, phase]);
+  }, [phase, lock]);
 
   const onSequenceComplete = useCallback(() => {
-    lenis?.start();
+    unlock();
     sessionStorage.setItem(PRELOADER_KEY, 'true');
     const curtain = document.getElementById('preloader-curtain');
     if (curtain) curtain.remove();
     setPhase('done');
-  }, [lenis]);
+  }, [unlock]);
 
   useGSAP(
     () => {
@@ -97,7 +97,7 @@ export default function Preloader() {
       tl.to(topHalf, { yPercent: -100, duration: 1, ease: 'power3.inOut' }, 'curtain');
       tl.to(bottomHalf, { yPercent: 100, duration: 1, ease: 'power3.inOut' }, 'curtain');
     },
-    { scope: containerRef, dependencies: [lenis, phase, onSequenceComplete] }
+    { scope: containerRef, dependencies: [phase, onSequenceComplete] }
   );
 
   if (phase === 'done') return null;
