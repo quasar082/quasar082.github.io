@@ -256,7 +256,7 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
   return (
     <>
       {/* Click-outside overlay */}
-      {isOpen && <div className="fixed inset-0 z-[48]" onClick={onClose} aria-hidden="true" />}
+      {isOpen && <div className="fixed inset-0 z-[60]" onClick={onClose} aria-hidden="true" />}
 
       {/* Dropdown wrapper: 3 separate floating elements stacked */}
       <div
@@ -264,7 +264,7 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
         id="header-dropdown"
         role="menu"
         aria-hidden={!isOpen}
-        className="absolute right-4 sm:right-6 lg:right-8 z-[49] flex flex-col gap-3"
+        className="absolute right-4 sm:right-6 lg:right-8 z-[61] flex flex-col gap-3"
         style={{
           top: '100%',
           marginTop: '8px',
