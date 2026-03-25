@@ -58,6 +58,9 @@ export function CustomCursor() {
       'a, button, [role="button"], [data-cursor-hover], [data-cursor-text], [data-cursor-drag], [data-cursor-magnetic] { cursor: none !important; }';
     document.head.appendChild(styleTag);
 
+    // Set centering via GSAP (avoids inline transform conflict with quickTo)
+    gsap.set([dot, ringWrap, label], {xPercent: -50, yPercent: -50});
+
     // Smooth cursor follow via gsap.quickTo — dot is instant, ring trails
     const dotXTo = gsap.quickTo(dot, 'x', {duration: 0.05, ease: 'power3'});
     const dotYTo = gsap.quickTo(dot, 'y', {duration: 0.05, ease: 'power3'});
@@ -299,6 +302,14 @@ export function CustomCursor() {
       document.documentElement.style.cursor = '';
       styleTag.remove();
 
+      // Kill all quickTo tweens to prevent stale references
+      dotXTo.tween.kill();
+      dotYTo.tween.kill();
+      ringXTo.tween.kill();
+      ringYTo.tween.kill();
+      labelXTo.tween.kill();
+      labelYTo.tween.kill();
+
       if (spinTween) spinTween.kill();
 
       if (currentMagneticTarget) {
@@ -329,7 +340,6 @@ export function CustomCursor() {
           backgroundColor: '#1A1A1A',
           pointerEvents: 'none',
           zIndex: 9999,
-          transform: 'translate(-50%, -50%)',
         }}
       />
       {/* Ring wrapper - positioned by GSAP x/y */}
@@ -343,7 +353,6 @@ export function CustomCursor() {
           height: DEFAULT_SIZE,
           pointerEvents: 'none',
           zIndex: 9999,
-          transform: 'translate(-50%, -50%)',
         }}
       >
         {/* Ring SVG - rotated by GSAP for spin effect */}
@@ -380,7 +389,6 @@ export function CustomCursor() {
           pointerEvents: 'none',
           zIndex: 10000,
           whiteSpace: 'nowrap',
-          transform: 'translate(-50%, -50%)',
         }}
       />
     </>
