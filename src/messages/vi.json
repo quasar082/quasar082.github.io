@@ -17,10 +17,10 @@
     "switchLang": "Switch to English"
   },
   "Hero": {
-    "greeting": "Xin chào, mình là Quân",
-    "role": "Kỹ sư AI",
-    "tagline": "Làm cho Wall-E biết yêu lại",
-    "marquee": "HA MINH QUAN"
+    "title": "Ky su AI",
+    "subtitle": "Code. Create. Make WALL-E love again",
+    "scroll": "Scroll",
+    "imageAlt": "Sazabi Gundam artwork"
   },
   "Home": {
     "welcome": "Chào mừng đến portfolio của mình",

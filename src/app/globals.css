@@ -165,3 +165,13 @@ a:hover {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+
+/* Hero scroll indicator pulse animation */
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.scroll-indicator-pulse {
+  animation: scroll-pulse 2s ease-in-out infinite;
+}

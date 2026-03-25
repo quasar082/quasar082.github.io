@@ -17,10 +17,10 @@
     "switchLang": "Switch to Vietnamese"
   },
   "Hero": {
-    "greeting": "Hi, I'm Quan",
-    "role": "AI Engineer",
-    "tagline": "Make Wall-E can love again",
-    "marquee": "HA MINH QUAN"
+    "title": "AI Engineer",
+    "subtitle": "Code. Create. Make WALL-E love again",
+    "scroll": "Scroll",
+    "imageAlt": "Sazabi Gundam artwork"
   },
   "Home": {
     "welcome": "Welcome to my portfolio",

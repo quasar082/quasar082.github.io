@@ -1,35 +1,195 @@
 'use client';
 
+import {useRef} from 'react';
 import {useTranslations} from 'next-intl';
-import {Marquee} from '@/components/hero/Marquee';
+import {gsap, ScrollTrigger, useGSAP} from '@/lib/gsap';
+import {usePreloaderDone} from '@/hooks/usePreloaderDone';
 
 export function HeroSection() {
   const t = useTranslations('Hero');
+  const heroRef = useRef<HTMLElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+  const preloaderDone = usePreloaderDone();
+
+  // --- Entrance animations (gated on preloader) ---
+  useGSAP(
+    () => {
+      if (!preloaderDone) return;
+
+      // Set initial states
+      gsap.set(
+        [
+          photoRef.current,
+          titleRef.current,
+          subtitleRef.current,
+          scrollIndicatorRef.current,
+        ],
+        {opacity: 0}
+      );
+      gsap.set(photoRef.current, {scale: 1.08, filter: 'blur(6px)'});
+      gsap.set(titleRef.current, {filter: 'blur(6px)'});
+      gsap.set(subtitleRef.current, {filter: 'blur(6px)'});
+
+      // Create entrance timeline
+      const tl = gsap.timeline();
+
+      // 1. Photo: scale down + deblur
+      tl.to(photoRef.current, {
+        scale: 1,
+        filter: 'blur(0px)',
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out',
+      });
+
+      // 2. Title: deblur + fade in (starts 0.25s after photo)
+      tl.to(
+        titleRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          ease: 'power2.out',
+        },
+        '-=0.75'
+      );
+
+      // 3. Subtitle: deblur + fade in (starts 0.25s after title)
+      tl.to(
+        subtitleRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          ease: 'power2.out',
+        },
+        '-=0.55'
+      );
+
+      // 4. Scroll indicator: fade in (starts 0.25s after subtitle)
+      tl.to(
+        scrollIndicatorRef.current,
+        {
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power2.out',
+        },
+        '-=0.55'
+      );
+
+      // 5. After entrance completes, add CSS pulse class
+      tl.call(() => {
+        scrollIndicatorRef.current?.classList.add('scroll-indicator-pulse');
+      });
+    },
+    {scope: heroRef, dependencies: [preloaderDone]}
+  );
+
+  // --- Scroll-driven effects ---
+  useGSAP(
+    () => {
+      if (!preloaderDone) return;
+
+      // Photo parallax + fade
+      gsap.to(photoRef.current, {
+        yPercent: -15,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      // Text block fade + slide up
+      gsap.to([titleRef.current, subtitleRef.current], {
+        yPercent: -30,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: '80% top',
+          scrub: true,
+        },
+      });
+
+      // Scroll indicator early fade
+      gsap.to(scrollIndicatorRef.current, {
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: '30% top',
+          scrub: true,
+        },
+      });
+    },
+    {scope: heroRef, dependencies: [preloaderDone]}
+  );
 
   return (
-    <section className="relative flex h-[100dvh] flex-col justify-between overflow-hidden">
-      {/* Upper content area */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
-        {/* Photo placeholder */}
-        <div className="h-[280px] w-[220px] rounded-lg bg-greige-200 md:h-[350px] md:w-[280px]" />
-
-        {/* Role + Tagline — offset to the right */}
-        <div className="mt-6 text-right self-center md:self-auto md:ml-[55%]">
-          <p
-            className="font-display font-[300] text-text-primary"
-            style={{fontSize: 'var(--text-display-md)'}}
-          >
-            {t('role')}
-          </p>
-          <p className="mt-2 text-lg text-text-secondary md:text-xl">
-            {t('tagline')}
-          </p>
+    <section
+      ref={heroRef}
+      className="relative h-[100dvh] -mt-20 overflow-hidden"
+    >
+      {/* Centered photo with blur gradient */}
+      <div
+        ref={photoRef}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <div className="relative">
+          <img
+            src="/images/hero-sazabi.png"
+            alt={t('imageAlt')}
+            width={600}
+            height={800}
+            className="h-[55vh] w-auto object-contain md:h-[60vh] lg:h-[65vh]"
+            loading="eager"
+            fetchPriority="high"
+          />
+          {/* Static bottom blur gradient */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[40%]"
+            style={{
+              background:
+                'linear-gradient(to top, var(--warm-white) 10%, transparent 100%)',
+            }}
+          />
         </div>
       </div>
 
-      {/* Marquee - anchored at bottom of viewport */}
-      <div className="pointer-events-none relative z-0 pb-8 md:pb-12">
-        <Marquee />
+      {/* Text block: bottom-left */}
+      <div className="absolute bottom-[15%] left-6 z-10 md:left-12 lg:left-20">
+        <h1
+          ref={titleRef}
+          className="font-display text-text-primary"
+          style={{fontSize: 'var(--text-display-lg)', fontWeight: 700}}
+        >
+          {t('title')}
+        </h1>
+        <p
+          ref={subtitleRef}
+          className="mt-2 font-body text-lg text-text-secondary md:text-xl"
+        >
+          {t('subtitle')}
+        </p>
+      </div>
+
+      {/* Scroll indicator */}
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute bottom-8 left-6 z-10 md:left-12 lg:left-20"
+      >
+        <span className="font-body text-xs uppercase tracking-[0.2em] text-text-muted">
+          {t('scroll')}
+        </span>
       </div>
     </section>
   );
