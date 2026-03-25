@@ -4,21 +4,15 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { usePreloaderStore } from '@/stores/usePreloaderStore';
 
-const PRELOADER_KEY = 'rq-preloader-seen';
 const HOMEPAGE_ROUTES = ['/', '/en', '/en/', '/vi', '/vi/'];
 
 /**
  * Preloader with curtain-reveal animation.
  *
- * Anti-FOUC strategy:
- * - A pure-HTML black curtain (#preloader-curtain) is placed in layout.tsx
- *   OUTSIDE the React tree, so it's never wrapped in a hidden="" Suspense div.
- *   First paint is always black on homepage.
- * - An inline script in layout.tsx removes the curtain synchronously for
- *   non-homepage routes and returning visitors (sessionStorage check).
- * - This component renders text overlays and animates the curtain halves
- *   on first homepage visit, then removes the curtain on completion.
+ * Always plays on homepage (every page load / refresh).
+ * Dispatches `preloaderDone` via store so page animations wait for it.
  */
 export default function Preloader() {
   const pathname = usePathname();
@@ -26,28 +20,30 @@ export default function Preloader() {
   const text1Ref = useRef<HTMLDivElement>(null);
   const text2Ref = useRef<HTMLDivElement>(null);
   const { lock, unlock } = useScrollLock();
+  const setDone = usePreloaderStore((s) => s.setDone);
 
   const [phase, setPhase] = useState<'pending' | 'animate' | 'done'>('pending');
 
   // Decide after hydration: animate or skip
   useEffect(() => {
     const curtain = document.getElementById('preloader-curtain');
-    // If inline script already removed the curtain, nothing to do
+    // If inline script already removed the curtain (non-homepage), skip
     if (!curtain) {
       setPhase('done');
+      setDone();
       return;
     }
 
     const isHomepage = HOMEPAGE_ROUTES.includes(pathname);
-    const alreadySeen = sessionStorage.getItem(PRELOADER_KEY) === 'true';
 
-    if (isHomepage && !alreadySeen) {
+    if (isHomepage) {
       setPhase('animate');
     } else {
       curtain.remove();
       setPhase('done');
+      setDone();
     }
-  }, [pathname]);
+  }, [pathname, setDone]);
 
   // Lock scroll during animation
   useEffect(() => {
@@ -58,11 +54,11 @@ export default function Preloader() {
 
   const onSequenceComplete = useCallback(() => {
     unlock();
-    sessionStorage.setItem(PRELOADER_KEY, 'true');
     const curtain = document.getElementById('preloader-curtain');
     if (curtain) curtain.remove();
     setPhase('done');
-  }, [unlock]);
+    setDone();
+  }, [unlock, setDone]);
 
   useGSAP(
     () => {

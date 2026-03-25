@@ -2,6 +2,7 @@
 
 import {useRef} from 'react';
 import {gsap, SplitText, useGSAP} from '@/lib/gsap';
+import {usePreloaderDone} from '@/hooks/usePreloaderDone';
 
 interface TextRevealProps {
   children: React.ReactNode;
@@ -21,10 +22,11 @@ export function TextReveal({
   style,
 }: TextRevealProps) {
   const ref = useRef<HTMLElement>(null);
+  const preloaderDone = usePreloaderDone();
 
   useGSAP(
     () => {
-      if (!ref.current) return;
+      if (!ref.current || !preloaderDone) return;
 
       const split = SplitText.create(ref.current, {
         type,
@@ -52,7 +54,7 @@ export function TextReveal({
         },
       });
     },
-    {scope: ref},
+    {scope: ref, dependencies: [preloaderDone]},
   );
 
   return (

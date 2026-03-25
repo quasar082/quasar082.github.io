@@ -4,6 +4,7 @@ import {useRef, useCallback} from 'react';
 import {useTranslations} from 'next-intl';
 import {gsap, useGSAP} from '@/lib/gsap';
 import {useLenis} from 'lenis/react';
+import {usePreloaderDone} from '@/hooks/usePreloaderDone';
 
 const SEPARATOR = '\u00A0\u2014\u00A0';
 
@@ -11,11 +12,14 @@ export function Marquee() {
   const t = useTranslations('Hero');
   const containerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef({current: 0, speed: 1, direction: 1}); // 1 = left-to-right base
+  const preloaderDone = usePreloaderDone();
 
   const marqueeText = t('marquee');
 
   useGSAP(
     () => {
+      if (!preloaderDone) return;
+
       const track = containerRef.current?.querySelector(
         '[data-marquee-track]'
       ) as HTMLElement | null;
@@ -47,7 +51,7 @@ export function Marquee() {
         gsap.set(track, {x: state.current});
       });
     },
-    {scope: containerRef}
+    {scope: containerRef, dependencies: [preloaderDone]}
   );
 
   const lenisCallback = useCallback((lenis: {velocity: number}) => {

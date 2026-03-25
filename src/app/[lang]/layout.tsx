@@ -84,7 +84,7 @@ export default async function LocaleLayout({
         </div>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=window.location.pathname;var h=['/','/en','/en/','/vi','/vi/'];if(h.indexOf(p)===-1||sessionStorage.getItem('rq-preloader-seen')==='true'){var c=document.getElementById('preloader-curtain');if(c)c.remove()}}catch(e){var c=document.getElementById('preloader-curtain');if(c)c.remove()}})();`,
+            __html: `(function(){try{var p=window.location.pathname;var h=['/','/en','/en/','/vi','/vi/'];if(h.indexOf(p)===-1){var c=document.getElementById('preloader-curtain');if(c)c.remove()}}catch(e){var c=document.getElementById('preloader-curtain');if(c)c.remove()}})();`,
           }}
         />
         <NextIntlClientProvider locale={lang} messages={messages}>

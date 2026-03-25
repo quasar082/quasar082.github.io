@@ -2,6 +2,7 @@
 
 import {useRef} from 'react';
 import {gsap, useGSAP} from '@/lib/gsap';
+import {usePreloaderDone} from '@/hooks/usePreloaderDone';
 
 interface TimelineEntryProps {
   children: React.ReactNode;
@@ -10,10 +11,11 @@ interface TimelineEntryProps {
 
 export function TimelineEntry({children, index}: TimelineEntryProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const preloaderDone = usePreloaderDone();
 
   useGSAP(
     () => {
-      if (!ref.current) return;
+      if (!ref.current || !preloaderDone) return;
       gsap.from(ref.current, {
         y: 40,
         opacity: 0,
@@ -27,7 +29,7 @@ export function TimelineEntry({children, index}: TimelineEntryProps) {
         },
       });
     },
-    {scope: ref},
+    {scope: ref, dependencies: [preloaderDone]},
   );
 
   return <div ref={ref}>{children}</div>;

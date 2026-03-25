@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { gsap, DrawSVGPlugin, useGSAP } from '@/lib/gsap';
+import { usePreloaderDone } from '@/hooks/usePreloaderDone';
 
 // Ensure DrawSVGPlugin is available
 void DrawSVGPlugin;
@@ -9,10 +10,11 @@ void DrawSVGPlugin;
 export function SvgDivider() {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const preloaderDone = usePreloaderDone();
 
   useGSAP(
     () => {
-      if (!pathRef.current) return;
+      if (!pathRef.current || !preloaderDone) return;
 
       gsap.from(pathRef.current, {
         drawSVG: '0%',
@@ -25,7 +27,7 @@ export function SvgDivider() {
         },
       });
     },
-    { scope: svgRef },
+    { scope: svgRef, dependencies: [preloaderDone] },
   );
 
   return (
