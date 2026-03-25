@@ -16,6 +16,8 @@ interface PillButtonProps {
   ariaControls?: string;
   className?: string;
   hidden?: boolean;
+  /** Fixed width to prevent layout shift when label changes */
+  fixedWidth?: number;
 }
 
 const VARIANT_STYLES = {
@@ -43,6 +45,7 @@ export function PillButton({
   ariaControls,
   className = '',
   hidden = false,
+  fixedWidth,
 }: PillButtonProps) {
   const ref = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const dotsRef = useRef<HTMLSpanElement>(null);
@@ -85,14 +88,15 @@ export function PillButton({
 
   const commonProps = {
     ref,
-    className: `inline-flex items-center cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
+    className: `inline-flex items-center ${fixedWidth ? 'justify-center' : ''} cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
     style: {
       backgroundColor: style.bg,
       color: style.text,
       borderRadius: '9999px',
       height: '48px',
-      paddingLeft: '40px',
-      paddingRight: hasDots ? '32px' : '40px',
+      ...(fixedWidth
+        ? {width: `${fixedWidth}px`, paddingLeft: 0, paddingRight: 0}
+        : {paddingLeft: '40px', paddingRight: hasDots ? '32px' : '40px'}),
       gap: hasDots ? '10px' : undefined,
       transition: 'background-color 300ms ease',
     } as React.CSSProperties,
