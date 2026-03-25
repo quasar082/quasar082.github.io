@@ -1,9 +1,10 @@
 'use client';
 
-import {useRef} from 'react';
+import {useRef, useCallback} from 'react';
 import {useTranslations} from 'next-intl';
 import {gsap, ScrollTrigger, useGSAP} from '@/lib/gsap';
 import {usePreloaderDone} from '@/hooks/usePreloaderDone';
+import {PillButton} from '@/components/header/PillButton';
 
 export function HeroSection() {
   const t = useTranslations('Hero');
@@ -12,7 +13,13 @@ export function HeroSection() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
   const preloaderDone = usePreloaderDone();
+
+  const scrollToAbout = useCallback(() => {
+    const el = document.getElementById('about');
+    if (el) el.scrollIntoView({behavior: 'smooth'});
+  }, []);
 
   // --- Entrance animations (gated on preloader) ---
   useGSAP(
@@ -25,6 +32,7 @@ export function HeroSection() {
           photoRef.current,
           titleRef.current,
           subtitleRef.current,
+          buttonsRef.current,
           scrollIndicatorRef.current,
         ],
         {opacity: 0}
@@ -32,6 +40,7 @@ export function HeroSection() {
       gsap.set(photoRef.current, {scale: 1.08, filter: 'blur(6px)'});
       gsap.set(titleRef.current, {filter: 'blur(6px)'});
       gsap.set(subtitleRef.current, {filter: 'blur(6px)'});
+      gsap.set(buttonsRef.current, {filter: 'blur(6px)'});
 
       // Create entrance timeline
       const tl = gsap.timeline();
@@ -67,6 +76,18 @@ export function HeroSection() {
           ease: 'power2.out',
         },
         '-=0.75'
+      );
+
+      // 3.5. Buttons row: deblur + fade in
+      tl.to(
+        buttonsRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          ease: 'power2.out',
+        },
+        '-=0.7'
       );
 
       // 4. Scroll indicator: fade in
@@ -112,7 +133,7 @@ export function HeroSection() {
 
       // Text block fade + slide up — text scrolls faster than photo
       gsap.fromTo(
-        [titleRef.current, subtitleRef.current],
+        [titleRef.current, subtitleRef.current, buttonsRef.current],
         {yPercent: 0, opacity: 1},
         {
           yPercent: -50,
@@ -209,6 +230,19 @@ export function HeroSection() {
         >
           {t('subtitle')}
         </p>
+        <div ref={buttonsRef} className="mt-3 flex items-center gap-3">
+          <span className="font-body text-lg text-text-secondary md:text-xl">{t('me')}</span>
+          <PillButton
+            label="Ha Minh Quan"
+            variant="outline"
+            onClick={scrollToAbout}
+          />
+          <PillButton
+            label="quasar"
+            variant="dark"
+            onClick={scrollToAbout}
+          />
+        </div>
       </div>
 
       {/* Scroll indicator */}

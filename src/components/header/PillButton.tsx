@@ -6,7 +6,7 @@ import {TextRoll} from './TextRoll';
 
 interface PillButtonProps {
   label: string;
-  variant: 'dark' | 'light';
+  variant: 'dark' | 'light' | 'outline';
   onClick?: () => void;
   href?: string;
   dots?: 'single' | 'double' | 'none';
@@ -25,11 +25,19 @@ const VARIANT_STYLES = {
     bg: 'var(--greige-900)',
     hoverBg: 'var(--greige-700)',
     text: 'var(--warm-white)',
+    border: 'none',
   },
   light: {
     bg: 'var(--warm-white-overlay)',
     hoverBg: 'var(--greige-200)',
     text: 'var(--greige-900)',
+    border: 'none',
+  },
+  outline: {
+    bg: 'transparent',
+    hoverBg: 'var(--greige-100)',
+    text: 'var(--greige-900)',
+    border: '1px solid var(--greige-900)',
   },
 } as const;
 
@@ -92,6 +100,7 @@ export function PillButton({
     style: {
       backgroundColor: style.bg,
       color: style.text,
+      border: style.border,
       borderRadius: '9999px',
       height: '48px',
       ...(fixedWidth
