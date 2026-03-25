@@ -35,6 +35,20 @@ export function CustomCursor() {
     let currentMagneticTarget: HTMLElement | null = null;
     let spinTween: gsap.core.Tween | null = null;
 
+    // SVG is always 100x100 viewBox, we scale via width/height
+    const SVG_SIZE = 100;
+    const SVG_CENTER = 50;
+    const SVG_R = 48; // radius within 100x100 viewBox
+    const CIRCUMFERENCE = 2 * Math.PI * SVG_R;
+
+    // Set initial circle attributes
+    circle.setAttribute('cx', String(SVG_CENTER));
+    circle.setAttribute('cy', String(SVG_CENTER));
+    circle.setAttribute('r', String(SVG_R));
+    // Full dasharray = solid line (no gaps visible)
+    circle.style.strokeDasharray = `${CIRCUMFERENCE}`;
+    circle.style.strokeDashoffset = '0';
+
     // Hide default cursor
     document.documentElement.style.cursor = 'none';
     const styleTag = document.createElement('style');
@@ -50,47 +64,28 @@ export function CustomCursor() {
     const labelXTo = gsap.quickTo(label, 'x', {duration: 0.2, ease: 'power3'});
     const labelYTo = gsap.quickTo(label, 'y', {duration: 0.2, ease: 'power3'});
 
-    // Ring SVG sizing constants
-    const DEFAULT_SIZE = 40;
+    // Size constants (actual rendered px via width/height on SVG)
+    const DEFAULT_SIZE = 48;
     const EXPAND_SIZE = 72;
     const TEXT_SIZE = 80;
     const DRAG_SIZE = 64;
-    const STROKE_WIDTH = 1;
 
-    // Helper to update SVG ring size
-    const setRingSize = (size: number, duration: number = 0.3) => {
-      const r = (size - STROKE_WIDTH) / 2;
-      const circumference = 2 * Math.PI * r;
-      gsap.to(ring, {
-        attr: {width: size, height: size, viewBox: `0 0 ${size} ${size}`},
-        duration,
+    // Start dashed spinning animation
+    const startSpin = () => {
+      // Switch to dashed pattern
+      gsap.to(circle.style, {
+        strokeDasharray: '10 8',
+        duration: 0.4,
         ease: 'power2.out',
       });
-      gsap.to(circle, {
-        attr: {cx: size / 2, cy: size / 2, r},
-        duration,
-        ease: 'power2.out',
-      });
-      return {r, circumference};
-    };
-
-    // Start/stop dashed spinning animation
-    const startSpin = (size: number) => {
-      const r = (size - STROKE_WIDTH) / 2;
-      const circumference = 2 * Math.PI * r;
-      // Dashed pattern: 8px dash, 6px gap
-      gsap.to(circle, {
-        strokeDasharray: `8 6`,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-      // Continuous rotation via strokeDashoffset
+      // Continuous rotation on SVG element
       if (spinTween) spinTween.kill();
-      spinTween = gsap.to(circle, {
-        strokeDashoffset: -circumference,
-        duration: 3,
+      spinTween = gsap.to(ring, {
+        rotation: 360,
+        duration: 4,
         ease: 'none',
         repeat: -1,
+        transformOrigin: '50% 50%',
       });
     };
 
@@ -99,10 +94,11 @@ export function CustomCursor() {
         spinTween.kill();
         spinTween = null;
       }
-      gsap.to(circle, {
-        strokeDasharray: 'none',
-        strokeDashoffset: 0,
-        duration: 0.3,
+      gsap.set(ring, {rotation: 0});
+      // Back to solid line
+      gsap.to(circle.style, {
+        strokeDasharray: `${CIRCUMFERENCE}`,
+        duration: 0.4,
         ease: 'power2.out',
       });
     };
@@ -131,17 +127,16 @@ export function CustomCursor() {
         case 'default':
           stopSpin();
           gsap.to(dot, {opacity: 1, duration: 0.3, ease: 'power2.out'});
-          setRingSize(DEFAULT_SIZE);
-          gsap.to(circle, {
-            stroke: 'rgba(26, 26, 26, 0.35)',
-            strokeWidth: STROKE_WIDTH,
-            fill: 'transparent',
+          gsap.to(ring, {
+            width: DEFAULT_SIZE,
+            height: DEFAULT_SIZE,
+            opacity: 1,
+            mixBlendMode: 'normal',
             duration: 0.3,
             ease: 'power2.out',
           });
-          gsap.to(ring, {
-            mixBlendMode: 'normal',
-            opacity: 1,
+          gsap.to(circle, {
+            attr: {stroke: 'rgba(26, 26, 26, 0.3)', 'stroke-width': 1.5, fill: 'transparent'},
             duration: 0.3,
             ease: 'power2.out',
           });
@@ -150,38 +145,36 @@ export function CustomCursor() {
 
         case 'expand':
           gsap.to(dot, {opacity: 1, duration: 0.3, ease: 'power2.out'});
-          setRingSize(EXPAND_SIZE);
-          gsap.to(circle, {
-            stroke: 'currentColor',
-            strokeWidth: STROKE_WIDTH,
-            fill: 'transparent',
-            duration: 0.3,
-            ease: 'power2.out',
-          });
           gsap.to(ring, {
-            mixBlendMode: 'difference',
+            width: EXPAND_SIZE,
+            height: EXPAND_SIZE,
             opacity: 1,
+            mixBlendMode: 'difference',
             duration: 0.3,
             ease: 'power2.out',
           });
-          startSpin(EXPAND_SIZE);
+          gsap.to(circle, {
+            attr: {stroke: 'currentColor', 'stroke-width': 1.5, fill: 'transparent'},
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+          startSpin();
           gsap.to(label, {opacity: 0, duration: 0.2});
           break;
 
         case 'text':
           stopSpin();
           gsap.to(dot, {opacity: 0, duration: 0.3, ease: 'power2.out'});
-          setRingSize(TEXT_SIZE);
-          gsap.to(circle, {
-            stroke: '#111111',
-            strokeWidth: 0,
-            fill: '#111111',
+          gsap.to(ring, {
+            width: TEXT_SIZE,
+            height: TEXT_SIZE,
+            opacity: 1,
+            mixBlendMode: 'normal',
             duration: 0.3,
             ease: 'power2.out',
           });
-          gsap.to(ring, {
-            mixBlendMode: 'normal',
-            opacity: 1,
+          gsap.to(circle, {
+            attr: {stroke: '#111111', 'stroke-width': 0, fill: '#111111'},
             duration: 0.3,
             ease: 'power2.out',
           });
@@ -192,17 +185,16 @@ export function CustomCursor() {
         case 'drag':
           stopSpin();
           gsap.to(dot, {opacity: 0, duration: 0.3, ease: 'power2.out'});
-          setRingSize(DRAG_SIZE);
-          gsap.to(circle, {
-            stroke: '#111111',
-            strokeWidth: 0,
-            fill: '#111111',
+          gsap.to(ring, {
+            width: DRAG_SIZE,
+            height: DRAG_SIZE,
+            opacity: 1,
+            mixBlendMode: 'normal',
             duration: 0.3,
             ease: 'power2.out',
           });
-          gsap.to(ring, {
-            mixBlendMode: 'normal',
-            opacity: 1,
+          gsap.to(circle, {
+            attr: {stroke: '#111111', 'stroke-width': 0, fill: '#111111'},
             duration: 0.3,
             ease: 'power2.out',
           });
@@ -317,8 +309,7 @@ export function CustomCursor() {
 
   if (!isDesktop) return null;
 
-  const defaultSize = 40;
-  const r = (defaultSize - 1) / 2;
+  const DEFAULT_SIZE = 48;
 
   return (
     <>
@@ -341,9 +332,9 @@ export function CustomCursor() {
       {/* Ring - SVG circle, supports dashed spinning on hover */}
       <svg
         ref={ringRef}
-        width={defaultSize}
-        height={defaultSize}
-        viewBox={`0 0 ${defaultSize} ${defaultSize}`}
+        width={DEFAULT_SIZE}
+        height={DEFAULT_SIZE}
+        viewBox="0 0 100 100"
         style={{
           position: 'fixed',
           top: 0,
@@ -356,12 +347,12 @@ export function CustomCursor() {
       >
         <circle
           ref={circleRef}
-          cx={defaultSize / 2}
-          cy={defaultSize / 2}
-          r={r}
+          cx={50}
+          cy={50}
+          r={48}
           fill="transparent"
-          stroke="rgba(26, 26, 26, 0.35)"
-          strokeWidth={1}
+          stroke="rgba(26, 26, 26, 0.3)"
+          strokeWidth={1.5}
         />
       </svg>
       {/* Floating label for text/drag states */}
