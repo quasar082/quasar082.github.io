@@ -41,11 +41,11 @@ export function CustomCursor() {
 
     // Smooth cursor follow via gsap.quickTo
     // Dot: near-instant for precise tracking
-    const dotXTo = gsap.quickTo(dot, 'x', {duration: 0.08, ease: 'power3.out'});
-    const dotYTo = gsap.quickTo(dot, 'y', {duration: 0.08, ease: 'power3.out'});
-    // Ring: slow-start, fast-middle, slow-end — chases the dot with visible lag
-    const ringXTo = gsap.quickTo(ring, 'x', {duration: 0.45, ease: 'power2.inOut'});
-    const ringYTo = gsap.quickTo(ring, 'y', {duration: 0.45, ease: 'power2.inOut'});
+    const dotXTo = gsap.quickTo(dot, 'x', {duration: 0.05, ease: 'none'});
+    const dotYTo = gsap.quickTo(dot, 'y', {duration: 0.05, ease: 'none'});
+    // Ring: starts immediately but decelerates — creates trailing/chasing feel
+    const ringXTo = gsap.quickTo(ring, 'x', {duration: 0.35, ease: 'power3.out'});
+    const ringYTo = gsap.quickTo(ring, 'y', {duration: 0.35, ease: 'power3.out'});
 
     // setCursorState — manages transitions between cursor states
     const setCursorState = (
