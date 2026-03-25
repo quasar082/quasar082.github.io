@@ -85,7 +85,7 @@ export function Header() {
           <button
             ref={localeBtnRef}
             onClick={toggleLocale}
-            className="flex items-center justify-center w-10 h-10 rounded-full text-[15px] font-medium uppercase tracking-[0.08em] font-body cursor-pointer select-none"
+            className="flex items-center justify-center w-12 h-12 rounded-full text-[15px] font-medium uppercase tracking-[0.08em] font-body cursor-pointer select-none"
             style={{
               backgroundColor: 'var(--warm-white-overlay)',
               color: 'var(--greige-900)',

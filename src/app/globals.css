@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Remove focus outline on buttons/links globally */
+button:focus,
+a:focus,
+[role="menuitem"]:focus {
+  outline: none;
+}
+
 /* === PRIMITIVE TOKENS === */
 :root {
   /* Warm white surface palette */
