@@ -81,7 +81,7 @@ function ExternalButton({
       target={href.startsWith('mailto:') ? undefined : '_blank'}
       rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
       role="menuitem"
-      className="dropdown-item flex items-center justify-between w-full h-16 px-6 rounded-xl font-body text-[18px] font-medium uppercase tracking-[0.06em] cursor-pointer"
+      className="dropdown-item flex items-center justify-between w-full h-16 px-8 rounded-xl font-body text-[18px] font-medium uppercase tracking-[0.06em] cursor-pointer"
       style={{
         backgroundColor: bg,
         color: textColor,

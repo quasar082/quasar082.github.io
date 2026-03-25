@@ -49,7 +49,7 @@ export function NavLink({label, isActive, onClick}: NavLinkProps) {
       className="nav-link flex items-center justify-between w-full font-body text-[18px] font-normal uppercase tracking-[0.04em] cursor-pointer"
       style={{
         height: '52px',
-        padding: '0 16px',
+        padding: '0 24px',
         borderRadius: '12px',
         color: 'var(--greige-900)',
         backgroundColor: isHovered ? 'var(--greige-200)' : 'transparent',
