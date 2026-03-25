@@ -124,6 +124,7 @@ export function Header() {
             ariaLabel={menuOpen ? 'Close menu' : 'Open menu'}
             ariaExpanded={menuOpen}
             ariaControls="header-dropdown"
+            stableLabels={[t('menu'), t('close')]}
           />
         </div>
       </div>
