@@ -1,4 +1,5 @@
 import {HeroSection} from '@/components/hero/HeroSection';
+import {MiniQuoteSection} from '@/components/about/MiniQuoteSection';
 import {AboutSection} from '@/components/about/AboutSection';
 import {AchievementsSection} from '@/components/achievements/AchievementsSection';
 import {projects} from '@/data/projects';
@@ -44,6 +45,9 @@ export default async function HomePage({
       <HeroSection />
 
       <SvgDivider />
+
+      {/* Mini quote interstitial */}
+      <MiniQuoteSection />
 
       {/* About */}
       <div id="about">
