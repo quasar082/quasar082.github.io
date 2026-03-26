@@ -26,7 +26,7 @@ export function AboutSection() {
           yPercent: -5,
           ease: 'none',
           scrollTrigger: {
-            trigger: imageRef.current,
+            trigger: sectionRef.current,
             start: 'top bottom',
             end: 'bottom top',
             scrub: true,
@@ -37,7 +37,7 @@ export function AboutSection() {
     {scope: sectionRef, dependencies: [preloaderDone]},
   );
 
-  // Content block parallax (D-35): subtle vertical shift
+  // Content block parallax: subtle vertical shift
   useGSAP(
     () => {
       if (!preloaderDone) return;
@@ -65,14 +65,47 @@ export function AboutSection() {
   return (
     <section
       ref={sectionRef}
+      className="relative overflow-hidden"
       style={{
         paddingTop: 'var(--spacing-section)',
         paddingBottom: 'var(--spacing-section)',
       }}
     >
-      <div className="mx-auto max-w-7xl px-6 md:px-8 lg:px-12">
+      {/* Background image — absolute, left-shifted, vertically centered, 90vh */}
+      <div
+        ref={imageRef}
+        className="pointer-events-none absolute top-1/2 -translate-y-1/2"
+        style={{left: '-10%', height: '90vh', width: 'auto'}}
+      >
+        <img
+          src="/images/about-deepstriker.png"
+          alt="Deep Striker mech artwork"
+          className="h-full w-auto object-contain"
+          loading="lazy"
+        />
+        {/* White blur edges on all 4 sides */}
+        <div
+          className="absolute inset-x-0 top-0 h-[35%]"
+          style={{background: 'linear-gradient(to bottom, var(--warm-white) 0%, transparent 100%)'}}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-[35%]"
+          style={{background: 'linear-gradient(to top, var(--warm-white) 0%, transparent 100%)'}}
+        />
+        <div
+          className="absolute inset-y-0 left-0 w-[30%]"
+          style={{background: 'linear-gradient(to right, var(--warm-white) 0%, transparent 100%)'}}
+        />
+        <div
+          className="absolute inset-y-0 right-0 w-[30%]"
+          style={{background: 'linear-gradient(to left, var(--warm-white) 0%, transparent 100%)'}}
+        />
+      </div>
+
+      {/* Content — sits above the background image */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8 lg:px-12">
         {/* About Title */}
-        <div className="mb-20 text-center">
+        <div className="mb-32 text-center">
           <TextReveal
             as="h2"
             type="words"
@@ -88,7 +121,7 @@ export function AboutSection() {
           </TextReveal>
         </div>
 
-        {/* Content Block 1: Overview / Myself (D-12 to D-16) */}
+        {/* Content Block 1: Overview / Myself */}
         <div
           ref={contentBlock1Ref}
           className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_2fr]"
@@ -134,39 +167,10 @@ export function AboutSection() {
           </div>
         </div>
 
-        {/* Floating Image (sits behind content, parallax slower) */}
-        <div
-          className="relative overflow-hidden"
-          style={{marginTop: '120px', marginBottom: '120px'}}
-        >
-          <div ref={imageRef} className="relative mx-auto max-w-[85%] md:max-w-[70%] lg:max-w-[60%]">
-            <img
-              src="/images/hero-sazabi.png"
-              alt="Sazabi mech artwork"
-              className="h-auto w-full object-contain"
-              loading="lazy"
-            />
-            {/* White blur edges on all 4 sides */}
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-[30%]"
-              style={{background: 'linear-gradient(to bottom, var(--warm-white) 0%, transparent 100%)'}}
-            />
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%]"
-              style={{background: 'linear-gradient(to top, var(--warm-white) 0%, transparent 100%)'}}
-            />
-            <div
-              className="pointer-events-none absolute inset-y-0 left-0 w-[25%]"
-              style={{background: 'linear-gradient(to right, var(--warm-white) 0%, transparent 100%)'}}
-            />
-            <div
-              className="pointer-events-none absolute inset-y-0 right-0 w-[25%]"
-              style={{background: 'linear-gradient(to left, var(--warm-white) 0%, transparent 100%)'}}
-            />
-          </div>
-        </div>
+        {/* Spacer between content blocks */}
+        <div style={{height: '200px'}} />
 
-        {/* Content Block 2: Boring part / Experience with (D-21 to D-24) */}
+        {/* Content Block 2: Boring part / Experience with */}
         <div
           ref={contentBlock2Ref}
           className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_2fr]"
@@ -213,8 +217,8 @@ export function AboutSection() {
         </div>
       </div>
 
-      {/* Services Block */}
-      <div className="mx-auto max-w-7xl px-6 md:px-8 lg:px-12">
+      {/* Services Block — more separation */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8 lg:px-12" style={{marginTop: '240px'}}>
         <ServicesBlock />
       </div>
     </section>

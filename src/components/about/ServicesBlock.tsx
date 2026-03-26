@@ -44,8 +44,8 @@ export function ServicesBlock() {
 
   return (
     <div ref={containerRef} style={{marginTop: '160px'}}>
-      {/* Services Title (D-25) */}
-      <div className="mb-12 text-center">
+      {/* Services Title */}
+      <div className="mb-20 text-center">
         <TextReveal
           as="h3"
           type="words"
@@ -62,7 +62,7 @@ export function ServicesBlock() {
       </div>
 
       {/* Service Cards -- zigzag layout (D-27) */}
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-16">
         {services.map((service, i) => (
           <div
             key={service.titleKey}
