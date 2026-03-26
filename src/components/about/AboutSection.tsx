@@ -149,7 +149,7 @@ export function AboutSection() {
                 type="lines"
                 stagger={0.05}
                 className="font-body text-text-secondary"
-                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
+                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7', whiteSpace: 'pre-line'}}
               >
                 {t('bio1')}
               </TextReveal>
@@ -158,7 +158,7 @@ export function AboutSection() {
                 type="lines"
                 stagger={0.05}
                 className="font-body text-text-secondary"
-                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
+                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7', whiteSpace: 'pre-line'}}
               >
                 {t('bio2')}
               </TextReveal>
@@ -196,7 +196,7 @@ export function AboutSection() {
                 type="lines"
                 stagger={0.05}
                 className="font-body text-text-secondary"
-                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
+                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7', whiteSpace: 'pre-line'}}
               >
                 {t('tech1')}
               </TextReveal>
@@ -205,7 +205,7 @@ export function AboutSection() {
                 type="lines"
                 stagger={0.05}
                 className="font-body text-text-secondary"
-                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
+                style={{fontSize: 'var(--text-lg)', lineHeight: '1.7', whiteSpace: 'pre-line'}}
               >
                 {t('tech2')}
               </TextReveal>

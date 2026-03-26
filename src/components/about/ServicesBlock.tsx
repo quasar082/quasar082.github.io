@@ -88,7 +88,7 @@ export function ServicesBlock() {
             {/* Service body */}
             <p
               className="mt-6 font-body text-text-secondary"
-              style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
+              style={{fontSize: 'var(--text-lg)', lineHeight: '1.7', whiteSpace: 'pre-line'}}
             >
               {t(service.bodyKey)}
             </p>

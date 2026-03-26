@@ -40,23 +40,23 @@
     "homeLink": "Về Trang Chủ"
   },
   "About": {
-    "quote": "Tu nhung y niem mo ho den dinh hinh ngay mai. Thong qua nhung co may thong minh.",
+    "quote": "Tu nhung y niem mo ho den dinh hinh ngay mai.\nThong qua nhung co may thong minh.",
     "title": "Gox gox! Ai do?",
     "overviewLabel": "tong quan",
     "myselfLabel": "Ban than",
     "bio1": "Minh la Ha Minh Quan, con goi la Quasar.\nSinh nam 2002, song tai Viet Nam. Mot Ky su AI duoc thuc day boi su to mo, xay dung o ranh gioi cua tri thong minh va nhung he thong dinh hinh tuong lai.",
-    "bio2": "Thiet ke va dieu phoi cac he thong AI end-to-end. Tu chatbot ho tro boi LLM va kien truc da tac tu den tu dong hoa quy trinh — dinh hinh cach cac he thong thong minh suy nghi, hanh dong va mo rong. Manh ve he thong backend, thiet ke API, va xay dung frontend lien mach de dua tri thong minh vao cuoc song. Giau kinh nghiem trong truy xuat tai lieu quy mo lon va prompt engineering, bien du lieu tho thanh tri thuc co cau truc va ket qua co y nghia.",
+    "bio2": "Thiet ke va dieu phoi cac he thong AI end-to-end.\nTu chatbot ho tro boi LLM va kien truc da tac tu den tu dong hoa quy trinh — dinh hinh cach cac he thong thong minh suy nghi, hanh dong va mo rong.\nManh ve he thong backend, thiet ke API, va xay dung frontend lien mach de dua tri thong minh vao cuoc song.\nGiau kinh nghiem trong truy xuat tai lieu quy mo lon va prompt engineering, bien du lieu tho thanh tri thuc co cau truc va ket qua co y nghia.",
     "boringLabel": "Phan nham chan",
     "experienceLabel": "Kinh nghiem voi",
     "tech1": "FastAPI, Flask, Next.js, Nest.js",
     "tech2": "Langchain, Langraph, Mem0, TensorFlow, Keras, Scikit-Learn, PyTorch, React, Surrealdb, Qdrant, Weaviate, Neo4j, MySQL, PostgreSQL, MongoDB, Redis",
     "servicesTitle": "Minh co the giup ban voi...",
     "service1Title": "AI Chatbot & Intelligence",
-    "service1Body": "Xay dung he thong AI chatbot end-to-end — tu pipeline RAG va quy trinh agentic den tu dong hoa dua tren logic kinh doanh thuc te. Lam viec voi du lieu phuc tap, phi cau truc, minh tap trung vao viec lam cho mo hinh dang tin cay, co ngu canh va phu hop thong qua prompt engineering chat che.",
+    "service1Body": "Xay dung he thong AI chatbot end-to-end — tu pipeline RAG va quy trinh agentic den tu dong hoa dua tren logic kinh doanh thuc te.\nLam viec voi du lieu phuc tap, phi cau truc, minh tap trung vao viec lam cho mo hinh dang tin cay, co ngu canh va phu hop thong qua prompt engineering chat che.",
     "service2Title": "AI System Architecture & Direction",
-    "service2Body": "Thiet ke kien truc he thong AI dinh nghia cach tri thong minh van hanh o quy mo lon. Tu he thong da tac tu den pipeline LLM, minh cau truc cach cac thanh phan tuong tac, suy luan va phat trien — dong thoi dinh hinh backend, API va lop du lieu thanh he thong san xuat lien ket.",
+    "service2Body": "Thiet ke kien truc he thong AI dinh nghia cach tri thong minh van hanh o quy mo lon.\nTu he thong da tac tu den pipeline LLM, minh cau truc cach cac thanh phan tuong tac, suy luan va phat trien — dong thoi dinh hinh backend, API va lop du lieu thanh he thong san xuat lien ket.",
     "service3Title": "Fullstack AI Development",
-    "service3Body": "Bien y tuong thanh san pham AI hoan chinh. Tu giao dien frontend den dich vu backend, minh xay dung he thong noi tri thong minh duoc tich hop lien mach — mang den ung dung co the su dung, mo rong va san sang cho trien khai thuc te."
+    "service3Body": "Bien y tuong thanh san pham AI hoan chinh.\nTu giao dien frontend den dich vu backend, minh xay dung he thong noi tri thong minh duoc tich hop lien mach — mang den ung dung co the su dung, mo rong va san sang cho trien khai thuc te."
   },
   "Achievements": {
     "heading": "Thanh tuu",

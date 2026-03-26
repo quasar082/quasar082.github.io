@@ -23,6 +23,7 @@ export function MiniQuoteSection() {
           style={{
             fontSize: 'var(--text-lg)',
             lineHeight: '1.7',
+            whiteSpace: 'pre-line',
           }}
         >
           {t('quote')}
