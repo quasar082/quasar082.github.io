@@ -201,7 +201,7 @@ export function AboutSection() {
             {/* Text with subtitle */}
             <div
               ref={bottomTextRef}
-              className="relative z-10 md:col-span-4 flex flex-col justify-start pt-16"
+              className="relative z-10 md:col-span-4 flex flex-col justify-start"
             >
               {/* Subtitle */}
               <div className="flex items-center gap-2 mb-6">
@@ -232,7 +232,7 @@ export function AboutSection() {
             <div
               ref={bottomImageRef}
               className="md:col-span-3 md:-mr-12 lg:-mr-20 overflow-hidden"
-              style={{marginTop: '-18rem'}}
+              style={{marginTop: '-25rem'}}
             >
               <div className="relative">
                 <img
