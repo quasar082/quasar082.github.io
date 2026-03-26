@@ -40,10 +40,23 @@
     "homeLink": "Về Trang Chủ"
   },
   "About": {
-    "heading": "Ve Toi",
-    "story1": "Minh la Quan, mot AI Engineer tin rang cong nghe nen mang cam giac con nguoi. Hanh trinh cua minh bat dau tu su to mo ve cach may tinh hieu ngon ngu, va no dan minh di sau vao the gioi xu ly ngon ngu tu nhien va cac mo hinh ngon ngu lon.",
-    "story2": "Ngay nay, minh thiet ke va xay dung cac he thong thong minh vuot xa tu dong hoa don gian. Tu dieu phoi cac quy trinh lam viec da tac nhan den kien truc cac duong ong RAG, minh tap trung vao viec tao ra AI dang tin cay, giai thich duoc va thuc su huu ich.",
-    "expertise": "Chuyen mon cot loi cua minh bao gom NLP, tinh chinh va dieu phoi LLM, thiet ke he thong da tac nhan, va kien truc RAG. Minh dam me thu hep khoang cach giua nghien cuu tien tien va cac ung dung san sang cho san xuat ma moi nguoi su dung hang ngay."
+    "quote": "Tu nhung y niem mo ho den dinh hinh ngay mai. Thong qua nhung co may thong minh.",
+    "title": "Gox gox! Ai do?",
+    "overviewLabel": "tong quan",
+    "myselfLabel": "Ban than",
+    "bio1": "Minh la Ha Minh Quan, con goi la Quasar.\nSinh nam 2002, song tai Viet Nam. Mot Ky su AI duoc thuc day boi su to mo, xay dung o ranh gioi cua tri thong minh va nhung he thong dinh hinh tuong lai.",
+    "bio2": "Thiet ke va dieu phoi cac he thong AI end-to-end. Tu chatbot ho tro boi LLM va kien truc da tac tu den tu dong hoa quy trinh — dinh hinh cach cac he thong thong minh suy nghi, hanh dong va mo rong. Manh ve he thong backend, thiet ke API, va xay dung frontend lien mach de dua tri thong minh vao cuoc song. Giau kinh nghiem trong truy xuat tai lieu quy mo lon va prompt engineering, bien du lieu tho thanh tri thuc co cau truc va ket qua co y nghia.",
+    "boringLabel": "Phan nham chan",
+    "experienceLabel": "Kinh nghiem voi",
+    "tech1": "FastAPI, Flask, Next.js, Nest.js",
+    "tech2": "Langchain, Langraph, Mem0, TensorFlow, Keras, Scikit-Learn, PyTorch, React, Surrealdb, Qdrant, Weaviate, Neo4j, MySQL, PostgreSQL, MongoDB, Redis",
+    "servicesTitle": "Minh co the giup ban voi...",
+    "service1Title": "AI Chatbot & Intelligence",
+    "service1Body": "Xay dung he thong AI chatbot end-to-end — tu pipeline RAG va quy trinh agentic den tu dong hoa dua tren logic kinh doanh thuc te. Lam viec voi du lieu phuc tap, phi cau truc, minh tap trung vao viec lam cho mo hinh dang tin cay, co ngu canh va phu hop thong qua prompt engineering chat che.",
+    "service2Title": "AI System Architecture & Direction",
+    "service2Body": "Thiet ke kien truc he thong AI dinh nghia cach tri thong minh van hanh o quy mo lon. Tu he thong da tac tu den pipeline LLM, minh cau truc cach cac thanh phan tuong tac, suy luan va phat trien — dong thoi dinh hinh backend, API va lop du lieu thanh he thong san xuat lien ket.",
+    "service3Title": "Fullstack AI Development",
+    "service3Body": "Bien y tuong thanh san pham AI hoan chinh. Tu giao dien frontend den dich vu backend, minh xay dung he thong noi tri thong minh duoc tich hop lien mach — mang den ung dung co the su dung, mo rong va san sang cho trien khai thuc te."
   },
   "Achievements": {
     "heading": "Thanh tuu",

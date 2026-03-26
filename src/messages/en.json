@@ -40,10 +40,23 @@
     "homeLink": "Go Home"
   },
   "About": {
-    "heading": "About Me",
-    "story1": "I'm Quan, an AI Engineer who believes technology should feel human. My journey started with a curiosity about how machines understand language, and it led me deep into the world of natural language processing and large language models.",
-    "story2": "Today, I design and build intelligent systems that go beyond simple automation. From orchestrating multi-agent workflows to architecting retrieval-augmented generation pipelines, I focus on making AI that's reliable, explainable, and genuinely useful.",
-    "expertise": "My core expertise spans NLP, LLM fine-tuning and orchestration, multi-agent system design, and RAG architecture. I'm passionate about bridging the gap between cutting-edge research and production-ready applications that real people use every day."
+    "quote": "From vague notions to shaping tomorrow. Through intelligent machines.",
+    "title": "Knock, knock! Who's there?",
+    "overviewLabel": "overview",
+    "myselfLabel": "Myself",
+    "bio1": "I'm Ha Minh Quan, also known as Quasar.\nBorn in 2002 and based in Vietnam. An AI Engineer driven by curiosity, building at the edge of intelligence and the systems that shape what comes next.",
+    "bio2": "Designing and orchestrating end-to-end AI systems. From LLM-powered chatbots and multi-agent architectures to workflow automation — shaping how intelligent systems think, act, and scale. Strong in backend systems, API design, and crafting seamless frontends that bring intelligence to life. Experienced in large-scale document retrieval and prompt engineering, turning raw data into structured intelligence and meaningful outcomes.",
+    "boringLabel": "Boring part",
+    "experienceLabel": "Experience with",
+    "tech1": "FastAPI, Flask, Next.js, Nest.js",
+    "tech2": "Langchain, Langraph, Mem0, TensorFlow, Keras, Scikit-Learn, PyTorch, React, Surrealdb, Qdrant, Weaviate, Neo4j, MySQL, PostgreSQL, MongoDB, Redis",
+    "servicesTitle": "I can help you with...",
+    "service1Title": "AI Chatbot & Intelligence",
+    "service1Body": "Building end-to-end AI chatbot systems — from RAG pipelines and agentic workflows to automation driven by real-world business logic. Working with complex, unstructured data, I focus on making models reliable, contextual, and aligned through strong prompt engineering.",
+    "service2Title": "AI System Architecture & Direction",
+    "service2Body": "Designing AI system architectures that define how intelligence operates at scale. From multi-agent systems to LLM pipelines, I structure how components interact, reason, and evolve — while shaping backend, APIs, and data layers into cohesive, production-ready systems.",
+    "service3Title": "Fullstack AI Development",
+    "service3Body": "Turning ideas into complete AI products. From frontend interfaces to backend services, I build systems where intelligence is seamlessly integrated — delivering applications that are usable, scalable, and ready for real-world deployment."
   },
   "Achievements": {
     "heading": "Achievements",

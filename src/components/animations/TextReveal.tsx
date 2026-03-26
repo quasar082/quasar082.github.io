@@ -44,6 +44,7 @@ export function TextReveal({
         y: '100%',
         clipPath: 'inset(100% 0 0 0)',
         opacity: 0,
+        filter: 'blur(6px)',
         duration: 0.8,
         stagger,
         ease: 'power3.out',
