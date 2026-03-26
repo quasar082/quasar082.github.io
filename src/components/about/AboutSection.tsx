@@ -17,9 +17,11 @@ function DownloadCvButton() {
     // Slide dot out to right, slide icon in from left
     const dot = el.querySelector('.cv-dot') as HTMLElement;
     const icon = el.querySelector('.cv-icon') as HTMLElement;
+    const textWrap = el.querySelector('.cv-text') as HTMLElement;
     const spans = el.querySelectorAll('.roll-text');
     if (dot) gsap.to(dot, {x: 20, opacity: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
     if (icon) gsap.to(icon, {x: 0, opacity: 1, duration: 0.35, ease: 'power3.inOut', overwrite: true});
+    if (textWrap) gsap.to(textWrap, {x: 8, duration: 0.35, ease: 'power3.inOut', overwrite: true});
     gsap.to(spans, {y: '-100%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
   }, []);
 
@@ -29,9 +31,11 @@ function DownloadCvButton() {
     el.style.backgroundColor = 'transparent';
     const dot = el.querySelector('.cv-dot') as HTMLElement;
     const icon = el.querySelector('.cv-icon') as HTMLElement;
+    const textWrap = el.querySelector('.cv-text') as HTMLElement;
     const spans = el.querySelectorAll('.roll-text');
     if (dot) gsap.to(dot, {x: 0, opacity: 1, duration: 0.35, ease: 'power3.inOut', overwrite: true});
     if (icon) gsap.to(icon, {x: -12, opacity: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
+    if (textWrap) gsap.to(textWrap, {x: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
     gsap.to(spans, {y: '0%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
   }, []);
 
@@ -72,7 +76,7 @@ function DownloadCvButton() {
       </span>
 
       {/* Text with roll effect */}
-      <div style={{overflow: 'hidden', position: 'relative', height: '1em', lineHeight: 1}}>
+      <div className="cv-text" style={{overflow: 'hidden', position: 'relative', height: '1em', lineHeight: 1}}>
         <span className="roll-text" style={{display: 'block'}}>Download CV</span>
         <span className="roll-text" style={{display: 'block'}}>Download CV</span>
       </div>

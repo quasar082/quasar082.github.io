@@ -58,7 +58,7 @@ a:focus,
   --font-mono: var(--font-geist-mono);
 
   /* Typography scale -- fluid display */
-  --text-display-xxl: clamp(6rem, 3rem + 8vw, 15rem);
+  --text-display-xxl: clamp(5rem, 2.5rem + 7vw, 12rem);
   --text-display-xl: clamp(4rem, 2rem + 5.33vw, 10rem);
   --text-display-lg: clamp(3.5rem, 1.75rem + 4.67vw, 8rem);
   --text-display-md: clamp(2.5rem, 1.5rem + 2.67vw, 5rem);
