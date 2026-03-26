@@ -15,15 +15,15 @@ export function AboutSection() {
   const contentBlock2Ref = useRef<HTMLDivElement>(null);
   const preloaderDone = usePreloaderDone();
 
-  // Image parallax (D-19): matches HeroSection pattern
+  // Image parallax: slower scrub for "behind content" feel
   useGSAP(
     () => {
       if (!preloaderDone || !imageRef.current) return;
       gsap.fromTo(
         imageRef.current,
-        {yPercent: 10},
+        {yPercent: 5},
         {
-          yPercent: -10,
+          yPercent: -5,
           ease: 'none',
           scrollTrigger: {
             trigger: imageRef.current,
@@ -134,17 +134,34 @@ export function AboutSection() {
           </div>
         </div>
 
-        {/* Floating Gundam Image (D-17 to D-20) */}
+        {/* Floating Image (sits behind content, parallax slower) */}
         <div
-          className="overflow-hidden"
+          className="relative overflow-hidden"
           style={{marginTop: '80px', marginBottom: '80px'}}
         >
-          <div ref={imageRef} className="max-w-[85%] md:max-w-[70%] lg:max-w-[60%]">
+          <div ref={imageRef} className="relative mx-auto max-w-[85%] md:max-w-[70%] lg:max-w-[60%]">
             <img
-              src="/images/about-gundam.png"
-              alt="Gundam mech artwork"
+              src="/images/hero-sazabi.png"
+              alt="Sazabi mech artwork"
               className="h-auto w-full object-contain"
               loading="lazy"
+            />
+            {/* White blur edges on all 4 sides */}
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-[30%]"
+              style={{background: 'linear-gradient(to bottom, var(--warm-white) 0%, transparent 100%)'}}
+            />
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%]"
+              style={{background: 'linear-gradient(to top, var(--warm-white) 0%, transparent 100%)'}}
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 w-[25%]"
+              style={{background: 'linear-gradient(to right, var(--warm-white) 0%, transparent 100%)'}}
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-[25%]"
+              style={{background: 'linear-gradient(to left, var(--warm-white) 0%, transparent 100%)'}}
             />
           </div>
         </div>
