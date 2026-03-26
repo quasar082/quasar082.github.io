@@ -127,7 +127,7 @@ export function AboutSection() {
           </div>
 
           {/* Top row: Image left (4/7) + Text right (3/7) */}
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-20 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-30 items-start">
             {/* Image — clips to grid cell, overflows only left via negative margin */}
             <div
               ref={topImageRef}
@@ -195,8 +195,8 @@ export function AboutSection() {
 
           {/* Bottom row: Text left (4/7) + Image right (3/7) */}
           <div
-            className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-20 items-start"
-            style={{marginTop: '6rem'}}
+            className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-30 items-start"
+            style={{marginTop: '-12rem'}}
           >
             {/* Text with subtitle */}
             <div
@@ -238,7 +238,7 @@ export function AboutSection() {
                   src="/images/about-deepstriker.png"
                   alt="Deep Striker mech artwork"
                   className="w-full object-cover object-center"
-                  style={{height: '60vh', minHeight: '500px'}}
+                  style={{height: '75vh', minHeight: '500px'}}
                   loading="lazy"
                 />
                 {/* White blur edges */}
