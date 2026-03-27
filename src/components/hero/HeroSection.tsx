@@ -224,18 +224,20 @@ export function HeroSection() {
       <div className="absolute bottom-[30%] left-6 z-10 md:left-12 lg:left-20">
         <h1
           ref={titleRef}
-          className="hero-text-shadow font-display text-2xl text-text-primary md:text-[1.625rem]"
+          className="hero-text-shadow font-display text-text-primary"
+          style={{fontSize: 'var(--text-3xl)'}}
         >
           {t('title')}
         </h1>
         <p
           ref={subtitleRef}
-          className="hero-text-shadow mt-0.5 font-body text-lg text-text-secondary md:text-xl"
+          className="hero-text-shadow mt-0.5 font-body text-text-secondary"
+          style={{fontSize: 'var(--text-2xl)'}}
         >
           {t('subtitle')}
         </p>
         <div ref={buttonsRef} className="mt-5 flex items-center gap-3">
-          <span className="hero-text-shadow font-body text-lg text-text-secondary md:text-xl">{t('me')}</span>
+          <span className="hero-text-shadow font-body text-text-secondary" style={{fontSize: 'var(--text-2xl)'}}>{t('me')}</span>
           <PillButton
             label="Ha Minh Quan"
             variant="outline"
@@ -254,7 +256,7 @@ export function HeroSection() {
         ref={scrollIndicatorRef}
         className="absolute bottom-8 left-6 z-10 md:left-12 lg:left-20"
       >
-        <span className="font-body text-xs uppercase tracking-[0.2em] text-text-muted">
+        <span className="font-body uppercase tracking-[0.2em] text-text-muted" style={{fontSize: 'var(--text-2xl)'}}>
           {t('scroll')}
         </span>
       </div>

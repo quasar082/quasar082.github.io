@@ -1,106 +1,11 @@
 'use client';
 
-import {useRef, useCallback} from 'react';
+import {useRef} from 'react';
 import {useTranslations} from 'next-intl';
 import {gsap, useGSAP} from '@/lib/gsap';
 import {usePreloaderDone} from '@/hooks/usePreloaderDone';
 import {TextReveal} from '@/components/animations/TextReveal';
 import {ServicesBlock} from '@/components/about/ServicesBlock';
-
-function DownloadCvButton() {
-  const btnRef = useRef<HTMLAnchorElement>(null);
-  // Icon and dot share same width (16px) so text shifts exactly that amount
-  const SHIFT = 16 + 10; // icon/dot width + gap
-
-  const handleMouseEnter = useCallback(() => {
-    const el = btnRef.current;
-    if (!el) return;
-    el.style.backgroundColor = 'var(--greige-100)';
-    const dot = el.querySelector('.cv-dot') as HTMLElement;
-    const icon = el.querySelector('.cv-icon') as HTMLElement;
-    const inner = el.querySelector('.cv-inner') as HTMLElement;
-    const spans = el.querySelectorAll('.roll-text');
-    if (dot) gsap.to(dot, {width: 0, opacity: 0, marginLeft: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    if (icon) gsap.to(icon, {width: 16, opacity: 1, marginRight: 10, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    if (inner) gsap.to(inner, {x: SHIFT / 2, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    gsap.to(spans, {y: '-100%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    const el = btnRef.current;
-    if (!el) return;
-    el.style.backgroundColor = 'transparent';
-    const dot = el.querySelector('.cv-dot') as HTMLElement;
-    const icon = el.querySelector('.cv-icon') as HTMLElement;
-    const inner = el.querySelector('.cv-inner') as HTMLElement;
-    const spans = el.querySelectorAll('.roll-text');
-    if (dot) gsap.to(dot, {width: 5, opacity: 1, marginLeft: 10, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    if (icon) gsap.to(icon, {width: 0, opacity: 0, marginRight: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    if (inner) gsap.to(inner, {x: 0, duration: 0.35, ease: 'power3.inOut', overwrite: true});
-    gsap.to(spans, {y: '0%', duration: 0.35, ease: 'power3.inOut', overwrite: true});
-  }, []);
-
-  return (
-    <a
-      ref={btnRef}
-      href="/cv.pdf"
-      download
-      className="inline-flex items-center justify-center cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em]"
-      style={{
-        backgroundColor: 'transparent',
-        color: 'var(--greige-900)',
-        border: '1px solid var(--greige-900)',
-        borderRadius: '9999px',
-        height: '48px',
-        paddingLeft: '30px',
-        paddingRight: '30px',
-        transition: 'background-color 300ms ease',
-        overflow: 'hidden',
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className="cv-inner" style={{display: 'flex', alignItems: 'center'}}>
-        {/* Download icon — collapsed by default, expands on hover */}
-        <span
-          className="cv-icon"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            width: 0,
-            opacity: 0,
-            marginRight: 0,
-            overflow: 'hidden',
-            flexShrink: 0,
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 2v8m0 0L5 7m3 3l3-3M3 13h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </span>
-
-        {/* Text with roll effect */}
-        <div style={{overflow: 'hidden', position: 'relative', height: '1em', lineHeight: 1, whiteSpace: 'nowrap'}}>
-          <span className="roll-text" style={{display: 'block'}}>Download CV</span>
-          <span className="roll-text" style={{display: 'block'}}>Download CV</span>
-        </div>
-
-        {/* Single dot — collapses on hover */}
-        <span
-          className="cv-dot"
-          style={{
-            width: '5px',
-            height: '5px',
-            borderRadius: '50%',
-            backgroundColor: 'var(--greige-900)',
-            flexShrink: 0,
-            marginLeft: '10px',
-          }}
-        />
-      </div>
-    </a>
-  );
-}
 
 export function AboutSection() {
   const t = useTranslations('About');
@@ -183,9 +88,9 @@ export function AboutSection() {
       if (!preloaderDone || !bottomImageRef.current) return;
       gsap.fromTo(
         bottomImageRef.current,
-        {yPercent: 18},
+        {yPercent: 30},
         {
-          yPercent: -18,
+          yPercent: -30,
           ease: 'none',
           scrollTrigger: {
             trigger: bottomImageRef.current,
@@ -221,14 +126,12 @@ export function AboutSection() {
             </TextReveal>
           </div>
 
-          {/* Single grid layout — image 2 overlaps into row 1 via grid placement */}
-          <div
-            className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-30"
-          >
-            {/* Row 1, Col 1-4: Image left */}
+          {/* Top row: Image left (4/7) + Text right (3/7) */}
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-20 items-start">
+            {/* Image — clips to grid cell, overflows only left via negative margin */}
             <div
               ref={topImageRef}
-              className="relative order-2 md:order-1 md:col-span-4 md:-ml-12 lg:-ml-20 overflow-hidden md:[grid-row:1] md:[grid-column:1/5]"
+              className="relative order-2 md:order-1 md:col-span-4 md:-ml-12 lg:-ml-20 overflow-hidden"
             >
               <div className="relative">
                 <img
@@ -258,10 +161,10 @@ export function AboutSection() {
               </div>
             </div>
 
-            {/* Row 1, Col 5-7: Text right */}
+            {/* Text — aligned to top of image row */}
             <div
               ref={topTextRef}
-              className="relative z-10 order-1 md:order-2 md:col-span-3 flex flex-col justify-start md:[grid-row:1] md:[grid-column:5/8]"
+              className="relative z-10 order-1 md:order-2 md:col-span-3 flex flex-col justify-start"
             >
               {/* Subtitle with 4-pointed star icon */}
               <div className="flex items-center gap-2 mb-6">
@@ -287,17 +190,18 @@ export function AboutSection() {
               >
                 {t('introBio')}
               </TextReveal>
-
-              {/* Download CV button */}
-              <div className="mt-10">
-                <DownloadCvButton />
-              </div>
             </div>
+          </div>
 
-            {/* Row 2, Col 1-4: Text left */}
+          {/* Bottom row: Text left (4/7) + Image right (3/7) */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-20 items-start"
+            style={{marginTop: '6rem'}}
+          >
+            {/* Text with subtitle */}
             <div
               ref={bottomTextRef}
-              className="relative z-10 order-3 md:col-span-4 flex flex-col justify-start md:[grid-row:2] md:[grid-column:1/5] md:mt-8"
+              className="relative z-10 md:col-span-4 flex flex-col justify-start"
             >
               {/* Subtitle */}
               <div className="flex items-center gap-2 mb-6">
@@ -324,17 +228,17 @@ export function AboutSection() {
               </TextReveal>
             </div>
 
-            {/* Row 1-2, Col 5-7: Image right — spans both rows for natural overlap */}
+            {/* Image right — clips to grid cell, overflows only right via negative margin */}
             <div
               ref={bottomImageRef}
-              className="order-4 md:col-span-3 md:-mr-12 lg:-mr-20 overflow-hidden md:[grid-row:1/3] md:[grid-column:5/8] md:self-end"
+              className="md:col-span-3 md:-mr-12 lg:-mr-20 overflow-hidden"
             >
               <div className="relative">
                 <img
                   src="/images/about-deepstriker.png"
                   alt="Deep Striker mech artwork"
                   className="w-full object-cover object-center"
-                  style={{height: '75vh', minHeight: '500px'}}
+                  style={{height: '60vh', minHeight: '500px'}}
                   loading="lazy"
                 />
                 {/* White blur edges */}
