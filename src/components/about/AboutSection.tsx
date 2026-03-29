@@ -318,11 +318,11 @@ export function AboutSection() {
               </div>
             </div>
 
-            {/* Row 2, Col 1-3: Text left */}
+            {/* Row 2, Col 1-6: Text left */}
             <div
               ref={bottomTextRef}
               className="relative z-10 order-3 flex flex-col justify-start"
-              style={{gridRow: '2', gridColumn: '1 / 4', marginTop: '2rem'}}
+              style={{gridRow: '2', gridColumn: '1 / 7', marginTop: '2rem'}}
             >
               {/* Subtitle */}
               <div className="flex items-center gap-2 mb-6">
@@ -349,11 +349,11 @@ export function AboutSection() {
               </TextReveal>
             </div>
 
-            {/* Row 1-2, Col 5-10: Image right (col 4 is empty spacer) — spans both rows */}
+            {/* Row 1-2, Col 8-10: Image right (col 7 is empty spacer) — spans both rows */}
             <div
               ref={bottomImageRef}
               className="order-4 overflow-hidden"
-              style={{gridRow: '1 / 3', gridColumn: '5 / 11', alignSelf: 'end'}}
+              style={{gridRow: '1 / 3', gridColumn: '8 / 11', alignSelf: 'end'}}
             >
               <div className="relative">
                 <img
