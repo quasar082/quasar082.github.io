@@ -70,17 +70,10 @@ export function BlogCard({post, locale, index = 0}: BlogCardProps) {
         {metaLine}
       </p>
 
-      {/* Divider + Image (only if coverImage exists) */}
+      {/* Image (only if coverImage exists) */}
       {post.coverImage && (
         <>
-          <div
-            className="mt-4 mb-4"
-            style={{
-              height: '1px',
-              backgroundColor: 'rgba(136, 133, 128, 0.15)',
-            }}
-          />
-          <div className="overflow-hidden rounded-lg">
+          <div className="mt-4 overflow-hidden rounded-lg">
             <img
               src={post.coverImage}
               alt={post.title}
