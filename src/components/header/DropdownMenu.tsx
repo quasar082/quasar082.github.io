@@ -4,6 +4,7 @@ import {useRef, useEffect, useCallback, useState, type RefObject} from 'react';
 import {gsap, useGSAP} from '@/lib/gsap';
 import {useLenis} from 'lenis/react';
 import {useTranslations, useLocale} from 'next-intl';
+import {usePathname} from '@/i18n/navigation';
 import {NavLink} from './NavLink';
 import {useActiveSection, NAV_SECTIONS} from './useActiveSection';
 
@@ -121,6 +122,7 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
   const activeSection = useActiveSection();
   const t = useTranslations('Header');
   const locale = useLocale();
+  const pathname = usePathname();
   const lenis = useLenis();
   const reducedMotion = useRef(false);
   const [dropdownWidth, setDropdownWidth] = useState<number>(0);
@@ -251,6 +253,18 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
   const handleNavClick = useCallback(
     (scrollTarget: string | number) => {
       onClose();
+      const isHomepage = pathname === '/';
+      if (!isHomepage) {
+        // Navigate to homepage with hash via window.location
+        // (Static export — use window.location directly per Phase 25 decision)
+        if (typeof scrollTarget === 'number') {
+          window.location.href = `/${locale}/`;
+        } else {
+          window.location.href = `/${locale}/${scrollTarget}`;
+        }
+        return;
+      }
+      // On homepage: use lenis smooth scroll
       setTimeout(() => {
         const easing = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
         if (typeof scrollTarget === 'number') {
@@ -267,7 +281,7 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
         }
       }, 100);
     },
-    [onClose, lenis],
+    [onClose, lenis, pathname, locale],
   );
 
   const widthStyle = dropdownWidth > 0 ? {width: `${dropdownWidth}px`} : {width: '280px'};
