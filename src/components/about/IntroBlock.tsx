@@ -58,60 +58,10 @@ export function IntroBlock() {
 
   return (
     <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-0">
-      {/* Left column: text content — 6 cols */}
-      <div className="md:[grid-column:1/7] flex flex-col justify-center">
-        {/* Subtitle */}
-        <div className="flex items-center gap-2 mb-12">
-          <span className="text-text-muted" style={{fontSize: 'var(--text-base)'}}>✦</span>
-          <span
-            className="font-body text-text-muted uppercase tracking-wider"
-            style={{fontSize: 'var(--text-sm)'}}
-          >
-            {t('introSubtitle')}
-          </span>
-        </div>
-
-        {/* Big heading — uppercase, reduced size */}
-        <TextReveal
-          as="h2"
-          type="words"
-          stagger={0.03}
-          className="font-display text-text-primary uppercase"
-          style={{
-            fontSize: 'var(--text-display-md)',
-            fontWeight: 'var(--font-weight-display)',
-            lineHeight: '1.1',
-          }}
-        >
-          {t('introHeading')}
-        </TextReveal>
-
-        {/* Tagline — right aligned */}
-        <div className="flex justify-end mt-12">
-          <TextReveal
-            as="p"
-            type="words"
-            stagger={0.04}
-            className="font-body text-text-secondary text-right"
-            style={{
-              fontSize: 'var(--text-lg)',
-              lineHeight: '1.5',
-            }}
-          >
-            {t('introTagline')}
-          </TextReveal>
-        </div>
-
-        {/* Download CV button — right aligned */}
-        <div ref={cvBtnWrapRef} className="flex justify-end mt-8">
-          <DownloadCvButton />
-        </div>
-      </div>
-
-      {/* Right column: image — 3 cols (col 8-10, col 7 is spacer) */}
+      {/* Left column: image — 3 cols (1-3) */}
       <div
         ref={imageRef}
-        className="relative overflow-hidden md:[grid-column:8/11] self-center"
+        className="relative overflow-hidden order-2 md:order-1 md:[grid-column:1/4] self-center"
       >
         <div className="relative">
           <img
@@ -138,6 +88,56 @@ export function IntroBlock() {
             className="absolute inset-y-0 right-0 w-[20%]"
             style={{background: 'linear-gradient(to left, var(--warm-white) 0%, transparent 100%)'}}
           />
+        </div>
+      </div>
+
+      {/* Right column: text content — 6 cols (5-10, col 4 is spacer) */}
+      <div className="order-1 md:order-2 md:[grid-column:5/11] flex flex-col justify-center">
+        {/* Subtitle */}
+        <div className="flex items-center gap-2 mb-12">
+          <span className="text-text-muted" style={{fontSize: 'var(--text-base)'}}>✦</span>
+          <span
+            className="font-body text-text-muted uppercase tracking-wider"
+            style={{fontSize: 'var(--text-sm)'}}
+          >
+            {t('introSubtitle')}
+          </span>
+        </div>
+
+        {/* Big heading — uppercase */}
+        <TextReveal
+          as="h2"
+          type="words"
+          stagger={0.03}
+          className="font-display text-text-primary uppercase"
+          style={{
+            fontSize: 'var(--text-display-md)',
+            fontWeight: 'var(--font-weight-display)',
+            lineHeight: '1.1',
+          }}
+        >
+          {t('introHeading')}
+        </TextReveal>
+
+        {/* Tagline — right aligned */}
+        <div className="flex justify-end mt-12">
+          <TextReveal
+            as="p"
+            type="words"
+            stagger={0.04}
+            className="font-body text-text-secondary uppercase tracking-wider text-right"
+            style={{
+              fontSize: 'var(--text-lg)',
+              lineHeight: '1.5',
+            }}
+          >
+            {t('introTagline')}
+          </TextReveal>
+        </div>
+
+        {/* Download CV button — right aligned */}
+        <div ref={cvBtnWrapRef} className="flex justify-end mt-8">
+          <DownloadCvButton />
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@
     "switchLang": "Switch to English"
   },
   "Hero": {
-    "title": "Ky su AI",
+    "title": "Kỹ sư AI",
     "subtitle": "Code. Create. Make WALL-E love again",
     "me": "Explore",
     "scroll": "Scroll",
@@ -40,60 +40,60 @@
     "homeLink": "Về Trang Chủ"
   },
   "About": {
-    "quote": "Tu nhung y niem mo ho den dinh hinh ngay mai.\nThong qua nhung co may thong minh.",
+    "quote": "Artificial Minds,\nNatural Words.",
     "introSubtitle": "Tôi là ai",
     "introHeading": "HÀ MINH QUÂN A.K.A QUASAR — KỸ SƯ AI TẠI VIỆT NAM, XÂY DỰNG HỆ THỐNG TRÍ TUỆ NHÂN TẠO VÀ PIPELINE END-TO-END.",
-    "introTagline": "Artificial Minds,\nNatural Words",
+    "introTagline": "Xây dựng hệ thống\ntrí tuệ nhân tạo\nvà pipeline end-to-end.",
     "strengthSubtitle": "Thế mạnh",
     "strengthBody": "Mình tập trung vào thiết kế kiến trúc, tối ưu vận hành và mở rộng hệ thống thông minh — từ xử lý dữ liệu phi cấu trúc quy mô lớn, hệ thống đa tác tử, chatbot đến triển khai thực tế — mang đến giải pháp AI hiệu quả, linh hoạt và bền vững.",
-    "servicesTitle": "Minh co the giup ban voi...",
+    "servicesTitle": "Mình có thể giúp bạn với...",
     "service1Title": "AI Chatbot & Intelligence",
-    "service1Body": "Xay dung he thong AI chatbot end-to-end — tu pipeline RAG va quy trinh agentic den tu dong hoa dua tren logic kinh doanh thuc te.\nLam viec voi du lieu phuc tap, phi cau truc, minh tap trung vao viec lam cho mo hinh dang tin cay, co ngu canh va phu hop thong qua prompt engineering chat che.",
+    "service1Body": "Xây dựng hệ thống AI chatbot end-to-end — từ pipeline RAG và quy trình agentic đến tự động hóa dựa trên logic kinh doanh thực tế.\nLàm việc với dữ liệu phức tạp, phi cấu trúc, mình tập trung vào việc làm cho mô hình đáng tin cậy, có ngữ cảnh và phù hợp thông qua prompt engineering chặt chẽ.",
     "service2Title": "AI System Architecture & Direction",
-    "service2Body": "Thiet ke kien truc he thong AI dinh nghia cach tri thong minh van hanh o quy mo lon.\nTu he thong da tac tu den pipeline LLM, minh cau truc cach cac thanh phan tuong tac, suy luan va phat trien — dong thoi dinh hinh backend, API va lop du lieu thanh he thong san xuat lien ket.",
+    "service2Body": "Thiết kế kiến trúc hệ thống AI định nghĩa cách trí thông minh vận hành ở quy mô lớn.\nTừ hệ thống đa tác tử đến pipeline LLM, mình cấu trúc cách các thành phần tương tác, suy luận và phát triển — đồng thời định hình backend, API và lớp dữ liệu thành hệ thống sản xuất liên kết.",
     "service3Title": "Fullstack AI Development",
-    "service3Body": "Bien y tuong thanh san pham AI hoan chinh.\nTu giao dien frontend den dich vu backend, minh xay dung he thong noi tri thong minh duoc tich hop lien mach — mang den ung dung co the su dung, mo rong va san sang cho trien khai thuc te."
+    "service3Body": "Biến ý tưởng thành sản phẩm AI hoàn chỉnh.\nTừ giao diện frontend đến dịch vụ backend, mình xây dựng hệ thống nơi trí thông minh được tích hợp liền mạch — mang đến ứng dụng có thể sử dụng, mở rộng và sẵn sàng cho triển khai thực tế."
   },
   "Achievements": {
-    "heading": "Thanh tuu",
-    "award": "Giai thuong",
-    "education": "Hoc van",
-    "experience": "Kinh nghiem"
+    "heading": "Thành tựu",
+    "award": "Giải thưởng",
+    "education": "Học vấn",
+    "experience": "Kinh nghiệm"
   },
   "Footer": {
-    "cta": "Hay cung xay dung dieu gi do",
+    "cta": "Hãy cùng xây dựng điều gì đó",
     "copyright": "Hà Minh Quân. Bảo lưu mọi quyền."
   },
   "Projects": {
-    "heading": "Du An",
-    "description": "Cac du an AI va ky thuat phan mem cua Ha Minh Quan",
-    "viewProject": "Xem Du An",
-    "challenge": "Thach Thuc",
-    "solution": "Giai Phap",
+    "heading": "Dự Án",
+    "description": "Các dự án AI và kỹ thuật phần mềm của Hà Minh Quân",
+    "viewProject": "Xem Dự Án",
+    "challenge": "Thách Thức",
+    "solution": "Giải Pháp",
     "liveDemo": "Xem Demo",
-    "sourceCode": "Ma Nguon",
-    "backToProjects": "Quay Lai Du An",
-    "viewMore": "Xem Them"
+    "sourceCode": "Mã Nguồn",
+    "backToProjects": "Quay Lại Dự Án",
+    "viewMore": "Xem Thêm"
   },
   "Blog": {
     "heading": "Blog",
-    "description": "Bai viet ve ky thuat AI, NLP, he thong LLM, va phat trien phan mem",
-    "searchPlaceholder": "Tim kiem bai viet...",
-    "allTags": "Tat ca",
-    "noResults": "Khong tim thay bai viet phu hop.",
-    "readMore": "Doc them",
-    "toc": "Muc luc",
-    "series": "Chuoi bai viet",
-    "previousPart": "Truoc",
-    "nextPart": "Tiep",
-    "backToBlog": "Quay lai Blog"
+    "description": "Bài viết về kỹ thuật AI, NLP, hệ thống LLM, và phát triển phần mềm",
+    "searchPlaceholder": "Tìm kiếm bài viết...",
+    "allTags": "Tất cả",
+    "noResults": "Không tìm thấy bài viết phù hợp.",
+    "readMore": "Đọc thêm",
+    "toc": "Mục lục",
+    "series": "Chuỗi bài viết",
+    "previousPart": "Trước",
+    "nextPart": "Tiếp",
+    "backToBlog": "Quay lại Blog"
   },
   "Chat": {
     "placeholder": "Nhập tin nhắn...",
     "send": "Gửi",
     "clear": "Xóa hội thoại",
     "close": "Đóng",
-    "greeting": "Xin chao! Minh la tro ly cua Quan. Hoi minh bat cu dieu gi ve cong viec cua Quan nhe!",
+    "greeting": "Xin chào! Mình là trợ lý của Quân. Hỏi mình bất cứ điều gì về công việc của Quân nhé!",
     "promptChip1": "Quân làm gì?",
     "promptChip2": "Kể về các dự án",
     "promptChip3": "Bạn dùng công nghệ gì?",
