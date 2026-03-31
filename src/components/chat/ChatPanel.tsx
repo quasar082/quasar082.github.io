@@ -53,7 +53,7 @@ export function ChatPanel({onClose}: {onClose: () => void}) {
     <div
       ref={panelRef}
       style={{opacity: 0, transform: 'translateY(20px)'}}
-      className="w-full md:w-[500px] mb-2 flex flex-col overflow-hidden rounded-2xl bg-white/60 backdrop-blur-md border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.05)]"
+      className="w-full md:w-[500px] mb-2 flex flex-col overflow-hidden rounded-2xl bg-white/95 border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.05)]"
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/20 px-4 py-3">

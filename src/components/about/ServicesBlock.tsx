@@ -28,7 +28,6 @@ export function ServicesBlock() {
       gsap.from(cards, {
         opacity: 0,
         y: 40,
-        filter: 'blur(4px)',
         duration: 0.8,
         stagger: 0.15,
         ease: 'power3.out',

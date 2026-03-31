@@ -43,7 +43,6 @@ export function IntroBlock() {
       gsap.from(cvBtnWrapRef.current, {
         y: 30,
         opacity: 0,
-        filter: 'blur(4px)',
         duration: 0.8,
         ease: 'power3.out',
         scrollTrigger: {
