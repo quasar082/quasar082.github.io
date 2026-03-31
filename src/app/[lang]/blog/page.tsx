@@ -1,5 +1,7 @@
-import {getAllPosts} from '@/lib/blog';
-import {PostList} from '@/components/blog/PostList';
+import {getAllPosts, getFeaturedPosts} from '@/lib/blog';
+import {FeaturedSlider} from '@/components/blog/FeaturedSlider';
+import {BlogGrid} from '@/components/blog/BlogGrid';
+import {TextReveal} from '@/components/animations/TextReveal';
 import {setRequestLocale, getTranslations} from 'next-intl/server';
 import {buildAlternates} from '@/lib/metadata';
 import type {Metadata} from 'next';
@@ -29,12 +31,36 @@ export default async function BlogPage({
 }) {
   const {lang} = await params;
   setRequestLocale(lang);
-  const posts = getAllPosts(lang);
-  const allTags = [...new Set(posts.flatMap((p) => p.tags))].sort();
+
+  const allPosts = getAllPosts(lang);
+  const featuredPosts = getFeaturedPosts(lang);
 
   return (
     <div className="min-h-dvh">
-      <PostList posts={posts} allTags={allTags} locale={lang} />
+      <div className="mx-auto max-w-[1400px] px-6 pt-32 pb-20 md:px-8">
+        {/* Featured section */}
+        <TextReveal
+          as="h1"
+          type="words"
+          className="font-display"
+          style={{
+            fontSize: 'var(--text-display-lg)',
+            fontWeight: 'var(--font-weight-display)',
+            color: 'var(--greige-900)',
+          }}
+        >
+          {(await getTranslations({locale: lang, namespace: 'Blog'}))('ourLatest')}
+        </TextReveal>
+
+        <div className="mt-10">
+          <FeaturedSlider posts={featuredPosts} locale={lang} />
+        </div>
+
+        {/* All posts grid section — 48px gap from slider */}
+        <div className="mt-12">
+          <BlogGrid posts={allPosts} locale={lang} />
+        </div>
+      </div>
     </div>
   );
 }
