@@ -44,6 +44,8 @@
     "introSubtitle": "Who I am",
     "introHeading": "HA MINH QUAN A.K.A QUASAR — AN AI ENGINEER BASED IN VIETNAM, CRAFTING END-TO-END ARTIFICIAL INTELLIGENCE SYSTEMS AND PIPELINES.",
     "introTagline": "Artificial Minds,\nNatural Words",
+    "strengthSubtitle": "My Strength",
+    "strengthBody": "I focus on architecture design, operational optimization, and scaling intelligent systems — from large-scale unstructured data processing, multi-agent systems, and chatbots to real-world deployment — delivering AI solutions that are efficient, adaptable, and built for long-term growth.",
     "servicesTitle": "I can help you with...",
     "service1Title": "AI Chatbot & Intelligence",
     "service1Body": "Building end-to-end AI chatbot systems — from RAG pipelines and agentic workflows to automation driven by real-world business logic.\nWorking with complex, unstructured data, I focus on making models reliable, contextual, and aligned through strong prompt engineering.",
