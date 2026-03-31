@@ -131,6 +131,14 @@ export function BlogGrid({posts, locale}: BlogGridProps) {
                   className="blog-grid-item break-inside-avoid"
                   style={{marginBottom: '48px'}}
                 >
+                  {/* Divider line above each card */}
+                  <div
+                    className="mb-5"
+                    style={{
+                      height: '1px',
+                      backgroundColor: 'rgba(136, 133, 128, 0.15)',
+                    }}
+                  />
                   <BlogCard post={post} locale={locale} index={i} />
                 </div>
               ))}

@@ -25,10 +25,10 @@ export function FeaturedSlider({posts, locale}: FeaturedSliderProps) {
     if (!containerRef.current) return 400;
     const containerWidth = containerRef.current.offsetWidth;
     const gap = 24;
-    // Mobile: full width - 16px peek; Tablet: 2 cards; Desktop: 3 cards
+    // Mobile: full width - 16px peek; Tablet: 1.5 cards; Desktop: 2 cards + peek of 3rd
     if (containerWidth < 768) return containerWidth - 16;
-    if (containerWidth < 1024) return (containerWidth - gap) / 2;
-    return (containerWidth - gap * 2) / 3;
+    if (containerWidth < 1024) return (containerWidth - gap) * 0.65;
+    return (containerWidth - gap) * 0.4;
   }, []);
 
   // Initialize Draggable
@@ -168,7 +168,7 @@ export function FeaturedSlider({posts, locale}: FeaturedSliderProps) {
               key={post.slug}
               className="slider-card flex-shrink-0"
               style={{
-                width: `calc((100% - 48px) / 3)`,
+                width: `calc((100% - 24px) * 0.4)`,
               }}
             >
               <BlogCard post={post} locale={locale} index={i} />
