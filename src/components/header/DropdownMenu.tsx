@@ -125,12 +125,17 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
     reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
 
-  // Measure actions container width
+  // Measure actions container width & right offset
+  const [dropdownRight, setDropdownRight] = useState<number>(0);
+
   useEffect(() => {
     if (!actionsRef.current) return;
     const measure = () => {
-      const w = actionsRef.current?.offsetWidth ?? 0;
-      setDropdownWidth(w);
+      const rect = actionsRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setDropdownWidth(rect.width);
+      // Calculate right offset: distance from right edge of actions to right edge of viewport
+      setDropdownRight(window.innerWidth - rect.right);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -274,10 +279,11 @@ export function DropdownMenu({isOpen, onClose, actionsRef}: DropdownMenuProps) {
         id="header-dropdown"
         role="menu"
         aria-hidden={!isOpen}
-        className="absolute right-4 sm:right-6 lg:right-8 z-[61] flex flex-col gap-3"
+        className="absolute z-[61] flex flex-col gap-3"
         style={{
           top: '100%',
           marginTop: '8px',
+          right: dropdownRight > 0 ? `${dropdownRight}px` : undefined,
           pointerEvents: isOpen ? 'auto' : 'none',
           ...widthStyle,
           maxWidth: 'calc(100vw - 32px)',
