@@ -18,7 +18,7 @@ export function ServicesBlock() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const preloaderDone = usePreloaderDone();
 
-  // Stagger entrance for service columns (Claude's discretion per UI-SPEC)
+  // Stagger entrance for service columns
   useGSAP(
     () => {
       if (!preloaderDone) return;
@@ -44,7 +44,7 @@ export function ServicesBlock() {
 
   return (
     <div ref={containerRef}>
-      {/* Services Title */}
+      {/* Services Title — centered, large, line break before "help you with" */}
       <div className="mb-20 text-center">
         <TextReveal
           as="h3"
@@ -52,43 +52,40 @@ export function ServicesBlock() {
           stagger={0.04}
           className="font-display text-text-primary"
           style={{
-            fontSize: 'var(--text-display-md)',
+            fontSize: 'var(--text-display-xl)',
             fontWeight: 'var(--font-weight-display)',
-            lineHeight: '1.2',
+            lineHeight: '1.1',
           }}
         >
-          {t('servicesTitle')}
+          {'I can\nhelp you with...'}
         </TextReveal>
       </div>
 
-      {/* Service Cards -- zigzag layout (D-27) */}
-      <div className="flex flex-col gap-16">
+      {/* Service Cards — 3 columns on md+, 1 column on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
         {services.map((service, i) => (
           <div
             key={service.titleKey}
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
-            className="w-[90%]"
-            style={{
-              marginLeft: i % 2 === 1 ? 'auto' : '0',
-            }}
+            className={i === 1 ? 'text-right' : ''}
           >
             {/* Service title */}
             <h4
               className="font-display text-text-primary"
               style={{
-                fontSize: 'var(--text-3xl)',
+                fontSize: 'var(--text-xl)',
                 fontWeight: 'var(--font-weight-display)',
                 lineHeight: '1.3',
               }}
             >
               {t(service.titleKey)}
             </h4>
-            {/* Service body */}
+            {/* Service body — same style as MiniQuote */}
             <p
-              className="mt-6 font-body text-text-secondary"
-              style={{fontSize: 'var(--text-2xl)', lineHeight: '1.7'}}
+              className="mt-4 font-body text-text-secondary"
+              style={{fontSize: 'var(--text-lg)', lineHeight: '1.7'}}
               dangerouslySetInnerHTML={{__html: t(service.bodyKey).replace(/\n/g, '<br />')}}
             />
           </div>
