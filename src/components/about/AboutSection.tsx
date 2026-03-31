@@ -11,7 +11,7 @@ export function AboutSection() {
   return (
     <section ref={sectionRef} className="overflow-hidden">
       {/* ===== PART 1: Introduction ===== */}
-      <div style={{paddingTop: '14rem'}}>
+      <div>
         <div className="mx-auto max-w-screen-2xl px-6 md:px-8 lg:px-12">
           <IntroBlock />
           <StrengthBlock />
