@@ -68,7 +68,7 @@ export function IntroBlock() {
             src="/images/about-deepstriker.png"
             alt="Deep Striker mech artwork"
             className="w-full object-cover object-center"
-            style={{height: '70vh', minHeight: '500px'}}
+            style={{height: '90vh', minHeight: '600px'}}
             loading="lazy"
           />
           {/* White blur edges */}
