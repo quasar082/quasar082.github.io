@@ -94,7 +94,7 @@ export function IntroBlock() {
       {/* Right column: text content — 4 cols (7-10, col 6 is spacer) */}
       <div className="order-1 md:order-2 md:[grid-column:7/11] flex flex-col justify-center">
         {/* Subtitle */}
-        <div className="flex items-center gap-2 mb-12">
+        <div className="flex items-center gap-2 mb-8">
           <span className="text-text-muted" style={{fontSize: 'var(--text-base)'}}>✦</span>
           <span
             className="font-body text-text-muted uppercase tracking-wider"
