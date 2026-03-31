@@ -72,7 +72,6 @@ export function FeaturedSlider({posts, locale}: FeaturedSliderProps) {
     gsap.from(cards, {
       y: 40,
       opacity: 0,
-      filter: 'blur(4px)',
       duration: 0.8,
       stagger: 0.1,
       ease: 'power3.out',

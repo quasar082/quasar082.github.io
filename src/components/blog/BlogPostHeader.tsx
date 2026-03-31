@@ -63,7 +63,8 @@ export function BlogPostHeader({meta, locale}: BlogPostHeaderProps) {
           <img
             src={meta.coverImage}
             alt={meta.title}
-            className="w-full h-auto"
+            className="w-full object-cover"
+            style={{aspectRatio: '16/9'}}
             loading="eager"
           />
         </div>

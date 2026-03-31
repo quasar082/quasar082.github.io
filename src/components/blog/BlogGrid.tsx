@@ -67,7 +67,6 @@ export function BlogGrid({posts, locale}: BlogGridProps) {
       y: 60,
       clipPath: 'inset(100% 0 0 0)',
       opacity: 0,
-      filter: 'blur(6px)',
       duration: 0.8,
       stagger: 0.1,
       ease: 'power3.out',
@@ -110,21 +109,10 @@ export function BlogGrid({posts, locale}: BlogGridProps) {
       {/* Grid */}
       {paginatedPosts.length > 0 ? (
         <>
-          <div
+        <div
             ref={gridRef}
-            className="mt-10"
-            style={{
-              columns: 1,
-              columnGap: '32px',
-            }}
+            className="mt-10 columns-1 md:columns-2 gap-x-8"
           >
-            {/* Responsive: 2 columns on md+ */}
-            <style>{`
-              @media (min-width: 768px) {
-                .blog-masonry-grid { columns: 2 !important; }
-              }
-            `}</style>
-            <div className="blog-masonry-grid" style={{columns: 'inherit', columnGap: 'inherit'}}>
               {paginatedPosts.map((post, i) => (
                 <div
                   key={post.slug}
@@ -142,7 +130,6 @@ export function BlogGrid({posts, locale}: BlogGridProps) {
                   <BlogCard post={post} locale={locale} index={i} />
                 </div>
               ))}
-            </div>
           </div>
 
           <Pagination
