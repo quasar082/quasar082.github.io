@@ -58,10 +58,10 @@ export function IntroBlock() {
 
   return (
     <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-0">
-      {/* Left column: image — 6 cols (1-6) */}
+      {/* Left column: image — 5 cols (1-5) */}
       <div
         ref={imageRef}
-        className="relative overflow-hidden order-2 md:order-1 md:[grid-column:1/7] self-center"
+        className="relative overflow-hidden order-2 md:order-1 md:[grid-column:1/6] self-center"
       >
         <div className="relative">
           <img
@@ -91,8 +91,8 @@ export function IntroBlock() {
         </div>
       </div>
 
-      {/* Right column: text content — 3 cols (8-10, col 7 is spacer) */}
-      <div className="order-1 md:order-2 md:[grid-column:8/11] flex flex-col justify-center">
+      {/* Right column: text content — 5 cols (6-10) */}
+      <div className="order-1 md:order-2 md:[grid-column:6/11] flex flex-col justify-center">
         {/* Subtitle */}
         <div className="flex items-center gap-2 mb-12">
           <span className="text-text-muted" style={{fontSize: 'var(--text-base)'}}>✦</span>

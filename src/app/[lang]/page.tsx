@@ -52,6 +52,9 @@ export default async function HomePage({
         <AboutSection />
       </div>
 
+      {/* Mini quote 2 — after about */}
+      <MiniQuoteSection quoteKey="quote2" />
+
       {/* Achievements */}
       <div id="achievements">
         <AchievementsSection />

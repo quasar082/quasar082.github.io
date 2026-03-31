@@ -3,7 +3,7 @@
 import {useTranslations} from 'next-intl';
 import {TextReveal} from '@/components/animations/TextReveal';
 
-export function MiniQuoteSection() {
+export function MiniQuoteSection({quoteKey = 'quote'}: {quoteKey?: string}) {
   const t = useTranslations('About');
 
   return (
@@ -26,7 +26,7 @@ export function MiniQuoteSection() {
             whiteSpace: 'pre-line',
           }}
         >
-          {t('quote')}
+          {t(quoteKey)}
         </TextReveal>
       </div>
     </section>
