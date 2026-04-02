@@ -17,6 +17,8 @@ interface WaterRippleImageProps {
   rippleIntensity?: number;
   animationSpeed?: number;
   hoverRippleMultiplier?: number;
+  /** How image fits in container — matches CSS object-fit */
+  objectFit?: 'cover' | 'contain' | 'fill';
 }
 
 export function WaterRippleImage({
@@ -31,6 +33,7 @@ export function WaterRippleImage({
   rippleIntensity = 0.008,
   animationSpeed = 0.8,
   hoverRippleMultiplier = 3.0,
+  objectFit = 'cover',
 }: WaterRippleImageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({width: 0, height: 0});
@@ -98,6 +101,7 @@ export function WaterRippleImage({
           rippleIntensity={rippleIntensity}
           animationSpeed={animationSpeed}
           hoverRippleMultiplier={hoverRippleMultiplier}
+          objectFit={objectFit}
           scale={1.0}
           containerClassName="w-full h-full"
           className="w-full h-full"
