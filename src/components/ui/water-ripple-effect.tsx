@@ -65,6 +65,7 @@ export default function WaterRippleEffect({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) 
     renderer.setClearColor(0x000000, 0)
     mountElement.appendChild(renderer.domElement)
+    const containerAspect = width / height
     const textureLoader = new THREE.TextureLoader()
     const texture = textureLoader.load(imageSrc, (loadedTexture) => {
       loadedTexture.magFilter = THREE.LinearFilter
@@ -73,6 +74,21 @@ export default function WaterRippleEffect({
       loadedTexture.wrapT = THREE.ClampToEdgeWrapping
       loadedTexture.generateMipmaps = true
       loadedTexture.needsUpdate = true
+
+      // Compute cover-style UV scale from image vs container aspect ratios
+      const imgW = loadedTexture.image.width
+      const imgH = loadedTexture.image.height
+      if (materialRef.current && imgH > 0) {
+        const textureAspect = imgW / imgH
+        // Cover: fill container, crop overflow, center
+        if (containerAspect > textureAspect) {
+          // Container wider than image → image fills width, crop top/bottom
+          materialRef.current.uniforms.coverScale.value.set(1.0, textureAspect / containerAspect)
+        } else {
+          // Container taller than image → image fills height, crop left/right
+          materialRef.current.uniforms.coverScale.value.set(containerAspect / textureAspect, 1.0)
+        }
+      }
     })
 
     const vertexShader = `
@@ -97,6 +113,7 @@ export default function WaterRippleEffect({
       uniform float waveFrequency;
       uniform float rippleFrequency;
       uniform float distortionAmount;
+      uniform vec2 coverScale;
       varying vec2 vUv;
       varying vec2 vPosition;
 
@@ -107,7 +124,10 @@ export default function WaterRippleEffect({
 
       void main() {
         vec2 uv = vUv;
-        
+
+        // Cover-style UV: scale and center to preserve image aspect ratio
+        uv = (uv - 0.5) * coverScale + 0.5;
+
         // Reduced intensity for global waves to preserve image quality
         float waveScale = waveIntensity * 0.5; // Reduce default intensity
         
@@ -178,7 +198,8 @@ export default function WaterRippleEffect({
         animationSpeed: { value: animationSpeed },
         waveFrequency: { value: waveFrequency },
         rippleFrequency: { value: rippleFrequency },
-        distortionAmount: { value: distortionAmount }
+        distortionAmount: { value: distortionAmount },
+        coverScale: { value: new THREE.Vector2(1.0, 1.0) }
       },
       vertexShader,
       fragmentShader,
