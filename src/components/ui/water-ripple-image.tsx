@@ -99,8 +99,8 @@ export function WaterRippleImage({
           animationSpeed={animationSpeed}
           hoverRippleMultiplier={hoverRippleMultiplier}
           scale={1.0}
-          containerClassName="w-full h-full"
-          className="w-full h-full"
+          containerClassName="w-full h-full flex items-center justify-center"
+          className=""
         />
       ) : (
         // Fallback / placeholder while loading
