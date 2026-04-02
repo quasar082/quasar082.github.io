@@ -56,24 +56,42 @@ void main() {
 }
 `;
 
-// Render shader — displaces background using heightfield normals + specular
+// Render shader — transparent overlay with light caustics + specular only
+// No background texture needed — outputs rgba with alpha for compositing
 const RENDER_SHADER = `
 precision highp float;
-uniform sampler2D samplerBackground;
 uniform sampler2D samplerRipples;
 uniform vec2 delta;
-uniform float perturbance;
 varying vec2 coord;
 
 void main() {
   float height = texture2D(samplerRipples, coord).r;
   float heightX = texture2D(samplerRipples, vec2(coord.x + delta.x, coord.y)).r;
   float heightY = texture2D(samplerRipples, vec2(coord.x, coord.y + delta.y)).r;
+
+  // Compute surface normal from heightfield gradient
   vec3 dx = vec3(delta.x, heightX - height, 0.0);
   vec3 dy = vec3(0.0, heightY - height, delta.y);
-  vec2 offset = -normalize(cross(dy, dx)).xz;
-  float specular = pow(max(0.0, dot(offset, normalize(vec2(-0.6, 1.0)))), 4.0);
-  gl_FragColor = texture2D(samplerBackground, coord + offset * perturbance) + specular;
+  vec2 normal = -normalize(cross(dy, dx)).xz;
+
+  // Specular highlight — directional light from upper-left
+  float specular = pow(max(0.0, dot(normal, normalize(vec2(-0.6, 1.0)))), 4.0);
+
+  // Caustic-like brightness from wave convergence/divergence
+  float curvature = abs(heightX + heightY - 2.0 * height);
+  float caustic = curvature * 80.0;
+
+  // Combine: white light for specular, subtle caustic glow
+  float brightness = specular * 0.7 + caustic * 0.15;
+
+  // Edge darkening (Fresnel-like) for depth
+  float edgeDark = length(normal) * 0.08;
+
+  // Final: white highlights with transparency
+  float alpha = clamp(brightness + edgeDark, 0.0, 0.6);
+  vec3 color = vec3(1.0) * specular + vec3(0.95, 0.97, 1.0) * caustic * 0.3;
+
+  gl_FragColor = vec4(color, alpha);
 }
 `;
 
@@ -104,8 +122,6 @@ class WaterRipple {
   private gl: WebGLRenderingContext;
   private canvas: HTMLCanvasElement;
   private resolution: number;
-  private perturbance: number;
-  private dropRadius: number;
 
   private quad!: WebGLBuffer;
   private dropProgram!: WebGLProgram;
@@ -117,31 +133,29 @@ class WaterRipple {
   private framebuffers: WebGLFramebuffer[] = [];
   private bufferWriteIndex = 0;
 
-  // Background texture
-  private backgroundTexture!: WebGLTexture;
-  private backgroundWidth = 0;
-  private backgroundHeight = 0;
-
-  private visible = true;
   private running = true;
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    options: {resolution?: number; perturbance?: number; dropRadius?: number} = {}
-  ) {
+  constructor(canvas: HTMLCanvasElement, options: {resolution?: number} = {}) {
     this.canvas = canvas;
     this.resolution = options.resolution ?? 256;
-    this.perturbance = options.perturbance ?? 0.03;
-    this.dropRadius = options.dropRadius ?? 20;
 
-    const gl = canvas.getContext('webgl', {alpha: true, premultipliedAlpha: false})!;
+    const gl = canvas.getContext('webgl', {
+      alpha: true,
+      premultipliedAlpha: false,
+      antialias: false,
+    })!;
+
+    if (!gl) throw new Error('WebGL not supported');
     this.gl = gl;
 
-    // Check for required extension
-    const floatExt = gl.getExtension('OES_texture_half_float');
-    const floatLinear = gl.getExtension('OES_texture_half_float_linear');
+    // Enable alpha blending for transparent overlay
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    // Fallback: try full float
+    // Check for required float texture extension
+    const floatExt = gl.getExtension('OES_texture_half_float');
+    gl.getExtension('OES_texture_half_float_linear');
+
     if (!floatExt) {
       gl.getExtension('OES_texture_float');
       gl.getExtension('OES_texture_float_linear');
@@ -150,7 +164,6 @@ class WaterRipple {
     this.initShaders();
     this.initBuffers();
     this.initTextures(floatExt);
-    this.initBackgroundTexture();
     this.resize();
   }
 
@@ -176,7 +189,6 @@ class WaterRipple {
     const gl = this.gl;
     const type = floatExt ? floatExt.HALF_FLOAT_OES : gl.FLOAT;
 
-    // Create 2 textures + framebuffers for ping-pong
     for (let i = 0; i < 2; i++) {
       const texture = gl.createTexture()!;
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -184,17 +196,7 @@ class WaterRipple {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        this.resolution,
-        this.resolution,
-        0,
-        gl.RGBA,
-        type,
-        null
-      );
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.resolution, this.resolution, 0, gl.RGBA, type, null);
 
       const fbo = gl.createFramebuffer()!;
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
@@ -208,25 +210,6 @@ class WaterRipple {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  private initBackgroundTexture(): void {
-    const gl = this.gl;
-    this.backgroundTexture = gl.createTexture()!;
-    gl.bindTexture(gl.TEXTURE_2D, this.backgroundTexture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-  }
-
-  private bindQuad(): void {
-    const gl = this.gl;
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
-    const location = 0;
-    gl.enableVertexAttribArray(location);
-    gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
-  }
-
   resize(): void {
     const gl = this.gl;
     this.canvas.width = this.canvas.clientWidth;
@@ -234,134 +217,92 @@ class WaterRipple {
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  // Capture current page content as background texture
-  captureBackground(image: TexImageSource): void {
-    const gl = this.gl;
-    gl.bindTexture(gl.TEXTURE_2D, this.backgroundTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    this.backgroundWidth = this.canvas.width;
-    this.backgroundHeight = this.canvas.height;
-  }
-
   drop(x: number, y: number, radius: number, strength: number): void {
     const gl = this.gl;
-    const dropProgram = this.dropProgram;
+    const prog = this.dropProgram;
 
-    gl.useProgram(dropProgram);
+    gl.useProgram(prog);
 
-    // Bind vertex attribute
-    const vertexLoc = gl.getAttribLocation(dropProgram, 'vertex');
+    const vertexLoc = gl.getAttribLocation(prog, 'vertex');
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
     gl.enableVertexAttribArray(vertexLoc);
     gl.vertexAttribPointer(vertexLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // Write to current write buffer
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[this.bufferWriteIndex]);
-
-    // Read from the other buffer
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.textures[1 - this.bufferWriteIndex]);
-    gl.uniform1i(gl.getUniformLocation(dropProgram, 'texture'), 0);
+    gl.uniform1i(gl.getUniformLocation(prog, 'texture'), 0);
 
-    gl.uniform2f(
-      gl.getUniformLocation(dropProgram, 'center'),
-      (2 * x - 1),
-      (1 - 2 * y)
-    );
-    gl.uniform1f(gl.getUniformLocation(dropProgram, 'radius'), radius);
-    gl.uniform1f(gl.getUniformLocation(dropProgram, 'strength'), strength);
+    gl.uniform2f(gl.getUniformLocation(prog, 'center'), 2 * x - 1, 1 - 2 * y);
+    gl.uniform1f(gl.getUniformLocation(prog, 'radius'), radius);
+    gl.uniform1f(gl.getUniformLocation(prog, 'strength'), strength);
 
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-
-    // Swap buffers
     this.bufferWriteIndex = 1 - this.bufferWriteIndex;
   }
 
   update(): void {
     const gl = this.gl;
-    const updateProgram = this.updateProgram;
+    const prog = this.updateProgram;
 
-    gl.useProgram(updateProgram);
+    gl.useProgram(prog);
 
-    const vertexLoc = gl.getAttribLocation(updateProgram, 'vertex');
+    const vertexLoc = gl.getAttribLocation(prog, 'vertex');
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
     gl.enableVertexAttribArray(vertexLoc);
     gl.vertexAttribPointer(vertexLoc, 2, gl.FLOAT, false, 0, 0);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[this.bufferWriteIndex]);
-
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.textures[1 - this.bufferWriteIndex]);
-    gl.uniform1i(gl.getUniformLocation(updateProgram, 'texture'), 0);
-
-    gl.uniform2f(
-      gl.getUniformLocation(updateProgram, 'delta'),
-      1 / this.resolution,
-      1 / this.resolution
-    );
+    gl.uniform1i(gl.getUniformLocation(prog, 'texture'), 0);
+    gl.uniform2f(gl.getUniformLocation(prog, 'delta'), 1 / this.resolution, 1 / this.resolution);
 
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-
     this.bufferWriteIndex = 1 - this.bufferWriteIndex;
   }
 
   render(): void {
     const gl = this.gl;
-    const renderProgram = this.renderProgram;
+    const prog = this.renderProgram;
 
-    gl.useProgram(renderProgram);
+    gl.useProgram(prog);
 
-    const vertexLoc = gl.getAttribLocation(renderProgram, 'vertex');
+    const vertexLoc = gl.getAttribLocation(prog, 'vertex');
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
     gl.enableVertexAttribArray(vertexLoc);
     gl.vertexAttribPointer(vertexLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // Render to screen
+    // Render to screen (transparent overlay)
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Background texture (unit 0)
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.backgroundTexture);
-    gl.uniform1i(gl.getUniformLocation(renderProgram, 'samplerBackground'), 0);
-
-    // Ripple heightfield texture (unit 1)
-    gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.textures[1 - this.bufferWriteIndex]);
-    gl.uniform1i(gl.getUniformLocation(renderProgram, 'samplerRipples'), 1);
-
-    gl.uniform2f(
-      gl.getUniformLocation(renderProgram, 'delta'),
-      1 / this.resolution,
-      1 / this.resolution
-    );
-    gl.uniform1f(gl.getUniformLocation(renderProgram, 'perturbance'), this.perturbance);
+    gl.uniform1i(gl.getUniformLocation(prog, 'samplerRipples'), 0);
+    gl.uniform2f(gl.getUniformLocation(prog, 'delta'), 1 / this.resolution, 1 / this.resolution);
 
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
   }
 
-  // Create a ripple at pixel coordinates
-  dropAtPixel(x: number, y: number, radius?: number, strength?: number): void {
+  dropAtPixel(x: number, y: number, radius: number, strength: number): void {
     const rect = this.canvas.getBoundingClientRect();
-    const normalizedX = x / rect.width;
-    const normalizedY = y / rect.height;
-    const dropRadiusNormalized = (radius ?? this.dropRadius) / rect.width;
-    this.drop(normalizedX, normalizedY, dropRadiusNormalized, strength ?? 0.04);
+    this.drop(x / rect.width, y / rect.height, radius / rect.width, strength);
   }
 
   step(): void {
     if (!this.running) return;
     this.update();
-    this.update(); // Run simulation twice per frame for faster wave propagation
+    this.update();
     this.render();
   }
 
   destroy(): void {
     const gl = this.gl;
     this.running = false;
-
     for (const tex of this.textures) gl.deleteTexture(tex);
     for (const fbo of this.framebuffers) gl.deleteFramebuffer(fbo);
-    gl.deleteTexture(this.backgroundTexture);
     gl.deleteBuffer(this.quad);
     gl.deleteProgram(this.dropProgram);
     gl.deleteProgram(this.updateProgram);
@@ -375,11 +316,9 @@ export function CustomCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
 
-  // Detect pointer:fine (desktop with precise pointer)
   useEffect(() => {
     const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
     setIsDesktop(mq.matches);
-
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
@@ -391,61 +330,25 @@ export function CustomCursor() {
     const canvas = canvasRef.current;
     let ripple: WaterRipple | null = null;
     let animFrameId: number;
-    let captureInterval: ReturnType<typeof setInterval>;
-    let offscreenCanvas: HTMLCanvasElement;
-    let offscreenCtx: CanvasRenderingContext2D;
 
     try {
-      ripple = new WaterRipple(canvas, {
-        resolution: 256,
-        perturbance: 0.03,
-        dropRadius: 20,
-      });
+      ripple = new WaterRipple(canvas, {resolution: 256});
     } catch {
-      // WebGL not supported — show default cursor and bail
+      // WebGL not available — graceful degradation, no effect
       return;
     }
 
-    // Create offscreen canvas for html2canvas-like capture
-    offscreenCanvas = document.createElement('canvas');
-    offscreenCtx = offscreenCanvas.getContext('2d')!;
-
-    // Capture page background as a solid color + gradient approximation
-    // We use a simple approach: fill with the site's background color
-    const captureBackground = () => {
-      if (!ripple) return;
-
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      offscreenCanvas.width = w;
-      offscreenCanvas.height = h;
-
-      // Get computed background color
-      const bgColor = getComputedStyle(document.body).backgroundColor || '#FAFAF8';
-      offscreenCtx.fillStyle = bgColor;
-      offscreenCtx.fillRect(0, 0, w, h);
-
-      ripple.captureBackground(offscreenCanvas);
-    };
-
-    // Initial capture after a short delay (let page render)
-    setTimeout(captureBackground, 100);
-    // Re-capture periodically to pick up scroll changes
-    captureInterval = setInterval(captureBackground, 2000);
-
-    const onResize = () => {
-      ripple?.resize();
-      captureBackground();
-    };
+    const onResize = () => ripple?.resize();
     window.addEventListener('resize', onResize);
 
-    // Mouse interaction
+    // Mouse movement creates gentle ripples
     const onMouseMove = (e: MouseEvent) => {
-      ripple?.dropAtPixel(e.clientX, e.clientY, 20, 0.03);
+      ripple?.dropAtPixel(e.clientX, e.clientY, 20, 0.04);
     };
 
+    // Click creates stronger ripple burst
     const onClick = (e: MouseEvent) => {
-      ripple?.dropAtPixel(e.clientX, e.clientY, 35, 0.12);
+      ripple?.dropAtPixel(e.clientX, e.clientY, 35, 0.14);
     };
 
     // Animation loop
@@ -460,7 +363,6 @@ export function CustomCursor() {
 
     return () => {
       cancelAnimationFrame(animFrameId);
-      clearInterval(captureInterval);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('click', onClick);
       window.removeEventListener('resize', onResize);
