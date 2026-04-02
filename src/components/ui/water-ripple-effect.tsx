@@ -18,7 +18,6 @@ interface WaterRippleEffectProps {
   waveFrequency?: number
   rippleFrequency?: number
   distortionAmount?: number
-  objectFit?: 'cover' | 'contain' | 'fill'
   onHover?: () => void
   onLeave?: () => void
 }
@@ -38,7 +37,6 @@ export default function WaterRippleEffect({
   waveFrequency = 10.0,
   rippleFrequency = 20.0,
   distortionAmount = 0.008,
-  objectFit = 'cover',
   onHover,
   onLeave,
   ...props
@@ -68,7 +66,6 @@ export default function WaterRippleEffect({
     renderer.setClearColor(0x000000, 0)
     mountElement.appendChild(renderer.domElement)
     const textureLoader = new THREE.TextureLoader()
-    const containerAspect = width / height
     const texture = textureLoader.load(imageSrc, (loadedTexture) => {
       loadedTexture.magFilter = THREE.LinearFilter
       loadedTexture.minFilter = THREE.LinearMipmapLinearFilter
@@ -76,13 +73,6 @@ export default function WaterRippleEffect({
       loadedTexture.wrapT = THREE.ClampToEdgeWrapping
       loadedTexture.generateMipmaps = true
       loadedTexture.needsUpdate = true
-
-      // Update imageAspect uniform once image dimensions are known
-      if (loadedTexture.image && materialRef.current) {
-        const imgAspect = loadedTexture.image.width / loadedTexture.image.height
-        materialRef.current.uniforms.imageAspect.value = imgAspect
-        materialRef.current.uniforms.containerAspect.value = containerAspect
-      }
     })
 
     const vertexShader = `
@@ -107,95 +97,76 @@ export default function WaterRippleEffect({
       uniform float waveFrequency;
       uniform float rippleFrequency;
       uniform float distortionAmount;
-      uniform float imageAspect;
-      uniform float containerAspect;
-      uniform int fitMode; // 0=cover, 1=contain, 2=fill
       varying vec2 vUv;
       varying vec2 vPosition;
 
-      // Object-fit UV remapping
-      vec2 coverUv(vec2 uv) {
-        if (fitMode == 2) return uv; // fill: no adjustment
-        vec2 s = uv;
-        float ratio = containerAspect / imageAspect;
-        if (fitMode == 0) {
-          // cover: scale up smaller axis, center-crop
-          if (ratio > 1.0) {
-            s.y = (uv.y - 0.5) * ratio + 0.5;
-          } else {
-            s.x = (uv.x - 0.5) / ratio + 0.5;
-          }
-        } else {
-          // contain: scale down larger axis, letterbox
-          if (ratio > 1.0) {
-            s.x = (uv.x - 0.5) / ratio + 0.5;
-          } else {
-            s.y = (uv.y - 0.5) * ratio + 0.5;
-          }
-        }
-        return s;
+      // Improved smoothstep for better interpolation
+      float smoothwave(float x) {
+        return sin(x) * 0.5 + 0.5;
       }
 
       void main() {
         vec2 uv = vUv;
-
+        
         // Reduced intensity for global waves to preserve image quality
-        float waveScale = waveIntensity * 0.5;
-
+        float waveScale = waveIntensity * 0.5; // Reduce default intensity
+        
         // More subtle global wavy distortion
         float wave1 = sin(uv.x * waveFrequency + time * animationSpeed * 2.0) * waveScale;
         float wave2 = sin(uv.y * (waveFrequency * 0.8) + time * animationSpeed * 1.5) * (waveScale * 0.8);
         float wave3 = sin((uv.x + uv.y) * (waveFrequency * 1.2) + time * animationSpeed * 2.5) * (waveScale * 0.3);
-
+        
         // Mouse-based ripples with falloff
         float dist = distance(uv, mouse);
-        float rippleScale = rippleIntensity * 0.7;
+        float rippleScale = rippleIntensity * 0.7; // Reduce ripple intensity
+        
+        // Improved falloff function for smoother transitions
         float falloff = exp(-dist * 4.0);
-
-        float mouseWave1 = sin(dist * rippleFrequency - time * animationSpeed * 4.0) *
+        
+        float mouseWave1 = sin(dist * rippleFrequency - time * animationSpeed * 4.0) * 
                           falloff * hoverIntensity * rippleScale;
-        float mouseWave2 = sin(dist * (rippleFrequency * 0.75) - time * animationSpeed * 3.0) *
+        float mouseWave2 = sin(dist * (rippleFrequency * 0.75) - time * animationSpeed * 3.0) * 
                           falloff * hoverIntensity * (rippleScale * 0.6);
-
+        
         // More controlled expanding ripples
-        float ripple1 = sin(length(uv - mouse) * (rippleFrequency * 1.25) - time * animationSpeed * 5.0) *
+        float ripple1 = sin(length(uv - mouse) * (rippleFrequency * 1.25) - time * animationSpeed * 5.0) * 
                        exp(-length(uv - mouse) * 5.0) * hoverIntensity * (rippleScale * 0.8);
-        float ripple2 = sin(length(uv - mouse) * (rippleFrequency * 0.9) - time * animationSpeed * 3.5) *
+        float ripple2 = sin(length(uv - mouse) * (rippleFrequency * 0.9) - time * animationSpeed * 3.5) * 
                        exp(-length(uv - mouse) * 4.0) * hoverIntensity * (rippleScale * 0.6);
-
+        
+        // Combine waves with reduced intensity
         float totalWave = (wave1 + wave2 + wave3 + mouseWave1 + mouseWave2 + ripple1 + ripple2) * 0.5;
-
+        
+        // More subtle distortion
         float distortScale = distortionAmount * 0.6;
         vec2 distortion = vec2(
-          sin(uv.x * (waveFrequency * 0.8) + time * animationSpeed * 1.8) * distortScale * 0.4 +
+          sin(uv.x * (waveFrequency * 0.8) + time * animationSpeed * 1.8) * distortScale * 0.4 + 
           sin(uv.y * (waveFrequency * 0.6) + time * animationSpeed * 2.2) * distortScale * 0.3,
-          sin(uv.y * (waveFrequency * 0.7) + time * animationSpeed * 1.6) * distortScale * 0.4 +
+          sin(uv.y * (waveFrequency * 0.7) + time * animationSpeed * 1.6) * distortScale * 0.4 + 
           sin(uv.x * (waveFrequency * 0.9) + time * animationSpeed * 2.0) * distortScale * 0.3
         );
-
+        
+        // Reduced mouse-based radial distortion
         vec2 mouseDir = uv - mouse;
         float mouseDist = length(mouseDir);
-        vec2 mouseDistortion = normalize(mouseDir) * sin(mouseDist * rippleFrequency - time * animationSpeed * 4.0) *
+        vec2 mouseDistortion = normalize(mouseDir) * sin(mouseDist * rippleFrequency - time * animationSpeed * 4.0) * 
                               exp(-mouseDist * 4.0) * hoverIntensity * distortScale * 0.5;
-
+        
+        // Combine distortions with reduced intensity
         vec2 finalDistortion = (distortion + mouseDistortion) * 0.7 + vec2(totalWave * 0.2, totalWave * 0.2);
-
-        // Apply distortion then remap UV for object-fit
+        
+        // Apply distortion to UV coordinates
         vec2 distortedUv = uv + finalDistortion;
+        
+        // Clamp UV coordinates to prevent sampling outside texture bounds
         distortedUv = clamp(distortedUv, 0.0, 1.0);
-        vec2 sampledUv = coverUv(distortedUv);
-
-        // Discard pixels outside texture bounds (for contain mode)
-        if (sampledUv.x < 0.0 || sampledUv.x > 1.0 || sampledUv.y < 0.0 || sampledUv.y > 1.0) {
-          gl_FragColor = vec4(0.0);
-          return;
-        }
-
-        vec4 color = texture2D(texture1, sampledUv);
+        
+        // Sample texture with distorted coordinates
+        vec4 color = texture2D(texture1, distortedUv);
+        
         gl_FragColor = color;
       }
     `
-    const fitModeInt = objectFit === 'cover' ? 0 : objectFit === 'contain' ? 1 : 2
     const material = new THREE.ShaderMaterial({
       uniforms: {
         texture1: { value: texture },
@@ -207,10 +178,7 @@ export default function WaterRippleEffect({
         animationSpeed: { value: animationSpeed },
         waveFrequency: { value: waveFrequency },
         rippleFrequency: { value: rippleFrequency },
-        distortionAmount: { value: distortionAmount },
-        imageAspect: { value: 1.0 },
-        containerAspect: { value: containerAspect },
-        fitMode: { value: fitModeInt },
+        distortionAmount: { value: distortionAmount }
       },
       vertexShader,
       fragmentShader,
@@ -283,7 +251,7 @@ export default function WaterRippleEffect({
     }
   }, [
     imageSrc, width, height, waveIntensity, rippleIntensity, animationSpeed, hoverRippleMultiplier, transitionSpeed,
-    waveFrequency, rippleFrequency, distortionAmount, objectFit, onHover, onLeave
+    waveFrequency, rippleFrequency, distortionAmount, onHover, onLeave
   ])
 
   return (
