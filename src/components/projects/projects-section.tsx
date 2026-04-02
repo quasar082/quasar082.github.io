@@ -48,7 +48,7 @@ export async function ProjectsSection({
           <TransitionLink
             href="/projects"
             className="inline-block rounded-full border border-border px-8 py-3 text-sm uppercase tracking-wider text-text-primary transition-colors hover:border-border-hover hover:bg-surface-elevated"
-            data-cursor-hover
+
           >
             {t('viewMore')}
           </TransitionLink>

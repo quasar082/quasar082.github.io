@@ -14,7 +14,7 @@ export function ProjectCard({project, locale, index}: ProjectCardProps) {
     <Link
       href={`/${locale}/projects/${project.slug}/`}
       className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-greige-500"
-      data-cursor-text="View"
+
     >
       {/* Image — 3:4 portrait, borderless editorial */}
       <div className="aspect-[3/4] overflow-hidden" data-parallax-image>
