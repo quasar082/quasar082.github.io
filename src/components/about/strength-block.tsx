@@ -5,6 +5,7 @@ import {useTranslations} from 'next-intl';
 import {TextReveal} from '@/components/ui/text-reveal';
 import {gsap, useGSAP} from '@/lib/animations/gsap';
 import {usePreloaderDone} from '@/lib/hooks/use-preloader-done';
+import {WaterRippleImage} from '@/components/ui/water-ripple-image';
 
 export function StrengthBlock() {
   const t = useTranslations('About');
@@ -95,7 +96,7 @@ export function StrengthBlock() {
         className="relative overflow-hidden self-end md:[grid-column:7/11]"
       >
         <div className="relative">
-          <img
+          <WaterRippleImage
             src="/images/about-deepstriker.png"
             alt="Deep Striker mech artwork"
             className="w-full object-cover object-center"
