@@ -132,13 +132,13 @@ export default function Preloader() {
     >
       <div
         ref={text1Ref}
-        className="absolute font-display text-[clamp(1.5rem,4vw,3rem)] uppercase text-white font-medium tracking-wider opacity-0"
+        className="absolute font-display text-[clamp(1.5rem,4vw,3rem)] uppercase text-white font-light tracking-wider opacity-0"
       >
         Welcome to party
       </div>
       <div
         ref={text2Ref}
-        className="absolute font-display text-[clamp(4rem,15vw,12rem)] uppercase text-white font-medium tracking-wider opacity-0"
+        className="absolute font-display text-[clamp(4rem,15vw,12rem)] uppercase text-white font-light tracking-wider opacity-0"
       >
         Quasar
       </div>

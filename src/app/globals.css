@@ -65,7 +65,7 @@ a:focus,
   --text-display-sm: clamp(2rem, 1.25rem + 2vw, 3.5rem);
 
   /* Display font weight */
-  --font-weight-display: 500;
+  --font-weight-display: 300;
 
   /* Typography scale -- fixed body */
   --text-xs: 0.75rem;
