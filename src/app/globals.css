@@ -111,12 +111,12 @@ body::after {
 }
 
 /* Base link styles */
-a {
+a:not(.pill-btn) {
   color: var(--color-text-accent);
   transition: color 150ms ease-out;
 }
 
-a:hover {
+a:not(.pill-btn):hover {
   color: var(--color-accent-hover);
 }
 

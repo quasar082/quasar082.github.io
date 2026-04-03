@@ -119,7 +119,7 @@ export function PillButton({
 
   const commonProps = {
     ref,
-    className: `inline-flex items-center ${fixedWidth ? 'justify-center' : ''} cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
+    className: `pill-btn inline-flex items-center ${fixedWidth ? 'justify-center' : ''} cursor-pointer select-none font-body text-[15px] font-medium uppercase tracking-[0.08em] ${hidden ? 'hidden sm:inline-flex' : ''} ${className}`.trim(),
     style: {
       backgroundColor: style.bg,
       color: style.text,
