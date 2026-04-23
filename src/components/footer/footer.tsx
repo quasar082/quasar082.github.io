@@ -3,7 +3,7 @@ import {Github, Mail} from 'lucide-react';
 import {TextReveal} from '@/components/ui/text-reveal';
 
 const socialLinks = [
-  {icon: Github, href: 'https://github.com/quasar0802', label: 'GitHub'},
+  {icon: Github, href: 'https://github.com/quasar082', label: 'GitHub'},
   {icon: Mail, href: 'mailto:contact@example.com', label: 'Email'},
 ];
 

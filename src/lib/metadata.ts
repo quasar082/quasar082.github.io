@@ -7,7 +7,7 @@ import 'server-only';
  * alternate-language link generators, and a default OG image definition.
  */
 
-export const SITE_URL = 'https://quasar0802.github.io';
+export const SITE_URL = 'https://quasar082.github.io';
 
 export const SITE_NAME = 'Ha Minh Quan | AI Engineer';
 
@@ -24,8 +24,8 @@ export const defaultOgImage = [
 /**
  * Build an absolute canonical URL for the given locale and optional path.
  *
- * @example buildCanonical('en', 'blog/my-post') => 'https://quasar0802.github.io/en/blog/my-post/'
- * @example buildCanonical('en')                 => 'https://quasar0802.github.io/en/'
+ * @example buildCanonical('en', 'blog/my-post') => 'https://quasar082.github.io/en/blog/my-post/'
+ * @example buildCanonical('en')                 => 'https://quasar082.github.io/en/'
  */
 export function buildCanonical(lang: string, path?: string): string {
   return `${SITE_URL}/${lang}${path ? `/${path}` : ''}/`;

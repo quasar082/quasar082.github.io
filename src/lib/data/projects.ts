@@ -36,7 +36,7 @@ export const projects: Project[] = [
     thumbnail: '/images/projects/project-1.svg',
     links: {
       live: 'https://demo.example.com/orchestrator',
-      github: 'https://github.com/quasar0802/multi-agent-orchestrator',
+      github: 'https://github.com/quasar082/multi-agent-orchestrator',
     },
     featured: true,
     caseStudy: {
@@ -66,7 +66,7 @@ export const projects: Project[] = [
     thumbnail: '/images/projects/project-2.svg',
     links: {
       live: 'https://demo.example.com/knowledge-base',
-      github: 'https://github.com/quasar0802/rag-knowledge-base',
+      github: 'https://github.com/quasar082/rag-knowledge-base',
     },
     featured: true,
     caseStudy: {
@@ -95,7 +95,7 @@ export const projects: Project[] = [
     tags: ['Transformers', 'FastAPI', 'Kafka', 'Docker'],
     thumbnail: '/images/projects/project-3.svg',
     links: {
-      github: 'https://github.com/quasar0802/sentiment-analysis-api',
+      github: 'https://github.com/quasar082/sentiment-analysis-api',
       paper: 'https://arxiv.org/abs/example',
     },
     featured: false,
