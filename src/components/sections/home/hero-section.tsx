@@ -4,49 +4,20 @@ type HeroSectionProps = {
   heroImagePath: string;
   services: ServiceItem[];
   socialLinks: SocialLink[];
-  isMenuOpen: boolean;
-  onOpenMenu: () => void;
 };
 
-export function HeroSection({ heroImagePath, services, socialLinks, isMenuOpen, onOpenMenu }: HeroSectionProps) {
+export function HeroSection({ heroImagePath, services, socialLinks }: HeroSectionProps) {
   return (
     <section
       id="home"
-      className="relative h-dvh bg-cover bg-center px-4 py-4 text-white sm:px-6 lg:px-8"
+      className="relative h-dvh bg-cover bg-center px-4 pb-4 pt-24 text-white sm:px-6 sm:pb-6 lg:px-8 lg:pb-8"
       style={{ backgroundImage: `url('${heroImagePath}')` }}
       aria-label="Hero section"
     >
       <div className="absolute inset-0 bg-[rgba(34,43,39,0.42)]" />
 
-      <div className="container relative z-10 mx-auto flex h-dvh flex-col py-4 sm:py-6 lg:py-8">
-        <header className="flex items-center justify-between">
-          <a
-            href="#home"
-            className="inline-flex min-h-11 items-center gap-2.5 text-3xl font-semibold leading-none text-white no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:text-4xl"
-            aria-label="Quasar home"
-          >
-            <span className="relative inline-block h-5 w-8" aria-hidden="true">
-              <span className="absolute inset-y-0 left-0 w-[42%] bg-white" />
-              <span className="absolute left-[38%] top-0 h-[42%] w-[62%] bg-white" />
-            </span>
-            <span>Quasar</span>
-          </a>
-
-          <button
-            type="button"
-            className="inline-flex min-h-12 min-w-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-full border border-white/45 bg-white/10 transition hover:bg-white/20 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-reduce:transition-none motion-reduce:transform-none"
-            aria-expanded={isMenuOpen}
-            aria-controls="hero-menu-overlay"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            onClick={onOpenMenu}
-          >
-            <span className="h-0.5 w-5 rounded-full bg-white" />
-            <span className="h-0.5 w-5 rounded-full bg-white" />
-            <span className="h-0.5 w-5 rounded-full bg-white" />
-          </button>
-        </header>
-
-        <div className="mt-6 grid flex-1 grid-cols-1 items-end gap-5 md:mt-8 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_1fr] lg:gap-8">
+      <div className="container relative z-10 mx-auto flex h-full flex-col">
+        <div className="grid flex-1 grid-cols-1 items-end gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_1fr] lg:gap-8">
           <aside id="services" className="self-start lg:col-start-1 lg:row-start-1" aria-label="Core services">
             <ul className="m-0 grid list-none gap-1 p-0 md:gap-2">
               {services.map((service) => (

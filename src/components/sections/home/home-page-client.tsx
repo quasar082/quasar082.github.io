@@ -8,6 +8,7 @@ import { ContactSection } from './contact-section';
 import { HeroSection } from './hero-section';
 import { MenuOverlay } from './menu-overlay';
 import { ProjectsSection } from './projects-section';
+import { SiteHeader } from './site-header';
 
 type HomePageClientProps = {
   content: HomeContent;
@@ -39,13 +40,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="h-dvh overflow-x-clip bg-[#8f9a94]">
-      <HeroSection
-        heroImagePath={content.heroImagePath}
-        services={content.services}
-        socialLinks={content.socialLinks}
-        isMenuOpen={isMenuOpen}
-        onOpenMenu={() => setIsMenuOpen(true)}
-      />
+      <SiteHeader isMenuOpen={isMenuOpen} onOpenMenu={() => setIsMenuOpen(true)} sticky />
+      <HeroSection heroImagePath={content.heroImagePath} services={content.services} socialLinks={content.socialLinks} />
       <AboutSection />
       <ProjectsSection projects={content.projects} />
       <AchievementSection achievements={content.achievements} />
