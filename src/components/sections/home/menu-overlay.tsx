@@ -2,57 +2,58 @@ import type { MenuItem } from '@/lib/content/home';
 
 type MenuOverlayProps = {
   menuItems: MenuItem[];
+  activeSection: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export function MenuOverlay({ menuItems, isOpen, onClose }: MenuOverlayProps) {
+const previewClassByHref: Record<string, string> = {
+  '#home': 'from-[#222b27] via-[#8f9a94] to-[#d8d2c4]',
+  '#about': 'from-white via-[#f1f1f1] to-[#d8d8d8]',
+  '#projects': 'from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]',
+  '#achievements': 'from-[#f7f7f7] via-[#d9d9d9] to-[#b7b7b7]',
+  '#contact': 'from-[#e9e9e9] via-[#cfcfcf] to-[#0d0d0d]',
+};
+
+export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuOverlayProps) {
   return (
     <div
       id="hero-menu-overlay"
       aria-hidden={!isOpen}
-      className={`fixed inset-0 z-60 bg-[rgba(9,14,12,0.64)] backdrop-blur-[8px] transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+      className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ease-out motion-reduce:transition-none ${
         isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
       }`}
-      onClick={onClose}
+      role={isOpen ? 'dialog' : undefined}
+      aria-modal={isOpen ? 'true' : undefined}
+      aria-label="Main menu"
     >
-      <div
-        className={`ml-auto flex h-full w-full max-w-[440px] flex-col border-l border-white/20 bg-[rgba(17,23,20,0.92)] p-5 shadow-[-16px_0_42px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        role={isOpen ? 'dialog' : undefined}
-        aria-modal={isOpen ? 'true' : undefined}
-        aria-label="Main menu"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-sm uppercase tracking-[0.12em] text-white/60">Navigation</span>
-          <button
-            type="button"
-            className="min-h-11 min-w-11 cursor-pointer rounded-full border border-white/35 bg-transparent px-4 py-2 text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-reduce:transition-none"
-            aria-label="Close menu"
-            onClick={onClose}
-          >
-            Close
-          </button>
-        </div>
+      <nav aria-label="Main navigation" className="container mx-auto h-full px-4 pb-8 pt-28 sm:px-6 lg:px-8">
+        <ul className="m-0 grid h-full list-none gap-5 overflow-y-auto p-0 pr-1 md:gap-6">
+          {menuItems.map((item) => {
+            const isActive = item.href === activeSection;
+            const previewClass = previewClassByHref[item.href] ?? 'from-white/15 via-white/10 to-white/5';
 
-        <nav aria-label="Main navigation" className="mt-8">
-          <ul className="m-0 grid list-none gap-4 p-0">
-            {menuItems.map((item) => (
+            return (
               <li key={item.label}>
                 <a
                   href={item.href}
-                  className="inline-flex min-h-11 items-center text-[clamp(1.4rem,3vw,2.4rem)] text-white no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                  className="group grid gap-4 text-white no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   onClick={onClose}
                 >
-                  {item.label}
+                  <span className="inline-flex min-h-8 items-center gap-3 text-sm font-semibold uppercase tracking-[0.04em] md:text-base">
+                    <span
+                      className={`h-3 w-3 rounded-full transition-opacity ${isActive ? 'bg-[#a7d7ad] opacity-100' : 'bg-[#a7d7ad] opacity-0 group-hover:opacity-60'}`}
+                      aria-hidden="true"
+                    />
+                    {item.label}
+                  </span>
+                  <span className={`block aspect-[16/8] w-full rounded-lg bg-gradient-to-br ${previewClass}`} aria-hidden="true" />
                 </a>
               </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+            );
+          })}
+        </ul>
+      </nav>
     </div>
   );
 }

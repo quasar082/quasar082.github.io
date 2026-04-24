@@ -6,9 +6,9 @@ type AchievementSectionProps = {
 
 export function AchievementSection({ achievements }: AchievementSectionProps) {
   return (
-    <section className="box-border min-h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Achievement section">
+    <section id="achievements" className="box-border min-h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Achievements section">
       <div className="container mx-auto">
-        <h2 className="m-0 text-6xl leading-tight tracking-tight md:text-7xl lg:text-8xl">Achievement</h2>
+        <h2 className="m-0 text-6xl leading-tight tracking-tight md:text-7xl lg:text-8xl">Achievements</h2>
 
         <div className="mt-12 divide-y divide-black/10 border-y border-black/10">
           {achievements.map((achievement) => (

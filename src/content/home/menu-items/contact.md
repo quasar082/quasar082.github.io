@@ -1,5 +1,5 @@
 ---
 label: Contact
 href: '#contact'
-order: 4
+order: 5
 ---

@@ -16,6 +16,36 @@ type HomePageClientProps = {
 
 export function HomePageClient({ content }: HomePageClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(content.menuItems[0]?.href ?? '#home');
+  const [isPastHero, setIsPastHero] = useState(false);
+
+  useEffect(() => {
+    const hero = document.getElementById('home');
+    const sectionIds = content.menuItems.map((item) => item.href.slice(1));
+
+    const updateScrollState = () => {
+      setIsPastHero(hero ? hero.getBoundingClientRect().bottom <= 72 : false);
+
+      const currentSectionId = sectionIds.findLast((sectionId) => {
+        const section = document.getElementById(sectionId);
+
+        return section ? section.getBoundingClientRect().top <= window.innerHeight * 0.35 : false;
+      });
+
+      if (currentSectionId) {
+        setActiveSection(`#${currentSectionId}`);
+      }
+    };
+
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState);
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [content.menuItems]);
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -40,13 +70,13 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="h-dvh overflow-x-clip bg-[#8f9a94]">
-      <SiteHeader isMenuOpen={isMenuOpen} onOpenMenu={() => setIsMenuOpen(true)} sticky />
+      <SiteHeader isMenuOpen={isMenuOpen} isPastHero={isPastHero} onOpenMenu={() => setIsMenuOpen(true)} sticky />
       <HeroSection heroImagePath={content.heroImagePath} services={content.services} socialLinks={content.socialLinks} />
       <AboutSection />
       <ProjectsSection projects={content.projects} />
       <AchievementSection achievements={content.achievements} />
       <ContactSection contactSocials={content.contactSocials} />
-      <MenuOverlay menuItems={content.menuItems} isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MenuOverlay menuItems={content.menuItems} activeSection={activeSection} isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </main>
   );
 }

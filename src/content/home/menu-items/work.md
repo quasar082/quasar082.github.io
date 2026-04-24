@@ -1,5 +1,5 @@
 ---
-label: Work
+label: Project
 href: '#projects'
 order: 3
 ---
