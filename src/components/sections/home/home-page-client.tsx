@@ -18,6 +18,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(content.menuItems[0]?.href ?? '#home');
   const [isPastHero, setIsPastHero] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   useEffect(() => {
     const hero = document.getElementById('home');
@@ -60,6 +61,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    setIsHeaderVisible(true);
     window.addEventListener('keydown', onKeyDown);
 
     return () => {
@@ -68,9 +70,29 @@ export function HomePageClient({ content }: HomePageClientProps) {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const updateHeaderVisibility = () => {
+      const currentScrollY = window.scrollY;
+      const scrollingUp = currentScrollY < lastScrollY;
+      const nearTop = currentScrollY <= 16;
+
+      setIsHeaderVisible(nearTop || scrollingUp || isMenuOpen);
+      lastScrollY = currentScrollY;
+    };
+
+    updateHeaderVisibility();
+    window.addEventListener('scroll', updateHeaderVisibility, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateHeaderVisibility);
+    };
+  }, [isMenuOpen]);
+
   return (
     <main className="h-dvh overflow-x-clip bg-[#8f9a94]">
-      <SiteHeader isMenuOpen={isMenuOpen} isPastHero={isPastHero} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
+      <SiteHeader isMenuOpen={isMenuOpen} isPastHero={isPastHero} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection heroImagePath={content.heroImagePath} services={content.services} socialLinks={content.socialLinks} />
       <AboutSection />
       <ProjectsSection projects={content.projects} />

@@ -44,8 +44,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <BlogShell>
-      <article className="px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pt-10">
+    <BlogShell activeHref="/blog">
+      <article className="px-4 pb-16 pt-20 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-4xl">
           <Link href="/blog" className="inline-flex min-h-11 items-center text-sm font-semibold uppercase tracking-[0.12em] text-black/60 no-underline">
             Back to blog

@@ -17,7 +17,7 @@ export default function BlogPage() {
   const categories = getBlogCategories();
 
   return (
-    <BlogShell>
+    <BlogShell activeHref="/blog">
       <BlogPageClient latestPosts={latestPosts} posts={posts} categories={categories} />
     </BlogShell>
   );
