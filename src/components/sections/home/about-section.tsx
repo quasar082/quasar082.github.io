@@ -5,9 +5,9 @@ export function AboutSection() {
   return (
     <section id="about" className="box-border h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="About section">
       <div className="container mx-auto grid h-full grid-cols-1 grid-rows-1 gap-6 md:grid-cols-5 md:grid-rows-4">
-        <h2 className="text-4xl mt-8 leading-tight md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3 md:text-5xl lg:text-6xl xl:text-6xl">
+        <h2 className="text-4xl mt-8 leading-tight md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3 text-[clamp(2rem,4vmin,15rem)] md:text-[clamp(2rem,4vmin,15rem)] lg:text-[clamp(2rem,5vmin,15rem)] xl:text-[clamp(2rem,6vmin,15rem)]">
           <TextReveal italicWords={["ha", "minh", "quan", "quasar"]}>
-            Hi! My name is Ha Minh Quan a.k.a Quasar. An AI engineer based in Vietnam. I focus on architecture design, operational optimization, and scaling intelligent systems - from large-scale unstructured data processing, multi-agent systems, and chatbots to real-world deployment.
+            Hi! My name is Ha Minh Quan ~ Quasar. An AI engineer based in Vietnam. I focus on architecture design, operational optimization, and scaling intelligent systems - from large-scale unstructured data processing, multi-agent systems, and chatbots to real-world deployment.
           </TextReveal>
         </h2>
 

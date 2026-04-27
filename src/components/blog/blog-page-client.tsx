@@ -58,7 +58,7 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
 
   return (
     <>
-      <section className="px-4 pb-12 pt-20 sm:px-6 lg:px-8 ">
+      <section className="px-4 pt-20 sm:px-6 lg:px-8 ">
         <div className="container mx-auto border-b border-black/10 pb-10">
           <p className="m-0 text-sm font-semibold uppercase tracking-[0.22em] text-black/55">Quasar Journal</p>
           <div className="mt-6">

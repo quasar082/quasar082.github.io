@@ -42,7 +42,7 @@ export function HeroSection({ heroImagePath, services, socialLinks }: HeroSectio
           </aside>
 
           <div className="lg:col-start-1 lg:row-start-2">
-            <h1 className="m-0 max-w-full leading-tight tracking-tight lg:max-w-[11ch] text-8xl xl:text-9xl">
+            <h1 className="m-0 max-w-full leading-tight tracking-tight lg:max-w-[12ch] text-[clamp(2rem,6vmin,15rem)] md:text-[clamp(2rem,8vmin,20rem)] lg:text-[clamp(2rem,10vmin,20rem)] xl:text-[clamp(2rem,12vmin,20rem)]">
               Build advanced AI apps with our expertise.
             </h1>
           </div>
