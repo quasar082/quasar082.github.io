@@ -43,7 +43,7 @@ export function BlogMenuOverlay({ isOpen, onClose, items, activeHref }: BlogMenu
     }
 
     const DEAD_ZONE = 0.08;
-    const MAX_SPEED = 2;
+    const MAX_SPEED = 3;
 
     let speed = 0;
     let rafId = 0;
