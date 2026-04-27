@@ -49,7 +49,7 @@ export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuO
     const step = () => {
       const delta = targetScrollTop - currentScrollTop;
       const distance = Math.abs(delta);
-      const easeFactor = 0.08 + Math.min(0.14, distance / 1600);
+      const easeFactor = 0.05 + Math.min(0.1, distance / 2200);
 
       currentScrollTop += delta * easeFactor;
 
