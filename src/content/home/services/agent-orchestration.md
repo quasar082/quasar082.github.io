@@ -1,5 +1,5 @@
 ---
 label: Agent Orchestration
 href: '#about'
-order: 1
+order: 4
 ---

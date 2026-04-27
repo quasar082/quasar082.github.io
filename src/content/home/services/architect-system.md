@@ -1,5 +1,5 @@
 ---
 label: Architect System
 href: '#about'
-order: 4
+order: 2
 ---

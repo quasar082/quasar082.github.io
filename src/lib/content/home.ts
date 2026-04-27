@@ -8,13 +8,6 @@ export type ServiceItem = {
   order: number;
 };
 
-export type SocialLink = {
-  label: string;
-  href: string;
-  symbol: string;
-  order: number;
-};
-
 export type MenuItem = {
   label: string;
   href: string;
@@ -45,7 +38,6 @@ export type ContactSocial = {
 export type HomeContent = {
   heroImagePath: string;
   services: ServiceItem[];
-  socialLinks: SocialLink[];
   menuItems: MenuItem[];
   projects: ProjectItem[];
   achievements: AchievementItem[];
@@ -85,7 +77,6 @@ export function getHomeContent(): HomeContent {
   return {
     heroImagePath: site.heroImagePath,
     services: readCollection<ServiceItem>('services'),
-    socialLinks: readCollection<SocialLink>('social-links'),
     menuItems: readCollection<MenuItem>('menu-items'),
     projects: readCollection<ProjectItem>('projects'),
     achievements: readCollection<AchievementItem>('achievements'),

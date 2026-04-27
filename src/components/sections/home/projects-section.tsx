@@ -9,7 +9,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <section id="projects" className="box-border min-h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
-        <h2 className="m-0 max-w-full text-8xl leading-tight tracking-tight xl:text-9xl">Projects</h2>
+        <h2 className="m-0 max-w-full text-5xl leading-tight tracking-tight md:text-7xl lg:text-8xl">Projects</h2>
 
         <div className="mt-12 grid grid-cols-1 gap-20 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (

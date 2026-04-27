@@ -1,4 +1,4 @@
-import type { ServiceItem, SocialLink } from '@/lib/content/home';
+import type { ContactSocial, ServiceItem } from '@/lib/content/home';
 
 function GithubMark() {
   return (
@@ -11,10 +11,42 @@ function GithubMark() {
 type HeroSectionProps = {
   heroImagePath: string;
   services: ServiceItem[];
-  socialLinks: SocialLink[];
+  contactSocials: ContactSocial[];
 };
 
-export function HeroSection({ heroImagePath, services, socialLinks }: HeroSectionProps) {
+function FacebookMark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="size-[1em]" aria-hidden="true">
+      <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.87.26-1.46 1.56-1.46H16.7V5.02c-.3-.04-1.34-.12-2.55-.12-2.53 0-4.25 1.5-4.25 4.25V11H7.2v3h2.7v8h3.6Z" />
+    </svg>
+  );
+}
+
+function LinkedInMark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="size-[1em]" aria-hidden="true">
+      <path d="M6.94 8.5H3.56V20h3.38V8.5Zm.22-3.56c0 1.05-.8 1.9-1.92 1.9-1.1 0-1.9-.85-1.9-1.9 0-1.06.82-1.9 1.93-1.9s1.88.84 1.9 1.9ZM20.44 13.4V20h-3.37v-6.2c0-1.56-.56-2.62-1.96-2.62-1.07 0-1.7.72-1.98 1.42-.1.25-.13.6-.13.96V20h-3.38s.05-10.57 0-11.66H13v1.66c.45-.7 1.26-1.7 3.08-1.7 2.24 0 3.92 1.46 3.92 4.6Z" />
+    </svg>
+  );
+}
+
+function getSocialIcon(label: string) {
+  if (label === 'Github') {
+    return <GithubMark />;
+  }
+
+  if (label === 'Facebook') {
+    return <FacebookMark />;
+  }
+
+  if (label === 'LinkedIn') {
+    return <LinkedInMark />;
+  }
+
+  return null;
+}
+
+export function HeroSection({ heroImagePath, services, contactSocials }: HeroSectionProps) {
   return (
     <section
       id="home"
@@ -52,7 +84,9 @@ export function HeroSection({ heroImagePath, services, socialLinks }: HeroSectio
             aria-label="Social links"
           >
             <ul className="m-0 flex list-none flex-wrap gap-3 p-0 md:gap-4 lg:grid lg:justify-items-end lg:gap-4">
-              {socialLinks.map((social) => (
+              {contactSocials
+                .filter((social) => social.label === 'Github' || social.label === 'Facebook' || social.label === 'LinkedIn')
+                .map((social) => (
                 <li key={social.label}>
                   <a
                     href={social.href}
@@ -63,7 +97,7 @@ export function HeroSection({ heroImagePath, services, socialLinks }: HeroSectio
                       aria-hidden="true"
                       className={`text-base font-semibold leading-none lg:text-3xl ${social.label === 'Github' ? 'lg:rotate-90' : ''}`}
                     >
-                      {social.label === 'Github' ? <GithubMark /> : social.symbol}
+                      {getSocialIcon(social.label)}
                     </span>
                     <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100 lg:after:-left-2 lg:after:top-0 lg:after:h-full lg:after:w-px lg:after:origin-top lg:after:scale-x-100 lg:after:scale-y-0 group-hover:lg:after:scale-y-100 group-focus-visible:lg:after:scale-y-100">
                       {social.label}
