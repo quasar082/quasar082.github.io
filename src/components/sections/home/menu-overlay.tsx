@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import type { MenuItem } from '@/lib/content/home';
 
 type MenuOverlayProps = {
@@ -18,6 +21,69 @@ const previewClassByHref: Record<string, string> = {
 };
 
 export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuOverlayProps) {
+  const listRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const isDesktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!isDesktopPointer) {
+      return;
+    }
+
+    const list = listRef.current;
+    if (!list) {
+      return;
+    }
+
+    const DEAD_ZONE = 0.08;
+    const MAX_SPEED = 1.35;
+
+    let speed = 0;
+    let rafId = 0;
+
+    const step = () => {
+      if (speed !== 0) {
+        list.scrollTop += speed;
+      }
+      rafId = window.requestAnimationFrame(step);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = list.getBoundingClientRect();
+      if (rect.height <= 0) {
+        speed = 0;
+        return;
+      }
+
+      const relativeY = (event.clientY - rect.top) / rect.height;
+      const distanceFromCenter = relativeY - 0.5;
+
+      if (Math.abs(distanceFromCenter) <= DEAD_ZONE) {
+        speed = 0;
+        return;
+      }
+
+      speed = distanceFromCenter > 0 ? MAX_SPEED : -MAX_SPEED;
+    };
+
+    const onPointerLeave = () => {
+      speed = 0;
+    };
+
+    list.addEventListener('pointermove', onPointerMove);
+    list.addEventListener('pointerleave', onPointerLeave);
+    rafId = window.requestAnimationFrame(step);
+
+    return () => {
+      list.removeEventListener('pointermove', onPointerMove);
+      list.removeEventListener('pointerleave', onPointerLeave);
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [isOpen]);
+
   return (
     <div
       id="hero-menu-overlay"
@@ -30,7 +96,7 @@ export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuO
       aria-label="Main menu"
     >
       <nav aria-label="Main navigation" className="container mx-auto h-full px-4 pb-8 pt-28 sm:px-6 lg:px-8">
-        <ul data-lenis-prevent className="m-0 grid h-full list-none gap-5 overflow-y-auto p-0 pr-1 md:gap-6">
+        <ul ref={listRef} data-lenis-prevent className="m-0 grid h-full list-none gap-5 overflow-y-auto p-0 pr-1 md:gap-6">
           {menuItems.map((item) => {
             const isActive = item.href === activeSection;
             const previewClass = previewClassByHref[item.href] ?? 'from-white/15 via-white/10 to-white/5';
