@@ -28,10 +28,12 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
     };
 
     updateLayoutState();
+    const measureExpandedSlot = window.setTimeout(updateLayoutState, 2050);
     window.addEventListener('resize', updateLayoutState);
     document.fonts?.ready.then(updateLayoutState).catch(updateLayoutState);
 
     return () => {
+      window.clearTimeout(measureExpandedSlot);
       window.removeEventListener('resize', updateLayoutState);
     };
   }, []);
@@ -53,16 +55,19 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
               <span className="justify-self-end">QUASAR</span>
               <div
                 ref={inlineImageRef}
-                className="h-[calc(100dvh*var(--image-scale))] w-[calc(100dvw*var(--image-scale))] [grid-column:2]"
-                aria-hidden="true"
-              />
+                className="h-[calc(100dvh*var(--image-scale))] w-[calc(100dvw*var(--image-scale))] overflow-hidden opacity-0 shadow-2xl [grid-column:2] [animation:home-preloader-inline-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]"
+              >
+                {/* Native img keeps parity with the existing static-export hero asset path. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={heroImagePath} alt="" decoding="async" className="h-full w-full object-cover" />
+              </div>
               <span className="justify-self-start">PORTFOLIO</span>
             </div>
           )}
         </div>
 
         <div
-          className={isMobile ? 'relative z-20 h-screen w-screen overflow-hidden opacity-0 shadow-2xl [transform:translateZ(0)_scale(var(--image-scale))] [transform-origin:center] [will-change:transform,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]' : 'fixed z-20 overflow-hidden opacity-0 shadow-2xl [will-change:top,left,width,height,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]'}
+          className={isMobile ? 'relative z-20 h-screen w-screen overflow-hidden opacity-0 shadow-2xl [transform:translateZ(0)_scale(var(--image-scale))] [transform-origin:center] [will-change:transform,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]' : 'fixed z-20 overflow-hidden opacity-0 shadow-2xl [will-change:top,left,width,height,opacity] [animation:home-preloader-fixed-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]'}
           style={
             isMobile
               ? undefined
@@ -125,6 +130,38 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
         @keyframes home-preloader-image {
           0%,
           36% {
+            opacity: 0;
+            transform: translateZ(0) scale(var(--image-scale));
+          }
+          54%,
+          68% {
+            opacity: 1;
+            transform: translateZ(0) scale(var(--image-scale));
+          }
+          100% {
+            opacity: 1;
+            transform: translateZ(0) scale(1);
+          }
+        }
+
+        @keyframes home-preloader-inline-image {
+          0%,
+          36% {
+            opacity: 0;
+          }
+          54%,
+          68% {
+            opacity: 1;
+          }
+          69%,
+          100% {
+            opacity: 0;
+          }
+        }
+
+        @keyframes home-preloader-fixed-image {
+          0%,
+          68% {
             left: var(--image-start-left, 0);
             top: var(--image-start-top, 0);
             width: var(--image-start-width, 100vw);
@@ -132,8 +169,7 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
             opacity: 0;
             transform: translateZ(0);
           }
-          54%,
-          68% {
+          69% {
             left: var(--image-start-left, 0);
             top: var(--image-start-top, 0);
             width: var(--image-start-width, 100vw);
