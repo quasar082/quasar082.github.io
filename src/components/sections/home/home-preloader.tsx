@@ -8,23 +8,23 @@ type HomePreloaderProps = {
 
 export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
   const inlineImageRef = useRef<HTMLDivElement | null>(null);
+  const fixedImageRef = useRef<HTMLDivElement | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [imageRect, setImageRect] = useState({ left: 0, top: 0, width: 0, height: 0 });
 
   useEffect(() => {
     const updateLayoutState = () => {
       setIsMobile(window.innerWidth < 640);
 
       const inlineImage = inlineImageRef.current;
-      if (!inlineImage) return;
+      const fixedImage = fixedImageRef.current;
+      if (!inlineImage || !fixedImage) return;
 
       const rect = inlineImage.getBoundingClientRect();
-      setImageRect({
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height,
-      });
+      fixedImage.style.setProperty('--image-start-left', `${rect.left}px`);
+      fixedImage.style.setProperty('--image-start-top', `${rect.top}px`);
+      fixedImage.style.setProperty('--image-start-width', `${rect.width}px`);
+      fixedImage.style.setProperty('--image-start-height', `${rect.height}px`);
+      fixedImage.style.setProperty('--image-ready-opacity', '1');
     };
 
     updateLayoutState();
@@ -67,17 +67,8 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
         </div>
 
         <div
+          ref={fixedImageRef}
           className={isMobile ? 'relative z-20 h-screen w-screen overflow-hidden opacity-0 shadow-2xl [transform:translateZ(0)_scale(var(--image-scale))] [transform-origin:center] [will-change:transform,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]' : 'fixed z-20 overflow-hidden opacity-0 shadow-2xl [will-change:top,left,width,height,opacity] [animation:home-preloader-fixed-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]'}
-          style={
-            isMobile
-              ? undefined
-              : ({
-                  '--image-start-left': `${imageRect.left}px`,
-                  '--image-start-top': `${imageRect.top}px`,
-                  '--image-start-width': `${imageRect.width}px`,
-                  '--image-start-height': `${imageRect.height}px`,
-                } as React.CSSProperties)
-          }
         >
           {/* Native img keeps parity with the existing static-export hero asset path. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -175,7 +166,7 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
             top: var(--image-start-top, 0);
             width: var(--image-start-width, 100vw);
             height: var(--image-start-height, 100vh);
-            opacity: 1;
+            opacity: var(--image-ready-opacity, 0);
             transform: translateZ(0);
           }
           100% {
