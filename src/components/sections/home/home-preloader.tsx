@@ -68,7 +68,7 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
 
         <div
           ref={fixedImageRef}
-          className={isMobile ? 'relative z-20 h-screen w-screen overflow-hidden opacity-0 shadow-2xl [transform:translateZ(0)_scale(var(--image-scale))] [transform-origin:center] [will-change:transform,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]' : 'fixed z-20 overflow-hidden opacity-0 shadow-2xl [will-change:top,left,width,height,opacity] [animation:home-preloader-fixed-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]'}
+          className={isMobile ? 'relative z-20 h-screen w-screen overflow-hidden opacity-0 shadow-2xl [transform:translateZ(0)_scale(var(--image-scale))] [transform-origin:center] [will-change:transform,opacity] [animation:home-preloader-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]' : 'fixed z-40 overflow-hidden opacity-0 shadow-2xl [will-change:top,left,width,height,opacity] [animation:home-preloader-fixed-image_3s_cubic-bezier(0.76,0,0.24,1)_forwards]'}
         >
           {/* Native img keeps parity with the existing static-export hero asset path. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
