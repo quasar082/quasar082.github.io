@@ -150,10 +150,10 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
             opacity: 0;
           }
           54%,
-          68% {
+          70% {
             opacity: 1;
           }
-          69%,
+          72%,
           100% {
             opacity: 0;
           }
@@ -169,7 +169,8 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
             opacity: 0;
             transform: translateZ(0);
           }
-          69% {
+          69%,
+          72% {
             left: var(--image-start-left, 0);
             top: var(--image-start-top, 0);
             width: var(--image-start-width, 100vw);
