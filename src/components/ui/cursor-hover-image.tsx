@@ -38,7 +38,9 @@ export function CursorHoverImage({
 
   useEffect(() => {
     const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    setEnabled(canHover);
+    const frame = window.requestAnimationFrame(() => setEnabled(canHover));
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   const stopRaf = () => {

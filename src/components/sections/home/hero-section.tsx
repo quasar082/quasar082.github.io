@@ -58,6 +58,7 @@ export function HeroSection({ heroImagePath, services, contactSocials }: HeroSec
   return (
     <section
       id="home"
+      data-home-hero-image
       className="relative h-dvh bg-cover bg-center px-4 pb-10 pt-24 text-white sm:px-6 sm:pb-10 lg:px-8 lg:pb-8"
       style={{ backgroundImage: `url('${heroImagePath}')` }}
       aria-label="Hero section"
