@@ -52,8 +52,14 @@ export function HomePreloader({ heroImagePath }: HomePreloaderProps) {
 
         if (cancelled) return;
 
-        const startRect = inlineImage.getBoundingClientRect();
+        const inlineRect = inlineImage.getBoundingClientRect();
         const targetRect = heroTarget.getBoundingClientRect();
+        const startRect = {
+          height: inlineRect.height,
+          left: window.innerWidth / 2 - inlineRect.width / 2,
+          top: window.innerHeight / 2 - inlineRect.height / 2,
+          width: inlineRect.width,
+        };
 
         gsap.set(root, { autoAlpha: 1 });
         gsap.set(title, { autoAlpha: 0, scale: 0.98 });
