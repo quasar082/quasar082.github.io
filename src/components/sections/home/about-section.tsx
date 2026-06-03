@@ -1,4 +1,3 @@
-import { CursorHoverImage } from '@/components/ui/cursor-hover-image';
 import { SpinningText } from '@/components/ui/spinning-text';
 
 export function AboutSection() {
@@ -7,13 +6,8 @@ export function AboutSection() {
       <div className="container mx-auto grid lg:h-full grid-cols-1 grid-rows-1 gap-6 md:grid-cols-5 md:grid-rows-4">
         <h2 className="text-4xl mt-8 leading-tight md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3 text-[clamp(2rem,4vmin,3rem)] md:text-[clamp(2rem,4vmin,4rem)] lg:text-[clamp(2rem,5vmin,4rem)] xl:text-[clamp(2rem,6vmin,4rem)]">
           Hi! My name is{' '}
-          <CursorHoverImage src="/images/about.jpg" width={320} height={210} className="inline underline underline-offset-8">
-            Ha Minh Quan
-          </CursorHoverImage>{' '}
-          ~{' '}
-          <CursorHoverImage src="/images/hero.jpg" width={320} height={210} className="inline underline underline-offset-8">
-            Quasar
-          </CursorHoverImage>
+          <span className="inline underline underline-offset-8">Ha Minh Quan</span> ~{' '}
+          <span className="inline underline underline-offset-8">Quasar</span>
           . An AI engineer based in Vietnam. I focus on architecture design, operational optimization, and scaling intelligent systems - from large-scale unstructured data processing, multi-agent systems, and chatbots to real-world deployment.
         </h2>
 
