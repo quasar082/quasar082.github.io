@@ -49,7 +49,7 @@ export const TextReveal: FC<TextRevealProps> = ({
       <span className="flex flex-wrap content-start leading-[inherit]">
         {tokens.map((token, i) => {
           if (token.type === "break") {
-            return <span key={`${i}-${token.value}`} className="basis-full h-[0.45em]" aria-hidden="true" />
+            return <span key={`${i}-${token.value}`} className="basis-full h-[0.6em]" aria-hidden="true" />
           }
 
           const revealIndex = revealTokens.indexOf(token)
