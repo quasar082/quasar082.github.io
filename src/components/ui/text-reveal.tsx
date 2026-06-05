@@ -35,7 +35,7 @@ export const TextReveal: FC<TextRevealProps> = ({
 
   return (
     <div ref={sectionRef} className={cn("relative z-0", className)}>
-      <span className="flex flex-wrap leading-[inherit]">
+      <span className="flex flex-wrap content-start leading-[inherit]">
         {words.map((word, i) => {
           const start = i / words.length
           const end = start + 1 / words.length
