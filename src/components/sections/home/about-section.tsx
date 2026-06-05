@@ -9,19 +9,12 @@ export function AboutSection({ paragraphs }: AboutSectionProps) {
   return (
     <section id="about" className="box-border lg:h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="About section">
       <div className="container mx-auto grid lg:h-full grid-cols-1 grid-rows-1 gap-6 md:grid-cols-5 md:grid-rows-4">
-        <div className="mt-8 self-start md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3">
-          <div className="grid gap-[0.35em]">
-            {paragraphs.map((paragraph) => (
-              <TextReveal
-                key={paragraph}
-                className="text-4xl leading-[1] [&_*]:leading-[1] text-[clamp(2rem,4vmin,3rem)] md:text-[clamp(2rem,4vmin,4rem)] lg:text-[clamp(2rem,5vmin,4rem)] xl:text-[clamp(2rem,6vmin,4rem)]"
-                italicWords={["Ha", "Minh", "Quan", "Quasar"]}
-              >
-                {`"${paragraph}"`}
-              </TextReveal>
-            ))}
-          </div>
-        </div>
+        <TextReveal
+          className="mt-8 self-start text-4xl leading-[1] [&_*]:leading-[1] md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3 text-[clamp(2rem,4vmin,3rem)] md:text-[clamp(2rem,4vmin,4rem)] lg:text-[clamp(2rem,5vmin,4rem)] xl:text-[clamp(2rem,6vmin,4rem)]"
+          italicWords={["Ha", "Minh", "Quan", "Quasar"]}
+        >
+          {paragraphs.map((paragraph) => `"${paragraph}"`).join('\n')}
+        </TextReveal>
 
         <p className="whitespace-pre-line text-sm tracking-wide md:col-start-1 md:col-end-2 md:row-start-4 md:row-end-5 md:text-base mt-8">
           CRAFTING END-TO-END

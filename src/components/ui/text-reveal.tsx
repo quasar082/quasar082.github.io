@@ -10,6 +10,10 @@ import { motion, MotionValue, useScroll, useTransform } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
+type TextRevealToken =
+  | { type: "word"; value: string }
+  | { type: "break"; value: string }
+
 export interface TextRevealProps extends ComponentPropsWithoutRef<"div"> {
   children: string
   italicWords?: string[]
@@ -30,25 +34,37 @@ export const TextReveal: FC<TextRevealProps> = ({
     throw new Error("TextReveal: children must be a string")
   }
 
-  const words = children.split(" ")
+  const tokens: TextRevealToken[] = children.split(/(\n+)/).flatMap<TextRevealToken>((part) => {
+    if (/^\n+$/.test(part)) {
+      return [{ type: "break" as const, value: part }]
+    }
+
+    return part.split(" ").filter(Boolean).map((word) => ({ type: "word" as const, value: word }))
+  })
+  const revealTokens = tokens.filter((token) => token.type === "word")
   const italicWordSet = new Set(italicWords.map((word) => word.toLowerCase()))
 
   return (
     <div ref={sectionRef} className={cn("relative z-0", className)}>
       <span className="flex flex-wrap content-start leading-[inherit]">
-        {words.map((word, i) => {
-          const start = i / words.length
-          const end = start + 1 / words.length
-          const normalizedWord = word.toLowerCase().replace(/[^a-z0-9]/gi, "")
+        {tokens.map((token, i) => {
+          if (token.type === "break") {
+            return <span key={`${i}-${token.value}`} className="basis-full h-[0.45em]" aria-hidden="true" />
+          }
+
+          const revealIndex = revealTokens.indexOf(token)
+          const start = revealIndex / revealTokens.length
+          const end = start + 1 / revealTokens.length
+          const normalizedWord = token.value.toLowerCase().replace(/[^a-z0-9]/gi, "")
           const isItalic = italicWordSet.has(normalizedWord)
           return (
             <Word
-              key={i}
+              key={`${i}-${token.value}`}
               progress={scrollYProgress}
               range={[start, end]}
               className={isItalic ? "italic" : undefined}
             >
-              {word}
+              {token.value}
             </Word>
           )
         })}
