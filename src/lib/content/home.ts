@@ -39,6 +39,7 @@ export type ContactSocial = {
 
 export type HomeContent = {
   heroImagePath: string;
+  aboutParagraphs: string[];
   services: ServiceItem[];
   menuItems: MenuItem[];
   projects: ProjectItem[];
@@ -74,10 +75,11 @@ function readCollection<T extends OrderedItem>(directoryName: string): T[] {
 }
 
 export function getHomeContent(): HomeContent {
-  const site = readMarkdownFrontmatter<{ heroImagePath: string }>(path.join(homeContentDirectory, 'site.md'));
+  const site = readMarkdownFrontmatter<{ heroImagePath: string; aboutParagraphs: string[] }>(path.join(homeContentDirectory, 'site.md'));
 
   return {
     heroImagePath: site.heroImagePath,
+    aboutParagraphs: site.aboutParagraphs,
     services: readCollection<ServiceItem>('services'),
     menuItems: readCollection<MenuItem>('menu-items'),
     projects: readCollection<ProjectItem>('projects'),
