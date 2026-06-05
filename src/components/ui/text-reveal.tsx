@@ -35,7 +35,7 @@ export const TextReveal: FC<TextRevealProps> = ({
 
   return (
     <div ref={sectionRef} className={cn("relative z-0", className)}>
-      <span className="flex flex-wrap">
+      <span className="flex flex-wrap leading-[inherit]">
         {words.map((word, i) => {
           const start = i / words.length
           const end = start + 1 / words.length
@@ -67,11 +67,11 @@ interface WordProps {
 const Word: FC<WordProps> = ({ children, progress, range, className }) => {
   const opacity = useTransform(progress, range, [0, 1])
   return (
-    <span className="xl:lg-3 relative mx-1 lg:mx-1.5">
-      <span className={cn("absolute opacity-30", className)}>{children}</span>
+    <span className="relative mx-1 leading-[inherit] lg:mx-1.5">
+      <span className={cn("absolute leading-[inherit] opacity-30", className)}>{children}</span>
       <motion.span
         style={{ opacity: opacity }}
-        className={cn("text-inherit", className)}
+        className={cn("leading-[inherit] text-inherit", className)}
       >
         {children}
       </motion.span>
