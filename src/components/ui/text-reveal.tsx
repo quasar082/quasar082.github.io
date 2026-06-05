@@ -27,7 +27,7 @@ export const TextReveal: FC<TextRevealProps> = ({
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 85%", "end 20%"],
+    offset: ["start 85%", "end 55%"],
   })
 
   if (typeof children !== "string") {
