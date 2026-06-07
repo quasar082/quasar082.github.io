@@ -98,16 +98,16 @@ export function HeroSection() {
       />
 
       <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pt-[clamp(5rem,calc(30rem-10vw),30rem)]">
-        <div className="grid w-full grid-cols-[minmax(4rem,1fr)_minmax(0,76rem)] items-end gap-x-6 md:gap-x-10 lg:gap-x-14">
-          <div className="flex h-full items-end justify-start">
+        <div className="flex justify-between items-center w-full ">
+          <div className="flex h-full items-end justify-start w-fit ">
             <p className="m-0 text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
           </div>
 
-          <div className="ml-auto w-full max-w-[76rem]">
+          <div className="w-3/4 flex-shrink-0">
           <div className="@container w-full"> 
   
   {/* 2. Thẻ con đổi từ 100cqw thành 16.6cqw, hạ giới hạn max xuống */}
-  <p className="text-[clamp(1rem,30cqw,100rem)] font-bold whitespace-nowrap leading-[0.95]">
+  <p className="text-[clamp(1rem,33cqw,100rem)] font-semibold whitespace-nowrap  w-fit leading-[0.95]">
     quasar
   </p>
   

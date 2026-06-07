@@ -51,6 +51,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn('font-sans', geist.variable)}>
+      <head>
+        <meta name="color-scheme" content="light" />
+      </head>
       <body>
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
