@@ -1,19 +1,90 @@
-import type { ServiceItem } from '@/lib/content/home';
+'use client';
+
+import { useLayoutEffect, useRef, useState } from 'react';
 
 const heroVideoPath = '/hero/DNA 3D Animation by Tridimensi on Dribbble.mp4';
 
-type HeroSectionProps = {
-  services: ServiceItem[];
+type FitHeroTextProps = {
+  text: string;
+  align?: 'left' | 'right';
+  className?: string;
 };
 
-export function HeroSection({ services }: HeroSectionProps) {
+function FitHeroText({ text, align = 'left', className }: FitHeroTextProps) {
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  const textRef = useRef<HTMLParagraphElement | null>(null);
+  const [fontSize, setFontSize] = useState(16);
+  const [scaleY, setScaleY] = useState(1);
+  const [ready, setReady] = useState(false);
+
+  useLayoutEffect(() => {
+    const parent = parentRef.current;
+    const el = textRef.current;
+
+    if (!parent || !el) return;
+
+    const fit = () => {
+      const parentWidth = parent.clientWidth;
+      const parentHeight = parent.clientHeight;
+      if (!parentWidth || !parentHeight) return;
+
+      let low = 16;
+      let high = 520;
+      let best = 16;
+
+      for (let i = 0; i < 24; i += 1) {
+        const mid = (low + high) / 2;
+        el.style.fontSize = `${mid}px`;
+        el.style.transform = 'scaleY(1)';
+
+        if (el.scrollWidth <= parentWidth) {
+          best = mid;
+          low = mid;
+        } else {
+          high = mid;
+        }
+      }
+
+      el.style.fontSize = `${best}px`;
+      const textHeight = el.scrollHeight;
+      const nextScaleY = textHeight ? parentHeight / textHeight : 1;
+
+      setFontSize(Math.floor(best * 100) / 100);
+      setScaleY(Math.floor(nextScaleY * 1000) / 1000);
+      setReady(true);
+    };
+
+    const observer = new ResizeObserver(fit);
+    observer.observe(parent);
+
+    document.fonts?.ready.then(fit).catch(fit);
+    fit();
+
+    return () => observer.disconnect();
+  }, [text]);
+
   return (
-    <section
-      id="home"
-      data-home-hero-image
-      className="relative h-dvh overflow-hidden px-4 pb-10 pt-24 text-white sm:px-6 sm:pb-10 lg:px-8 lg:pb-8"
-      aria-label="Hero section"
-    >
+    <div ref={parentRef} className={`relative w-full overflow-hidden ${className ?? ''}`}>
+      <p
+        ref={textRef}
+        className={`absolute bottom-0 m-0 block max-w-full whitespace-nowrap font-semibold leading-[0.8] tracking-[-0.05em] text-black ${
+          align === 'right' ? 'right-0 origin-bottom-right text-right' : 'left-0 origin-bottom-left text-left'
+        }`}
+        style={{
+          fontSize,
+          transform: `scaleY(${scaleY})`,
+          visibility: ready ? 'visible' : 'hidden',
+        }}
+      >
+        {text}
+      </p>
+    </div>
+  );
+}
+
+export function HeroSection() {
+  return (
+    <section id="home" data-home-hero-image className="relative h-dvh overflow-hidden px-4 pb-10 pt-24 text-black sm:px-6 sm:pb-10 lg:px-8 lg:pb-8" aria-label="Hero section">
       <video
         className="absolute inset-0 h-full w-full object-cover"
         src={heroVideoPath}
@@ -24,22 +95,17 @@ export function HeroSection({ services }: HeroSectionProps) {
         preload="metadata"
         aria-hidden="true"
       />
-      <div className="container relative z-10 mx-auto flex h-full flex-col">
-        <div className="grid flex-1 grid-cols-1 items-end gap-5 lg:grid-rows-[auto_1fr] lg:items-end lg:gap-y-3">
-          <aside id="services" className="self-start lg:row-start-1" aria-label="Core services">
-            <ul className="m-0 grid list-none gap-1 p-0 md:gap-2">
-              {services.map((service) => (
-                <li key={service.label} className="inline-flex min-h-11 items-center text-base leading-snug text-white/90 2xl:text-lg">
-                  ↳ {service.label}
-                </li>
-              ))}
-            </ul>
-          </aside>
 
-          <div className="lg:row-start-2">
-            <h1 className="m-0 max-w-full leading-tight tracking-tight lg:max-w-[12ch] text-[clamp(2rem,10vmin,15rem)] xl:text-[clamp(2rem,12vmin,20rem)]">
-              Build advanced AI apps with our expertise.
-            </h1>
+      <div className="container relative z-10 mx-auto flex h-full flex-col justify-end">
+        <div className="grid min-h-0 flex-1 grid-rows-[1fr_auto_auto]">
+          <FitHeroText text="quasar" align="right" className="ml-auto row-start-2 h-[clamp(8rem,22vw,18rem)] w-full max-w-[78rem]" />
+
+          <div className="row-start-3 mt-4 grid grid-cols-[auto_1fr] items-end gap-x-8 md:mt-6 md:gap-x-14">
+            <p className="m-0 self-end text-[clamp(1rem,2vw,1.4rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
+            <div className="min-w-0 max-w-[48rem]">
+              <FitHeroText text="Harness AI." className="h-[clamp(2rem,4.8vw,4.6rem)]" />
+              <FitHeroText text="Shape what's next." className="mt-1 h-[clamp(2rem,4.8vw,4.6rem)]" />
+            </div>
           </div>
         </div>
       </div>
