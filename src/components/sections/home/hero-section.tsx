@@ -85,7 +85,7 @@ function FitHeroText({ text, align = 'left', className, maxFontSize }: FitHeroTe
 
 export function HeroSection() {
   return (
-    <section id="home" data-home-hero-image className="relative h-dvh overflow-hidden px-4 pb-10 pt-24 text-black sm:px-6 sm:pb-10 lg:px-8 lg:pb-8" aria-label="Hero section">
+    <section id="home" data-home-hero-image className="relative h-dvh overflow-hidden px-4 pt-24 text-black sm:px-6 lg:px-8 " aria-label="Hero section">
       <video
         className="absolute inset-0 h-full w-full object-cover"
         src={heroVideoPath}
@@ -97,22 +97,29 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-[6vh] pt-[24vh] md:pb-[3vh] md:pt-[28vh]">
+      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pt-[clamp(5rem,calc(30rem-10vw),30rem)]">
         <div className="grid w-full grid-cols-[minmax(4rem,1fr)_minmax(0,76rem)] items-end gap-x-6 md:gap-x-10 lg:gap-x-14">
-          <div className="flex h-full items-end justify-start pb-[clamp(1.2rem,3vw,2.4rem)]">
+          <div className="flex h-full items-end justify-start">
             <p className="m-0 text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
           </div>
 
           <div className="ml-auto w-full max-w-[76rem]">
-            <FitHeroText text="quasar" align="right" className="h-[clamp(6.5rem,18vw,14rem)] w-full" />
-
-            <div className="mt-8 ml-auto w-full max-w-[42rem] md:mt-10 lg:mt-12">
-              <p className="m-0 text-left  font-semibold leading-[0.95] tracking-[-0.05em] text-black">Harness AI.</p>
-              <p className="mt-2 m-0 text-left  font-semibold leading-[0.95] tracking-[-0.05em] text-black">Shape what&apos;s next.</p>
+          <div className="@container w-full"> 
+  
+  {/* 2. Thẻ con đổi từ 100cqw thành 16.6cqw, hạ giới hạn max xuống */}
+  <p className="text-[clamp(1rem,30cqw,100rem)] font-bold whitespace-nowrap leading-[0.95]">
+    quasar
+  </p>
+  
+</div>
+            {/* <FitHeroText text="quasar" align="right" className="h-[clamp(6.5rem,17vw,14rem)] w-full" /> */}
+            <div className="mt-8 ml-auto w-full">
+              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-black">Harness AI.</p>
+              <p className="mt-2 m-0 text-left  text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-black">Shape what&apos;s next.</p>
             </div>
           </div>
         </div>
-      </div>
+   </div>
     </section>
   );
 }
