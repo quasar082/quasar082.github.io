@@ -8,9 +8,10 @@ type FitHeroTextProps = {
   text: string;
   align?: 'left' | 'right';
   className?: string;
+  maxFontSize?: number;
 };
 
-function FitHeroText({ text, align = 'left', className }: FitHeroTextProps) {
+function FitHeroText({ text, align = 'left', className, maxFontSize }: FitHeroTextProps) {
   const parentRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLParagraphElement | null>(null);
   const [fontSize, setFontSize] = useState(16);
@@ -29,7 +30,7 @@ function FitHeroText({ text, align = 'left', className }: FitHeroTextProps) {
       if (!parentWidth || !parentHeight) return;
 
       let low = 16;
-      let high = 520;
+      let high = maxFontSize ?? 520;
       let best = 16;
 
       for (let i = 0; i < 24; i += 1) {
@@ -61,7 +62,7 @@ function FitHeroText({ text, align = 'left', className }: FitHeroTextProps) {
     fit();
 
     return () => observer.disconnect();
-  }, [text]);
+  }, [maxFontSize, text]);
 
   return (
     <div ref={parentRef} className={`relative w-full ${className ?? ''}`}>
@@ -103,8 +104,8 @@ export function HeroSection() {
           <div className="mt-8 ml-auto grid w-full max-w-[58rem] grid-cols-[auto_1fr] items-end gap-x-8 md:mt-10 md:gap-x-14 lg:mt-12">
             <p className="m-0 self-end text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
             <div className="min-w-0 max-w-[42rem]">
-              <FitHeroText text="Harness AI." className="h-[clamp(2rem,4vw,3.8rem)]" />
-              <FitHeroText text="Shape what's next." className="mt-2 h-[clamp(2rem,4vw,3.8rem)]" />
+              <FitHeroText text="Harness AI." className="h-[clamp(2rem,4vw,3.8rem)]" maxFontSize={112} />
+              <FitHeroText text="Shape what's next." className="mt-2 h-[clamp(2rem,4vw,3.8rem)]" maxFontSize={112} />
             </div>
           </div>
         </div>
