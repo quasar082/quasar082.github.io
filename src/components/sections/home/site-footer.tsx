@@ -2,15 +2,15 @@
 
 export function SiteFooter() {
   return (
-    <footer aria-label="Site footer" className="min-h-0 flex-1">
+    <footer aria-label="Site footer" className="min-h-0 mt-auto">
       <div className="@container w-full">
-        <p className="text-[clamp(1rem,31.8cqw,100rem)] w-fit whitespace-nowrap font-bold leading-[0.95]">
-          quasar
+        <p className="text-[clamp(1rem,26.4cqw,100rem)] w-fit whitespace-nowrap font-semibold tracking-[-0.04em] leading-[0.95]">
+          QUASAR
         </p>
       </div>
-      {/* <div className="mt-3 border-t border-black/35 pt-3">
+      <div className="border-t border-black/35 pt-2">
         <p className="m-0 text-sm tracking-wide text-black/65">© 2026 Quasar. All rights reserved.</p>
-      </div> */}
+      </div>
     </footer>
   );
 }
