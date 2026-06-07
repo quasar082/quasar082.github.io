@@ -24,8 +24,6 @@ export function HeroSection({ services }: HeroSectionProps) {
         preload="metadata"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-[rgba(34,43,39,0.42)]" />
-
       <div className="container relative z-10 mx-auto flex h-full flex-col">
         <div className="grid flex-1 grid-cols-1 items-end gap-5 lg:grid-rows-[auto_1fr] lg:items-end lg:gap-y-3">
           <aside id="services" className="self-start lg:row-start-1" aria-label="Core services">

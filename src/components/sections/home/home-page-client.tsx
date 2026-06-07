@@ -17,16 +17,12 @@ type HomePageClientProps = {
 export function HomePageClient({ content }: HomePageClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(content.menuItems[0]?.href ?? '#home');
-  const [isPastHero, setIsPastHero] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   useEffect(() => {
-    const hero = document.getElementById('home');
     const sectionIds = content.menuItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1));
 
     const updateScrollState = () => {
-      setIsPastHero(hero ? hero.getBoundingClientRect().bottom <= 72 : false);
-
       const currentSectionId = sectionIds.findLast((sectionId) => {
         const section = document.getElementById(sectionId);
 
@@ -96,7 +92,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="h-dvh overflow-x-clip bg-[#8f9a94]">
-      <SiteHeader isMenuOpen={isMenuOpen} isPastHero={isPastHero} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
+      <SiteHeader isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection services={content.services} />
       <AboutSection paragraphs={content.aboutParagraphs} />
       <ProjectsSection projects={content.projects} />

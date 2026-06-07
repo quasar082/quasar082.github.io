@@ -58,7 +58,7 @@ export function BlogShell({ children, activeHref = '/blog' }: BlogShellProps) {
 
   return (
     <main className="min-h-dvh bg-[#f7f7f3] text-[#111111]">
-      <SiteHeader isMenuOpen={isMenuOpen} isPastHero isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky homeHref="/" />
+      <SiteHeader isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky homeHref="/" />
       {children}
       <BlogMenuOverlay isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} items={menuItems} activeHref={activeHref} />
     </main>

@@ -2,17 +2,16 @@ import Link from 'next/link';
 
 type SiteHeaderProps = {
   isMenuOpen: boolean;
-  isPastHero: boolean;
   onOpenMenu?: () => void;
   sticky?: boolean;
   homeHref?: string;
   isVisible?: boolean;
 };
 
-export function SiteHeader({ isMenuOpen, isPastHero, onOpenMenu, sticky = false, homeHref = '#home', isVisible = true }: SiteHeaderProps) {
+export function SiteHeader({ isMenuOpen, onOpenMenu, sticky = false, homeHref = '#home', isVisible = true }: SiteHeaderProps) {
   const hasMenuToggle = typeof onOpenMenu === 'function';
-  const toneClass = isPastHero && !isMenuOpen ? 'text-black' : 'text-white';
-  const barClass = isPastHero && !isMenuOpen ? 'bg-black' : 'bg-white';
+  const toneClass = isMenuOpen ? 'text-white' : 'text-black';
+  const barClass = isMenuOpen ? 'bg-white' : 'bg-black';
 
   return (
     <header
