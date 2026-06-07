@@ -96,15 +96,15 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto flex h-full flex-col justify-end">
-        <div className="grid min-h-0 flex-1 grid-rows-[1fr_auto_auto]">
-          <FitHeroText text="quasar" align="right" className="ml-auto row-start-2 h-[clamp(8rem,22vw,18rem)] w-full max-w-[78rem]" />
+      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-[12vh] pt-20 md:pb-[8vh]">
+        <div className="ml-auto w-full max-w-[68rem]">
+          <FitHeroText text="quasar" align="right" className="h-[clamp(5.5rem,16vw,12.5rem)] w-full" />
 
-          <div className="row-start-3 mt-4 grid grid-cols-[auto_1fr] items-end gap-x-8 md:mt-6 md:gap-x-14">
-            <p className="m-0 self-end text-[clamp(1rem,2vw,1.4rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
-            <div className="min-w-0 max-w-[48rem]">
-              <FitHeroText text="Harness AI." className="h-[clamp(2rem,4.8vw,4.6rem)]" />
-              <FitHeroText text="Shape what's next." className="mt-1 h-[clamp(2rem,4.8vw,4.6rem)]" />
+          <div className="mt-3 grid grid-cols-[auto_1fr] items-end gap-x-6 md:mt-4 md:gap-x-10">
+            <p className="m-0 self-end text-[clamp(0.85rem,1.4vw,1.05rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
+            <div className="min-w-0 max-w-[32rem]">
+              <FitHeroText text="Harness AI." className="h-[clamp(1.5rem,3.1vw,3rem)]" />
+              <FitHeroText text="Shape what's next." className="mt-1 h-[clamp(1.5rem,3.1vw,3rem)]" />
             </div>
           </div>
         </div>
