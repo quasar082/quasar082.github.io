@@ -96,11 +96,11 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-[7vh] pt-16 md:pb-[3vh]">
+      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-0 pt-[18vh] md:pt-[22vh]">
         <div className="ml-auto w-full max-w-[76rem]">
           <FitHeroText text="quasar" align="right" className="h-[clamp(6.5rem,18vw,14rem)] w-full" />
 
-          <div className="mt-8 grid grid-cols-[auto_1fr] items-end gap-x-8 md:mt-10 md:gap-x-14 lg:mt-12">
+          <div className="mt-8 ml-auto grid w-full max-w-[58rem] grid-cols-[auto_1fr] items-end gap-x-8 md:mt-10 md:gap-x-14 lg:mt-12">
             <p className="m-0 self-end text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
             <div className="min-w-0 max-w-[42rem]">
               <FitHeroText text="Harness AI." className="h-[clamp(2rem,4vw,3.8rem)]" />
