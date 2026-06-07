@@ -64,10 +64,10 @@ function FitHeroText({ text, align = 'left', className }: FitHeroTextProps) {
   }, [text]);
 
   return (
-    <div ref={parentRef} className={`relative w-full overflow-hidden ${className ?? ''}`}>
+    <div ref={parentRef} className={`relative w-full ${className ?? ''}`}>
       <p
         ref={textRef}
-        className={`absolute bottom-0 m-0 block max-w-full whitespace-nowrap font-semibold leading-[0.8] tracking-[-0.05em] text-black ${
+        className={`absolute bottom-0 m-0 block max-w-full whitespace-nowrap font-semibold leading-[0.95] tracking-[-0.05em] text-black ${
           align === 'right' ? 'right-0 origin-bottom-right text-right' : 'left-0 origin-bottom-left text-left'
         }`}
         style={{
@@ -96,15 +96,15 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-[12vh] pt-20 md:pb-[8vh]">
-        <div className="ml-auto w-full max-w-[68rem]">
-          <FitHeroText text="quasar" align="right" className="h-[clamp(5.5rem,16vw,12.5rem)] w-full" />
+      <div className="container relative z-10 mx-auto flex h-full flex-col justify-center pb-[7vh] pt-16 md:pb-[3vh]">
+        <div className="ml-auto w-full max-w-[76rem]">
+          <FitHeroText text="quasar" align="right" className="h-[clamp(6.5rem,18vw,14rem)] w-full" />
 
-          <div className="mt-3 grid grid-cols-[auto_1fr] items-end gap-x-6 md:mt-4 md:gap-x-10">
-            <p className="m-0 self-end text-[clamp(0.85rem,1.4vw,1.05rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
-            <div className="min-w-0 max-w-[32rem]">
-              <FitHeroText text="Harness AI." className="h-[clamp(1.5rem,3.1vw,3rem)]" />
-              <FitHeroText text="Shape what's next." className="mt-1 h-[clamp(1.5rem,3.1vw,3rem)]" />
+          <div className="mt-8 grid grid-cols-[auto_1fr] items-end gap-x-8 md:mt-10 md:gap-x-14 lg:mt-12">
+            <p className="m-0 self-end text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
+            <div className="min-w-0 max-w-[42rem]">
+              <FitHeroText text="Harness AI." className="h-[clamp(2rem,4vw,3.8rem)]" />
+              <FitHeroText text="Shape what's next." className="mt-2 h-[clamp(2rem,4vw,3.8rem)]" />
             </div>
           </div>
         </div>
