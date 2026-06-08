@@ -28,7 +28,7 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto mt-auto pb-25">
+      <div className="container relative z-10 mx-auto mt-auto pb-15 [@media(min-height:900px)]:pb-25">
         <div className="flex justify-between items-center w-full ">
           <div className="flex h-full items-end justify-start w-fit leading-none mt-auto">
             <p className="m-0 leading-none text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/45">Scroll</p>
