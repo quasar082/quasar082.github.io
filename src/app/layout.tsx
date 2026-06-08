@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import './globals.css';
 import { SmoothScrollProvider } from '@/components/providers/smooth-scroll-provider';
 import { cn } from '@/lib/utils';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
 const siteUrl = new URL('https://quasar082.github.io');
 
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn('font-sans', geist.variable)}>
+    <html lang="en" className={cn('font-sans', outfit.variable)}>
       <head>
         <meta name="color-scheme" content="light" />
       </head>
