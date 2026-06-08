@@ -18,6 +18,7 @@ export type MenuItem = {
 export type ProjectItem = {
   name: string;
   href: string;
+  description: string;
   placeholderClass: string;
   imageUrl?: string;
   order: number;

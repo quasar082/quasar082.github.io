@@ -26,21 +26,26 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                   className="group block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
                 >
                   <article>
-                    <div className="flex h-[80vh] min-h-[520px] w-full flex-col gap-4 overflow-hidden md:flex-row">
+                    <div className="flex h-[80vh] min-h-[520px] w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:overflow-hidden">
                       <div
-                        className={`${primaryWidth} h-1/2 bg-cover bg-center md:h-full ${project.imageUrl ? '' : project.placeholderClass}`}
+                        className={`${primaryWidth} h-full w-[90%] shrink-0 snap-start bg-cover bg-center md:w-auto ${project.imageUrl ? '' : project.placeholderClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
                       <div
-                        className={`${secondaryWidth} h-1/2 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:h-full ${project.imageUrl ? 'bg-black/20' : project.placeholderClass}`}
+                        className={`${secondaryWidth} h-full w-[90%] shrink-0 snap-start bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:w-auto ${project.imageUrl ? 'bg-black/20' : project.placeholderClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
                     </div>
-                    <span className="mt-5 block text-xl leading-none tracking-tight text-gradient-black-gray transition-opacity group-hover:opacity-70 md:text-2xl">
-                      {project.name}
-                    </span>
+                    <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <span className="block text-xl leading-none tracking-tight text-gradient-black-gray transition-opacity group-hover:opacity-70 md:text-2xl">
+                        {project.name}
+                      </span>
+                      <p className="m-0 max-w-[32rem] text-left text-sm leading-relaxed text-black/60 md:mr-20 md:text-right md:text-base">
+                        {project.description}
+                      </p>
+                    </div>
                   </article>
                 </a>
               </CursorHoverCard>
