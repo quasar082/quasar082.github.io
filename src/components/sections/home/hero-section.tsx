@@ -38,7 +38,7 @@ export function HeroSection() {
           <div className="@container w-full"> 
   
   {/* 2. Thẻ con đổi từ 100cqw thành 16.6cqw, hạ giới hạn max xuống */}
-  <p className="text-[clamp(1rem,33cqw,100rem)] font-semibold whitespace-nowrap  w-fit leading-[0.95]">
+  <p className="text-[clamp(1rem,32.1cqw,100rem)] font-medium whitespace-nowrap  w-fit leading-[0.95]">
     quasar
   </p>
   

@@ -4,7 +4,7 @@ export function SiteFooter() {
   return (
     <footer aria-label="Site footer" className="min-h-0 mt-auto">
       <div className="@container w-full">
-        <p className="text-[clamp(1rem,26.4cqw,100rem)] w-fit whitespace-nowrap font-semibold tracking-[-0.04em] leading-[0.95]">
+        <p className="text-[clamp(1rem,26.2cqw,100rem)] w-fit whitespace-nowrap font-medium tracking-[-0.04em] leading-[0.95]">
           QUASAR
         </p>
       </div>
