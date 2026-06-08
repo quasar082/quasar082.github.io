@@ -17,16 +17,16 @@ export function HeroSection() {
       />
 
       <div className="container relative z-10 mx-auto mt-auto pb-15 [@media(min-height:900px)]:pb-25">
-        <div className="flex justify-between items-center w-full ">
-          <div className="flex h-full items-end justify-start w-fit leading-none mt-auto">
+        <div className="flex flex-col md:flex-row  justify-between items-center w-full ">
+          <div className="flex h-full items-end justify-end md:justify-start w-fit leading-none mt-auto">
             <p className="m-0 leading-none text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-gradient-black-gray opacity-45">Scroll</p>
           </div>
 
-          <div className="w-3/5 flex-shrink-0">
+          <div className="w-4/5 md:w-3/5 flex-shrink-0">
           <div className="@container w-full"> 
   
   {/* 2. Thẻ con đổi từ 100cqw thành 16.6cqw, hạ giới hạn max xuống */}
-  <p className="text-[clamp(1rem,32.1cqw,100rem)] font-medium whitespace-nowrap  w-fit leading-[0.95] text-gradient-black-gray">
+  <p className="text-[clamp(1rem,32.1cqw,100rem)] md:text-[clamp(1rem,32.1cqw,100rem)] font-medium whitespace-nowrap  w-fit leading-[0.95] text-gradient-black-gray">
     quasar
   </p>
   

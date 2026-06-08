@@ -10,14 +10,13 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <section id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
-        <p className="mb-3 text-sm uppercase tracking-[0.32em] text-black/55">My project</p>
-        <h2 className="m-0 max-w-full text-5xl leading-tight tracking-tight text-gradient-black-gray md:text-7xl lg:text-8xl">Projects</h2>
-
-        <div className="mt-12 flex flex-col gap-20 md:gap-24">
+        <h2 className="m-0 max-w-full text-2xl leading-tight tracking-tight text-gradient-black-gray">My projects</h2>
+        <hr className="border-t border-gray-300 my-2" />
+        <div className="mt- flex flex-col gap-20 md:gap-24">
           {projects.map((project, index) => {
             const isEven = index % 2 === 0;
-            const primaryWidth = isEven ? 'md:w-3/4' : 'md:w-1/4';
-            const secondaryWidth = isEven ? 'md:w-1/4' : 'md:w-3/4';
+            const primaryWidth = isEven ? 'md:w-3/5' : 'md:w-2/5';
+            const secondaryWidth = isEven ? 'md:w-2/5' : 'md:w-3/5';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
 
             return (
