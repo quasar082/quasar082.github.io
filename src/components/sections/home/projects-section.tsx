@@ -17,6 +17,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             const isEven = index % 2 === 0;
             const primaryWidth = isEven ? 'md:w-3/5' : 'md:w-2/5';
             const secondaryWidth = isEven ? 'md:w-2/5' : 'md:w-3/5';
+            const fallbackClass = 'bg-gradient-to-br from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
 
             return (
@@ -28,12 +29,12 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                   <article>
                     <div className="flex h-[80vh] min-h-[520px] w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:overflow-hidden">
                       <div
-                        className={`${primaryWidth} h-full w-[90%] shrink-0 snap-start bg-cover bg-center md:w-auto ${project.imageUrl ? '' : project.placeholderClass}`}
+                        className={`${primaryWidth} h-full w-[90%] shrink-0 snap-start border border-black/20 bg-cover bg-center md:w-auto ${project.imageUrl ? '' : fallbackClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
                       <div
-                        className={`${secondaryWidth} h-full w-[90%] shrink-0 snap-start bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:w-auto ${project.imageUrl ? 'bg-black/20' : project.placeholderClass}`}
+                        className={`${secondaryWidth} h-full w-[90%] shrink-0 snap-start border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:w-auto ${project.imageUrl ? 'bg-black/20' : fallbackClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
