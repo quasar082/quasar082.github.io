@@ -11,11 +11,11 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
     <section id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
         <div className="grid gap-6 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:items-start md:gap-14">
-          <h2 className="m-0 max-w-[12ch] -translate-y-4 text-[clamp(2.8rem,5vw,4.8rem)] leading-[0.92] tracking-tight text-gradient-black-gray md:-translate-y-6">
-            My projects
+          <h2 className="m-0 max-w-[13ch] -translate-y-4 pb-2 text-[clamp(2.8rem,5vw,4.8rem)] leading-[1] tracking-tight text-gradient-black-gray md:-translate-y-6">
+            Designing AI products with intent
           </h2>
-          <p className="m-0 max-w-[30rem] text-sm leading-7 text-black/60 md:pt-2 md:text-base">
-            AI-driven concepts, interfaces, and systems that turn complex ideas into clear, useful product experiences.
+          <p className="m-0 max-w-[38rem] justify-self-start text-sm leading-7 text-black/60 md:ml-auto md:pt-2 md:text-right md:text-base">
+            I craft end-to-end artificial intelligence systems and pipelines, from experimental interfaces to production-ready workflows that turn complex ideas into clear, useful product experiences.
           </p>
         </div>
         <div className="mt-12 flex flex-col gap-20 md:gap-24">
