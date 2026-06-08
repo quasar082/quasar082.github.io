@@ -4,7 +4,7 @@ import './globals.css';
 import { SmoothScrollProvider } from '@/components/providers/smooth-scroll-provider';
 import { cn } from '@/lib/utils';
 
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 const siteUrl = new URL('https://quasar082.github.io');
 
