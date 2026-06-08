@@ -121,13 +121,13 @@ export function CursorHoverCard({
       {enabled ? (
         <span
           className={`pointer-events-none fixed left-0 top-0 z-[70] inline-flex items-center justify-center rounded-full border border-black/10 bg-white text-sm font-semibold uppercase tracking-[0.08em] text-black shadow-2xl transition-opacity duration-150 ${
-            iconOnly ? 'h-16 w-16' : 'gap-2 py-[1.1rem] pl-8 pr-6'
+            iconOnly ? 'h-20 w-20' : 'gap-2 py-[1.1rem] pl-8 pr-6'
           } ${visible ? 'opacity-100' : 'opacity-0'}`}
           style={{ transform: `translate3d(calc(${position.x}px - 50%), calc(${position.y}px - 50%), 0)` }}
           aria-hidden="true"
         >
           {iconOnly ? null : <span>{label}</span>}
-          {iconVariant === 'arrow-up-right' ? <ArrowUpRight size={iconOnly ? 22 : 14} /> : <ArrowRight size={iconOnly ? 22 : 14} />}
+          {iconVariant === 'arrow-up-right' ? <ArrowUpRight size={iconOnly ? 28 : 14} /> : <ArrowRight size={iconOnly ? 28 : 14} />}
         </span>
       ) : null}
     </span>

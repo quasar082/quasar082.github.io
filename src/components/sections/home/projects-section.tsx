@@ -1,5 +1,6 @@
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
+import { ArrowUpRight } from 'lucide-react';
 import type { ProjectItem } from '@/lib/content/home';
 
 type ProjectsSectionProps = {
@@ -46,8 +47,13 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                       />
                     </div>
                     <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <span className="block text-xl leading-none tracking-tight text-gradient-black-gray transition-opacity group-hover:opacity-70 md:text-2xl">
+                      <span className="inline-flex items-center gap-3 text-xl leading-none tracking-tight text-gradient-black-gray transition-opacity group-hover:opacity-70 md:text-2xl">
                         {project.name}
+                        <ArrowUpRight
+                          size={22}
+                          className="translate-y-1 -translate-x-2 opacity-0 transition duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+                          aria-hidden="true"
+                        />
                       </span>
                       <p className="m-0 max-w-[32rem] text-left text-sm leading-relaxed text-black/60 md:mr-20 md:text-right md:text-base">
                         {project.description}
