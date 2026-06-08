@@ -35,13 +35,13 @@ export function SiteHeader({ isMenuOpen, onOpenMenu, sticky = false, homeHref = 
         {hasMenuToggle ? (
           <button
             type="button"
-            className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+            className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
             aria-expanded={isMenuOpen}
             aria-controls="hero-menu-overlay"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             onClick={onOpenMenu}
           >
-            <span className="relative xl:h-5 xl:w-8 h-4 w-7" aria-hidden="true">
+            <span className="relative xl:h-5 h-4 w-full" aria-hidden="true">
               {isMenuOpen ? (
                 <>
                   <span className={`absolute left-1/2 top-1/2 h-0.5 w-8 -translate-x-1/2 -translate-y-1/2 rotate-45 origin-center rounded-full ${barClass}`} />
@@ -49,9 +49,9 @@ export function SiteHeader({ isMenuOpen, onOpenMenu, sticky = false, homeHref = 
                 </>
               ) : (
                 <>
-                  <span className={`absolute left-1/2 top-0 h-0.5 w-6 -translate-x-1/2 rounded-full ${barClass}`} />
-                  <span className={`absolute left-1/2 top-1/2 h-0.5 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full ${barClass}`} />
-                  <span className={`absolute left-[58%] bottom-0 h-0.5 w-5 -translate-x-1/2 rounded-full ${barClass}`} />
+                  <span className={`absolute left-1/2 top-0 h-0.5 w-full -translate-x-1/2 rounded-full ${barClass}`} />
+                  <span className={`absolute left-1/2 top-1/2 h-0.5 w-full -translate-x-1/2 -translate-y-1/2 rounded-full ${barClass}`} />
+                  <span className={`absolute left-[65%] bottom-0 h-0.5 w-4 -translate-x-1/2 rounded-full ${barClass}`} />
                 </>
               )}
             </span>
