@@ -47,23 +47,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <BlogShell activeHref="/blog">
       <article className="px-4 pb-16 pt-20 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-4xl">
-          <Link href="/blog" className="inline-flex min-h-11 items-center text-sm font-semibold uppercase tracking-[0.12em] text-black/60 no-underline">
+          <Link href="/blog" className="inline-flex min-h-11 items-center text-sm font-semibold uppercase tracking-[0.12em] text-gradient-black-gray opacity-60 no-underline">
             Back to blog
           </Link>
           <div className="mt-6 border-b border-black/10 pb-8">
             <div className="aspect-[16/9] overflow-hidden rounded-[1.75rem] bg-[#ebebe4]">
               <Image src={post.coverImage} alt="" width={1600} height={900} className="h-full w-full object-cover" />
             </div>
-            <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-black/50">
+            <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-gradient-black-gray opacity-50">
               <span>{post.category}</span>
               <span>•</span>
               {post.tags.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
             </div>
-            <h1 className="mb-0 mt-4 text-[clamp(3rem,8vw,5.5rem)] leading-[0.94] tracking-tight">{post.title}</h1>
-            <p className="mb-0 mt-5 max-w-2xl text-lg leading-8 text-black/70">{post.summary}</p>
-            <p className="mb-0 mt-6 text-sm uppercase tracking-[0.12em] text-black/45">
+            <h1 className="mb-0 mt-4 text-[clamp(3rem,8vw,5.5rem)] leading-[0.94] tracking-tight text-gradient-black-gray">{post.title}</h1>
+            <p className="mb-0 mt-5 max-w-2xl text-lg leading-8 text-gradient-black-gray opacity-70">{post.summary}</p>
+            <p className="mb-0 mt-6 text-sm uppercase tracking-[0.12em] text-gradient-black-gray opacity-45">
               {post.date} · {post.readTime}
             </p>
           </div>

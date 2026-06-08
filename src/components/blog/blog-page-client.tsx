@@ -60,10 +60,10 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
     <>
       <section className="px-4 pt-20 sm:px-6 lg:px-8 ">
         <div className="container mx-auto border-b border-black/10 pb-10">
-          <p className="m-0 text-sm font-semibold uppercase tracking-[0.22em] text-black/55">Quasar Journal</p>
+          <p className="m-0 text-sm font-semibold uppercase tracking-[0.22em] text-gradient-black-gray opacity-55">Quasar Journal</p>
           <div className="mt-6">
             <div>
-              <h1 className="mt-4 text-[clamp(3.4rem,10vw,7.5rem)] leading-[0.92] tracking-tight">
+              <h1 className="mt-4 text-[clamp(3.4rem,10vw,7.5rem)] leading-[0.92] tracking-tight text-gradient-black-gray">
                 <span className="block pl-[clamp(2.25rem,9vw,7.5rem)]">Thoughts on AI systems,</span>
                 <span className="block">product surfaces, and motion — shaped as an evolving blog.</span>
               </h1>
@@ -75,7 +75,7 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
       <section className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <h2 className="m-0 text-6xl leading-tight tracking-tight md:text-7xl lg:text-8xl">Latest blog</h2>
+            <h2 className="m-0 text-6xl leading-tight tracking-tight text-gradient-black-gray md:text-7xl lg:text-8xl">Latest blog</h2>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -110,8 +110,8 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
                   <Image src={post.coverImage} alt="" width={960} height={720} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
                 </div>
                 <div className="p-5">
-                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-black/45">{post.readTime}</p>
-                  <h3 className="mb-0 mt-3 text-xl leading-tight tracking-tight md:text-2xl">{post.title}</h3>
+                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-gradient-black-gray opacity-45">{post.readTime}</p>
+                  <h3 className="mb-0 mt-3 text-xl leading-tight tracking-tight text-gradient-black-gray md:text-2xl">{post.title}</h3>
                 </div>
               </Link>
             ))}
@@ -125,7 +125,7 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
             <div className="flex flex-col gap-4">
               <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                  <h2 className="m-0 text-6xl leading-tight tracking-tight md:text-7xl lg:text-8xl">All posts</h2>
+                  <h2 className="m-0 text-6xl leading-tight tracking-tight text-gradient-black-gray md:text-7xl lg:text-8xl">All posts</h2>
                 </div>
                 <div className="w-full lg:max-w-sm">
                   <input
@@ -170,13 +170,13 @@ export function BlogPageClient({ latestPosts, posts, categories }: BlogPageClien
                   <Image src={post.coverImage} alt="" width={1280} height={800} className="h-full w-full object-cover" />
                 </div>
                 <div className="p-5 md:p-6">
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-gradient-black-gray opacity-45">
                     <span>{post.category}</span>
                     <span>•</span>
                     <span>{post.readTime}</span>
                   </div>
-                  <h3 className="mb-0 mt-3 text-2xl leading-tight tracking-tight">{post.title}</h3>
-                  <p className="mb-0 mt-3 text-base leading-7 text-black/68">{post.summary}</p>
+                  <h3 className="mb-0 mt-3 text-2xl leading-tight tracking-tight text-gradient-black-gray">{post.title}</h3>
+                  <p className="mb-0 mt-3 text-base leading-7 text-gradient-black-gray opacity-68">{post.summary}</p>
                 </div>
               </Link>
             ))}

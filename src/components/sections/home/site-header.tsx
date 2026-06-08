@@ -11,6 +11,7 @@ type SiteHeaderProps = {
 export function SiteHeader({ isMenuOpen, onOpenMenu, sticky = false, homeHref = '#home', isVisible = true }: SiteHeaderProps) {
   const hasMenuToggle = typeof onOpenMenu === 'function';
   const toneClass = isMenuOpen ? 'text-white' : 'text-black';
+  const logoTextClass = isMenuOpen ? '' : 'text-gradient-black-gray';
   const barClass = isMenuOpen ? 'bg-white' : 'bg-black';
 
   return (
@@ -29,7 +30,7 @@ export function SiteHeader({ isMenuOpen, onOpenMenu, sticky = false, homeHref = 
             <span className={`absolute inset-y-0 left-0 w-[42%] transition-colors ${barClass}`} />
             <span className={`absolute left-[38%] top-0 h-[42%] w-[62%] transition-colors ${barClass}`} />
           </span>
-          <span>Quasar</span>
+          <span className={logoTextClass}>Quasar</span>
         </Link>
 
         {hasMenuToggle ? (
