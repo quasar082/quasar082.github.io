@@ -10,9 +10,15 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <section id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
-        <h2 className="m-0 max-w-full text-2xl leading-tight tracking-tight text-gradient-black-gray">My projects</h2>
-        <hr className="border-t border-gray-300 my-2" />
-        <div className="mt- flex flex-col gap-20 md:gap-24">
+        <div className="grid gap-6 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:items-start md:gap-14">
+          <h2 className="m-0 max-w-[12ch] -translate-y-4 text-[clamp(2.8rem,5vw,4.8rem)] leading-[0.92] tracking-tight text-gradient-black-gray md:-translate-y-6">
+            My projects
+          </h2>
+          <p className="m-0 max-w-[30rem] text-sm leading-7 text-black/60 md:pt-2 md:text-base">
+            AI-driven concepts, interfaces, and systems that turn complex ideas into clear, useful product experiences.
+          </p>
+        </div>
+        <div className="mt-12 flex flex-col gap-20 md:gap-24">
           {projects.map((project, index) => {
             const isEven = index % 2 === 0;
             const primaryWidth = isEven ? 'md:basis-[calc(60%-0.5rem)]' : 'md:basis-[calc(40%-0.5rem)]';
@@ -21,7 +27,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
 
             return (
-              <CursorHoverCard key={project.name} label="View now" iconVariant="arrow-up-right" className="relative block">
+              <CursorHoverCard key={project.name} label="View now" iconVariant="arrow-up-right" iconOnly className="relative block">
                 <a
                   href={project.href}
                   className="group block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
