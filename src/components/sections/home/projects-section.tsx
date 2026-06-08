@@ -15,7 +15,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             Designing AI products with intent
           </h2>
           <p className="m-0 max-w-[38rem] justify-self-start text-sm leading-7 text-black/60 md:ml-auto md:pt-30 md:text-right md:text-base">
-            I craft end-to-end artificial intelligence systems and pipelines, from experimental interfaces to production-ready workflows that turn complex ideas into clear, useful product experiences.
+            I craft end-to-end artificial intelligence systems and agentic pipelines, from experimental interfaces to production-ready workflows that turn complex ideas into clear, useful product experiences.
           </p>
         </div>
         <div className="mt-12 flex flex-col gap-20 md:gap-24">
