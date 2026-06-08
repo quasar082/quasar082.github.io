@@ -173,7 +173,6 @@ body {
 
 @layer utilities {
   .text-gradient-black-gray {
-    display: inline-block;
     background-image: linear-gradient(to bottom, #000 0%, #000 48%, #777 100%);
     background-clip: text;
     -webkit-background-clip: text;
