@@ -29,12 +29,12 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                   <article>
                     <div className="flex h-[80vh] min-h-[520px] w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:overflow-hidden">
                       <div
-                        className={`${primaryWidth} h-full w-[90%] shrink-0 snap-start border border-black/20 bg-cover bg-center md:w-auto md:shrink-0 ${project.imageUrl ? '' : fallbackClass}`}
+                        className={`${primaryWidth} h-full w-[90%] shrink-0 snap-start rounded-2xl border border-black/20 bg-cover bg-center md:w-auto md:shrink-0 ${project.imageUrl ? '' : fallbackClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
                       <div
-                        className={`${secondaryWidth} h-full w-[90%] shrink-0 snap-start border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:w-auto md:shrink-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`}
+                        className={`${secondaryWidth} h-full w-[90%] shrink-0 snap-start rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:w-auto md:shrink-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`}
                         style={imageStyle}
                         aria-hidden="true"
                       />
