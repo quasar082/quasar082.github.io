@@ -173,9 +173,13 @@ body {
 
 @layer utilities {
   .text-gradient-black-gray {
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
     background-image: linear-gradient(to bottom, #000 0%, #000 48%, #777 100%);
     background-clip: text;
     -webkit-background-clip: text;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
