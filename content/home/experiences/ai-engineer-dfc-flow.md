@@ -1,7 +1,7 @@
 ---
 period: 6/2025-3/2026
-role: AI Engineer
-company: DFC FLOW
+role: Junior AI Engineer
+company: DFC Flow
 employmentType: Full time
 workMode: Onsite
 location: Ho Chi Minh, Vietnam

@@ -1,6 +1,6 @@
 ---
 period: 6/2014-2/2025
-role: AI Engineer
+role: Fresher AI Engineer
 company: C-Unit Square
 employmentType: Full time
 workMode: Onsite
