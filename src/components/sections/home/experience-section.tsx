@@ -166,7 +166,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
-            <div ref={roleViewportRef} className="overflow-hidden" style={{ height: rowHeight ?? undefined }} aria-live="polite">
+            <div ref={roleViewportRef} className="overflow-hidden pt-2 mb-2" style={{ height: rowHeight ?? undefined }} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience, index) => (
                   <p
