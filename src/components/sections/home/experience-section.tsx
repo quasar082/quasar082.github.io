@@ -28,12 +28,8 @@ function formatExperienceDate(date: string) {
   return normalizedDate;
 }
 
-function formatExperienceMeta(date: string) {
-  return `${formatExperienceDate(date)} · Full time. Onsite`;
-}
-
-function getCompanyName(details: string) {
-  return details.split(/\s[-–]\s|\.\s/)[0] ?? details;
+function formatExperienceMeta(experience: ExperienceItem) {
+  return [formatExperienceDate(experience.period), experience.employmentType, experience.workMode, experience.location].filter(Boolean).join(' · ');
 }
 
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
@@ -41,8 +37,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const roleRef = useRef<HTMLParagraphElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const metaRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const isSnappingRef = useRef(false);
+  const metaRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const activeExperience = experiences[activeExperienceIndex] ?? experiences[0];
 
@@ -70,59 +65,15 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       setActiveExperienceIndex(closestIndex);
     };
 
-    const snapToExperience = (index: number) => {
-      const targetItem = itemRefs.current[index];
-      const section = sectionRef.current;
-
-      if (!targetItem || !section) {
-        return;
-      }
-
-      const roleAnchor = getRoleAnchor();
-      const targetTop = window.scrollY + targetItem.getBoundingClientRect().top - roleAnchor;
-      isSnappingRef.current = true;
-      setActiveExperienceIndex(index);
-      window.scrollTo({ top: targetTop, behavior: 'smooth' });
-      window.setTimeout(() => {
-        isSnappingRef.current = false;
-      }, 420);
-    };
-
-    const onWheel = (event: WheelEvent) => {
-      const section = sectionRef.current;
-
-      if (!section || isSnappingRef.current || Math.abs(event.deltaY) < 8) {
-        return;
-      }
-
-      const rect = section.getBoundingClientRect();
-      const isInsideExperience = rect.top <= window.innerHeight * 0.52 && rect.bottom >= window.innerHeight * 0.48;
-
-      if (!isInsideExperience) {
-        return;
-      }
-
-      const nextIndex = Math.min(experiences.length - 1, Math.max(0, activeExperienceIndex + (event.deltaY > 0 ? 1 : -1)));
-
-      if (nextIndex === activeExperienceIndex) {
-        return;
-      }
-
-      event.preventDefault();
-      snapToExperience(nextIndex);
-    };
-
     updateActiveExperience();
     window.addEventListener('scroll', updateActiveExperience, { passive: true });
     window.addEventListener('resize', updateActiveExperience);
-    window.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
       window.removeEventListener('scroll', updateActiveExperience);
       window.removeEventListener('resize', updateActiveExperience);
-      window.removeEventListener('wheel', onWheel);
     };
-  }, [activeExperienceIndex, experiences.length]);
+  }, [experiences.length]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -131,8 +82,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     if (role) {
       timeline.fromTo(
         role,
-        { autoAlpha: 0, yPercent: 18, scale: 0.96, filter: 'blur(10px)', clipPath: 'inset(0 0 100% 0)' },
-        { autoAlpha: 1, yPercent: 0, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0 0 0% 0)', duration: 0.58, ease: 'expo.out' },
+        { autoAlpha: 0, yPercent: 12, scale: 0.98, clipPath: 'inset(0 0 100% 0)' },
+        { autoAlpha: 1, yPercent: 0, scale: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.45, ease: 'expo.out' },
         0,
       );
     }
@@ -148,11 +99,9 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
         company,
         {
           autoAlpha: isActive ? 1 : 0.28,
-          x: isActive ? 0 : -10,
-          scale: isActive ? 1.015 : 0.985,
-          letterSpacing: isActive ? '-0.085em' : '-0.07em',
-          filter: isActive ? 'blur(0px)' : 'blur(0.8px)',
-          duration: 0.48,
+          x: isActive ? 0 : -8,
+          scale: isActive ? 1.01 : 0.99,
+          duration: 0.36,
           ease: 'expo.out',
         },
         0,
@@ -164,8 +113,16 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     if (meta) {
       timeline.fromTo(
         meta,
-        { autoAlpha: 0, y: -10, x: -8, filter: 'blur(6px)', clipPath: 'inset(0 100% 0 0)' },
-        { autoAlpha: 1, y: 0, x: 0, filter: 'blur(0px)', clipPath: 'inset(0 0% 0 0)', duration: 0.46, ease: 'power4.out' },
+        { autoAlpha: 0, height: 0, y: -8, x: -6, clipPath: 'inset(0 100% 0 0)' },
+        {
+          autoAlpha: 1,
+          height: 'auto',
+          y: 0,
+          x: 0,
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 0.34,
+          ease: 'power4.out',
+        },
         0.1,
       );
     }
@@ -191,7 +148,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
               return (
                 <article className='mt-6'
-                  key={`${experience.date}-${experience.role}`}
+                  key={`${experience.period}-${experience.role}-${experience.company}`}
                   ref={(item) => {
                     itemRefs.current[index] = item;
                   }}
@@ -202,17 +159,19 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     }}
                     className="m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                   >
-                    {getCompanyName(experience.details)}
+                    {experience.company}
                   </p>
                   {isActive ? (
-                    <p
+                    <div
                       ref={(meta) => {
                         metaRefs.current[index] = meta;
                       }}
-                      className="m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45"
+                      className="overflow-hidden"
                     >
-                      {formatExperienceMeta(experience.date)}
-                    </p>
+                      <p className="m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45">
+                        {formatExperienceMeta(experience)}
+                      </p>
+                    </div>
                   ) : null}
                 </article>
               );

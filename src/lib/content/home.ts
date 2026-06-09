@@ -25,9 +25,12 @@ export type ProjectItem = {
 };
 
 export type ExperienceItem = {
-  date: string;
+  period: string;
   role: string;
-  details: string;
+  company: string;
+  employmentType?: string;
+  workMode?: string;
+  location?: string;
   previewImageUrl?: string;
   order: number;
 };

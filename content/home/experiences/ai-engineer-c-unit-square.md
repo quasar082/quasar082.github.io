@@ -1,6 +1,9 @@
 ---
-date: (6/2014-2/2025)
+period: 6/2014-2/2025
 role: AI Engineer
-details: C-Unit Square - Full time. Onsite. Ho Chi Minh, Vietnam.
+company: C-Unit Square
+employmentType: Full time
+workMode: Onsite
+location: Ho Chi Minh, Vietnam
 order: 1
 ---
