@@ -217,12 +217,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-            <div className="pointer-events-none absolute right-0 top-[calc(100%+0.75rem)] h-5 min-w-max text-right text-sm font-medium uppercase tracking-[0.18em] text-gradient-black-gray">
+            <div className="pointer-events-none absolute right-0 top-[calc(100%+0.75rem)] h-5 min-w-max text-right text-sm font-medium uppercase tracking-[0.18em]">
               {periodTransition.previous ? (
                 <div
                   key={`previous-${periodTransition.transitionKey}`}
                   ref={previousPeriodRef}
-                  className="absolute right-0 top-0 whitespace-nowrap"
+                  className="absolute right-0 top-0 whitespace-nowrap text-gradient-black-gray"
                   aria-hidden="true"
                 >
                   {periodTransition.previous}
@@ -231,7 +231,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               <div
                 key={`current-${periodTransition.transitionKey}`}
                 ref={currentPeriodRef}
-                className="absolute right-0 top-0 whitespace-nowrap"
+                className="absolute right-0 top-0 whitespace-nowrap text-gradient-black-gray"
                 style={{ opacity: periodTransition.transitionKey === 0 ? 0.7 : 0 }}
               >
                 {periodTransition.current}
