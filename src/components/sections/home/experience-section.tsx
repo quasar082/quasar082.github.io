@@ -154,10 +154,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="box-border bg-white py-32 text-black md:py-40 lg:py-48" aria-label="Experience section">
       <div className="container mx-auto">
-        <div className="mt-12 grid grid-cols-2 gap-10">
-          <div className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
+        <div className="grid grid-cols-2 gap-10">
+          <div className="sticky top-24 h-fit min-w-0 w-full [container-type:inline-size] relative md:top-32">
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (

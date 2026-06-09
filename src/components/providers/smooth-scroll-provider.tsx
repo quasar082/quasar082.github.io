@@ -1,7 +1,9 @@
 'use client';
 
-import Lenis from 'lenis';
 import { useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
 
 type SmoothScrollProviderProps = {
   children: React.ReactNode;
@@ -13,6 +15,8 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       return;
     }
 
+    gsap.registerPlugin(ScrollTrigger);
+
     const lenis = new Lenis({
       autoRaf: false,
       smoothWheel: true,
@@ -23,14 +27,20 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       touchMultiplier: 1,
     });
 
-    let rafId = 0;
+    lenis.on('scroll', ScrollTrigger.update);
 
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafId = window.requestAnimationFrame(raf);
+    const updateLenis = (time: number) => {
+      lenis.raf(time * 1000);
     };
 
-    rafId = window.requestAnimationFrame(raf);
+    const refreshScrollTriggers = () => {
+      ScrollTrigger.refresh();
+    };
+
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
+
+    const refreshId = window.requestAnimationFrame(refreshScrollTriggers);
 
     const scrollToHash = (hash: string) => {
       if (!hash) {
@@ -59,10 +69,14 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     };
 
     window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('load', refreshScrollTriggers);
 
     return () => {
       window.removeEventListener('hashchange', onHashChange);
-      window.cancelAnimationFrame(rafId);
+      window.removeEventListener('load', refreshScrollTriggers);
+      window.cancelAnimationFrame(refreshId);
+      gsap.ticker.remove(updateLenis);
+      lenis.off('scroll', ScrollTrigger.update);
       lenis.destroy();
     };
   }, []);

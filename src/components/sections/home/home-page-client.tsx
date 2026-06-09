@@ -92,7 +92,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   }, [isMenuOpen]);
 
   return (
-    <main className="h-dvh overflow-x-clip bg-[#8f9a94]">
+    <main className="min-h-dvh overflow-x-clip bg-[#8f9a94]">
       <SiteHeader isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[100px] h-[100px] w-full bg-gradient-to-b from-transparent to-white" />
