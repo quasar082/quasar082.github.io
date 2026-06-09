@@ -124,8 +124,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   return (
     <section ref={sectionRef} id="experience" className="box-border min-h-dvh bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Experience section">
       <div className="container mx-auto">
-        <h2 className="m-0 text-5xl leading-tight tracking-tight text-gradient-black-gray md:text-7xl lg:text-8xl">Experience</h2>
-
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
             <p ref={roleRef} className="m-0 text-[clamp(2rem,7cqw,5rem)] font-medium tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300" aria-live="polite">
@@ -144,12 +142,14 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     itemRefs.current[index] = item;
                   }}
                 >
-                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] font-medium leading-[0.95] tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
+                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] font-medium tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
                     {getCompanyName(experience.details)}
                   </p>
-                  <p className={`m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45 transition-all duration-300 ${isActive ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'}`}>
-                    {formatExperienceMeta(experience.date)}
-                  </p>
+                  {isActive ? (
+                    <p className="m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45">
+                      {formatExperienceMeta(experience.date)}
+                    </p>
+                  ) : null}
                 </article>
               );
             })}
