@@ -43,7 +43,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       return;
     }
 
-    const setRoleY = gsap.quickTo(roleTrack, 'y', { duration: 0.28, ease: 'power3.out' });
+    const setRoleY = (value: number) => {
+      gsap.set(roleTrack, { y: value });
+    };
+
+    gsap.set(roleTrack, { y: 0 });
 
     const updateExperienceProgress = () => {
       frame = 0;
