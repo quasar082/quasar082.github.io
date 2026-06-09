@@ -121,7 +121,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   return (
     <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
       <div className="container mx-auto">
-        <div className="mt-12 grid grid-cols-2 gap-10">
+        <div className="mt-12 grid grid-cols-[1fr_3fr] gap-10">
           <div className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size]">
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
