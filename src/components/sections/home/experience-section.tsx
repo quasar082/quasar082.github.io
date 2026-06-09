@@ -20,17 +20,20 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
   useEffect(() => {
     const updateRoleHeight = () => {
-      const measuredHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+      const measuredTextHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+      const itemTops = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
+      const measuredRowHeight = itemTops.length > 1 ? itemTops[1] - itemTops[0] : measuredTextHeight;
 
-      if (measuredHeight > 0) {
-        setRoleHeight(measuredHeight);
+      if (measuredRowHeight > 0) {
+        setRoleHeight(measuredRowHeight);
       }
     };
 
-    updateRoleHeight();
+    const frame = window.requestAnimationFrame(updateRoleHeight);
     window.addEventListener('resize', updateRoleHeight);
 
     return () => {
+      window.cancelAnimationFrame(frame);
       window.removeEventListener('resize', updateRoleHeight);
     };
   }, [experiences.length]);
@@ -146,7 +149,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(roleItem) => {
                       roleItemRefs.current[index] = roleItem;
                     }}
-                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-none tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                     style={{ height: roleHeight ?? undefined }}
                   >
                     {experience.role}
