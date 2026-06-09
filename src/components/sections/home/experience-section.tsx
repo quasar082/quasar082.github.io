@@ -126,7 +126,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
-            <p ref={roleRef} className="m-0 text-[clamp(2rem,7cqw,5rem)] font-medium tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300" aria-live="polite">
+            <p ref={roleRef} className="m-0 text-[clamp(2rem,7cqw,5rem)] text-right font-medium tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300" aria-live="polite">
               {activeExperience?.role}
             </p>
           </div>
@@ -136,13 +136,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               const isActive = index === activeExperienceIndex;
 
               return (
-                <article
+                <article className='mt-3'
                   key={`${experience.date}-${experience.role}`}
                   ref={(item) => {
                     itemRefs.current[index] = item;
                   }}
                 >
-                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] font-medium tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
+                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
                     {getCompanyName(experience.details)}
                   </p>
                   {isActive ? (

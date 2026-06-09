@@ -33,7 +33,7 @@ export function HeroSection() {
 </div>
             {/* <FitHeroText text="quasar" align="right" className="h-[clamp(6.5rem,17vw,14rem)] w-full" /> */}
             <div className="mt-8 ml-auto w-full">
-              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">Harness AI.</p>
+              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">Harness AI</p>
               <p className="mt-2 m-0 text-left  text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">Shape what&apos;s next.</p>
             </div>
           </div>
