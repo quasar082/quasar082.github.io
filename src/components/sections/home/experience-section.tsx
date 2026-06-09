@@ -217,7 +217,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-            <div className="pointer-events-none absolute right-0 top-[calc(100%+0.75rem)] h-5 min-w-max text-right text-sm font-medium uppercase tracking-[0.18em]">
+            <div className="pointer-events-none absolute right-0 top-[calc(100%+0.75rem)] h-[1.1em] min-w-max text-right text-[clamp(0.75rem,1.6cqw,1.1rem)] font-medium uppercase tracking-[0.18em]">
               {periodTransition.previous ? (
                 <div
                   key={`previous-${periodTransition.transitionKey}`}
