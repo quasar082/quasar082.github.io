@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const PARALLAX_IMAGE_URL = '/parallax-showcase.jpg';
 
@@ -10,44 +11,35 @@ export function ParallaxImageSection() {
   const imageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    let frame = 0;
+    const section = sectionRef.current;
+    const image = imageRef.current;
 
-    const updateParallax = () => {
-      frame = 0;
-      const section = sectionRef.current;
-      const image = imageRef.current;
+    if (!section || !image) {
+      return;
+    }
 
-      if (!section || !image) {
-        return;
-      }
+    gsap.registerPlugin(ScrollTrigger);
 
-      const rect = section.getBoundingClientRect();
-      const travel = image.offsetHeight - rect.height;
-      const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-      const clampedProgress = Math.min(1, Math.max(0, progress));
-
-      gsap.set(image, { y: -travel * clampedProgress });
-    };
-
-    const requestUpdate = () => {
-      if (frame) {
-        return;
-      }
-
-      frame = window.requestAnimationFrame(updateParallax);
-    };
-
-    requestUpdate();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        image,
+        { yPercent: -12 },
+        {
+          yPercent: 12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    }, section);
 
     return () => {
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
+      context.revert();
     };
   }, []);
 
@@ -55,7 +47,7 @@ export function ParallaxImageSection() {
     <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-black" aria-label="Visual interlude">
       <div
         ref={imageRef}
-        className="absolute inset-x-0 top-0 h-[128dvh] will-change-transform bg-cover bg-center"
+        className="absolute inset-x-0 -top-[14dvh] h-[128dvh] will-change-transform bg-cover bg-center"
         style={{ backgroundImage: `url('${PARALLAX_IMAGE_URL}')` }}
         aria-hidden="true"
       />
