@@ -8,71 +8,57 @@ type ExperienceSectionProps = {
   experiences: ExperienceItem[];
 };
 
-function formatExperienceDetails(experience: ExperienceItem) {
-  return [experience.period, experience.employmentType, experience.workMode, experience.location].filter(Boolean).join(' · ');
-}
-
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
-  const detailViewportRef = useRef<HTMLDivElement | null>(null);
-  const detailTrackRef = useRef<HTMLDivElement | null>(null);
   const roleItemRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const detailItemRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [roleHeight, setRoleHeight] = useState<number | null>(null);
-  const [detailHeight, setDetailHeight] = useState<number | null>(null);
 
   useEffect(() => {
-    const updateHeights = () => {
-      const measuredRoleHeight = Math.ceil(Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0)));
-      const measuredDetailHeight = Math.ceil(Math.max(...detailItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0)));
+    const updateRoleHeight = () => {
+      const measuredTextHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+      const itemTops = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
+      const measuredRowHeight = itemTops.length > 1 ? itemTops[1] - itemTops[0] : measuredTextHeight;
 
-      if (measuredRoleHeight > 0) {
-        setRoleHeight(measuredRoleHeight + 2);
-      }
-
-      if (measuredDetailHeight > 0) {
-        setDetailHeight(measuredDetailHeight + 2);
+      if (measuredRowHeight > 0) {
+        setRoleHeight(measuredRowHeight);
       }
     };
 
-    const frame = window.requestAnimationFrame(updateHeights);
-    window.addEventListener('resize', updateHeights);
+    const frame = window.requestAnimationFrame(updateRoleHeight);
+    window.addEventListener('resize', updateRoleHeight);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener('resize', updateHeights);
+      window.removeEventListener('resize', updateRoleHeight);
     };
   }, [experiences.length]);
 
   useEffect(() => {
     let frame = 0;
     const roleTrack = roleTrackRef.current;
-    const detailTrack = detailTrackRef.current;
 
-    if (!roleTrack || !detailTrack) {
+    if (!roleTrack) {
       return;
     }
 
-    const setTrackY = (roleValue: number, detailValue: number) => {
-      gsap.set(roleTrack, { y: roleValue });
-      gsap.set(detailTrack, { y: detailValue });
+    const setRoleY = (value: number) => {
+      gsap.set(roleTrack, { y: value });
     };
 
-    setTrackY(0, 0);
+    gsap.set(roleTrack, { y: 0 });
 
     const updateExperienceProgress = () => {
       frame = 0;
       const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
       const currentRoleHeight = roleHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
-      const currentDetailHeight = detailHeight ?? detailViewportRef.current?.offsetHeight ?? 0;
       const itemPositions = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
 
-      if (!currentRoleHeight || !currentDetailHeight || itemPositions.length === 0) {
+      if (!currentRoleHeight || itemPositions.length === 0) {
         return;
       }
 
@@ -96,7 +82,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       const clampedProgress = Math.min(experiences.length - 1, Math.max(0, progressIndex));
       const closestIndex = Math.round(clampedProgress);
 
-      setTrackY(-clampedProgress * currentRoleHeight, -clampedProgress * currentDetailHeight);
+      setRoleY(-clampedProgress * currentRoleHeight);
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
@@ -120,7 +106,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
     };
-  }, [detailHeight, experiences.length, roleHeight]);
+  }, [experiences.length, roleHeight]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -151,10 +137,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="box-border bg-white pb-[55vh] pt-40 text-black" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
-          <div className="md:sticky md:top-[38vh] md:h-fit">
+          <div className="md:sticky md:top-1/2 md:h-fit">
             <div ref={roleViewportRef} className="overflow-hidden" style={{ height: roleHeight ?? undefined }} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience, index) => (
@@ -163,7 +149,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(roleItem) => {
                       roleItemRefs.current[index] = roleItem;
                     }}
-                    className="m-0 truncate text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                     style={{ height: roleHeight ?? undefined }}
                   >
                     {experience.role}
@@ -171,29 +157,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-
-            <div ref={detailViewportRef} className="mt-4 overflow-hidden" style={{ height: detailHeight ?? undefined }} aria-live="polite">
-              <div ref={detailTrackRef}>
-                {experiences.map((experience, index) => (
-                  <p
-                    key={`${experience.period}-${experience.company}-detail`}
-                    ref={(detailItem) => {
-                      detailItemRefs.current[index] = detailItem;
-                    }}
-                    className="m-0 truncate text-right text-[clamp(0.875rem,1.4cqw,1.15rem)] font-medium leading-[1.15] tracking-[-0.03em] text-black/45"
-                    style={{ height: detailHeight ?? undefined }}
-                  >
-                    {formatExperienceDetails(experience)}
-                  </p>
-                ))}
-              </div>
-            </div>
           </div>
 
-          <div className="space-y-2">
+          <div>
             {experiences.map((experience, index) => {
               return (
-                <article
+                <article className='mt-6'
                   key={`${experience.period}-${experience.role}-${experience.company}`}
                   ref={(item) => {
                     itemRefs.current[index] = item;
@@ -203,7 +172,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(company) => {
                       companyRefs.current[index] = company;
                     }}
-                    className="m-0 truncate text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                   >
                     {experience.company}
                   </p>
