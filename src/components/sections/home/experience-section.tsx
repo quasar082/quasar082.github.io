@@ -51,14 +51,14 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <h2 className="m-0 text-5xl leading-tight tracking-tight text-gradient-black-gray md:text-7xl lg:text-8xl">Experience</h2>
 
-        <div className="mt-12 grid gap-10 border-t border-black/10 md:grid-cols-[minmax(180px,0.72fr)_minmax(0,1.28fr)] md:gap-12 lg:gap-20">
-          <div className="md:sticky md:top-1/2 md:h-fit md:-translate-y-1/2 md:py-16">
-            <p className="m-0 text-[clamp(2.25rem,7vw,6rem)] font-semibold leading-[0.92] tracking-[-0.08em] text-gradient-black-gray transition-opacity duration-300" aria-live="polite">
+        <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
+          <div className="md:sticky md:top-1/2 md:h-fit md:-translate-y-1/2 md:py-10">
+            <p className="m-0 text-[clamp(2rem,7cqw,5rem)] font-medium leading-[0.95] tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300" aria-live="polite">
               {activeExperience?.role}
             </p>
           </div>
 
-          <div className="divide-y divide-black/10 border-b border-black/10">
+          <div>
             {experiences.map((experience, index) => {
               const isActive = index === activeExperienceIndex;
 
@@ -68,13 +68,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                   ref={(item) => {
                     itemRefs.current[index] = item;
                   }}
-                  className="min-h-[48vh] py-12 md:flex md:items-center md:py-20 lg:min-h-[56vh]"
+                  className="py-3 md:py-4"
                 >
-                  <div className="max-w-2xl">
-                    <p className={`m-0 text-lg font-medium leading-tight tracking-tight text-gradient-black-gray transition-opacity duration-300 md:text-3xl lg:text-4xl ${isActive ? 'opacity-100' : 'opacity-35'}`}>
-                      {experience.details}
-                    </p>
-                  </div>
+                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] font-medium leading-[0.95] tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
+                    {experience.details}
+                  </p>
                 </article>
               );
             })}
