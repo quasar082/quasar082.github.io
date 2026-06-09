@@ -16,12 +16,18 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
-  const periodRef = useRef<HTMLDivElement | null>(null);
-  const visiblePeriodRef = useRef(experiences[0]?.period ?? '');
+  const previousPeriodRef = useRef<HTMLDivElement | null>(null);
+  const currentPeriodRef = useRef<HTMLDivElement | null>(null);
+  const periodValueRef = useRef(experiences[0]?.period ?? '');
+  const periodTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
-  const [visiblePeriod, setVisiblePeriod] = useState(experiences[0]?.period ?? '');
+  const [periodTransition, setPeriodTransition] = useState(() => ({
+    previous: '',
+    current: experiences[0]?.period ?? '',
+    transitionKey: 0,
+  }));
 
   useEffect(() => {
     let frame = 0;
@@ -95,37 +101,74 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
   useEffect(() => {
     const nextPeriod = experiences[activeExperienceIndex]?.period ?? '';
-    const period = periodRef.current;
 
-    if (!period || visiblePeriodRef.current === nextPeriod) {
+    if (periodValueRef.current === nextPeriod) {
       return;
     }
 
-    const timeline = gsap.timeline({ defaults: { overwrite: true } });
+    const previousPeriod = periodValueRef.current;
+    periodValueRef.current = nextPeriod;
 
-    timeline
-      .to(period, {
-        autoAlpha: 0,
-        y: -6,
-        duration: 0.4,
-        ease: 'power2.inOut',
-      })
-      .call(() => {
-        visiblePeriodRef.current = nextPeriod;
-        setVisiblePeriod(nextPeriod);
-      })
-      .set(period, { y: 6 })
-      .to(period, {
+    setPeriodTransition((current) => ({
+      previous: previousPeriod || current.current,
+      current: nextPeriod,
+      transitionKey: current.transitionKey + 1,
+    }));
+  }, [activeExperienceIndex, experiences]);
+
+  useEffect(() => {
+    const previousPeriod = previousPeriodRef.current;
+    const currentPeriod = currentPeriodRef.current;
+
+    periodTimelineRef.current?.kill();
+
+    if (!currentPeriod) {
+      return;
+    }
+
+    gsap.set(currentPeriod, { autoAlpha: 0, y: 6, willChange: 'transform, opacity' });
+
+    if (previousPeriod && periodTransition.previous) {
+      gsap.set(previousPeriod, { autoAlpha: 0.7, y: 0, willChange: 'transform, opacity' });
+    }
+
+    const timeline = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      onComplete: () => {
+        gsap.set([previousPeriod, currentPeriod].filter(Boolean), { clearProps: 'willChange' });
+      },
+    });
+
+    if (previousPeriod && periodTransition.previous) {
+      timeline.to(
+        previousPeriod,
+        {
+          autoAlpha: 0,
+          y: -6,
+          duration: 0.32,
+          ease: 'power2.out',
+        },
+        0,
+      );
+    }
+
+    timeline.to(
+      currentPeriod,
+      {
         autoAlpha: 0.7,
         y: 0,
-        duration: 0.48,
+        duration: 0.42,
         ease: 'power3.out',
-      });
+      },
+      previousPeriod && periodTransition.previous ? 0.08 : 0,
+    );
+
+    periodTimelineRef.current = timeline;
 
     return () => {
       timeline.kill();
     };
-  }, [activeExperienceIndex, experiences]);
+  }, [periodTransition.transitionKey, periodTransition.previous]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -169,8 +212,20 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-            <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.75rem)] text-right text-sm font-medium uppercase tracking-[0.18em] text-gradient-black-gray opacity-70">
-              {visiblePeriod}
+            <div className="pointer-events-none absolute right-0 top-[calc(100%+0.75rem)] h-5 min-w-max text-right text-sm font-medium uppercase tracking-[0.18em] text-gradient-black-gray">
+              {periodTransition.previous ? (
+                <div
+                  key={`previous-${periodTransition.transitionKey}`}
+                  ref={previousPeriodRef}
+                  className="absolute right-0 top-0 whitespace-nowrap"
+                  aria-hidden="true"
+                >
+                  {periodTransition.previous}
+                </div>
+              ) : null}
+              <div key={`current-${periodTransition.transitionKey}`} ref={currentPeriodRef} className="absolute right-0 top-0 whitespace-nowrap">
+                {periodTransition.current}
+              </div>
             </div>
           </div>
          
