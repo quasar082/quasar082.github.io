@@ -8,60 +8,17 @@ type ExperienceSectionProps = {
   experiences: ExperienceItem[];
 };
 
-const EXPERIENCE_TEXT_CLASS = 'text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray';
-const ROLE_ROW_MASK_BUFFER = 5;
+const EXPERIENCE_TYPE_CLASS = 'text-[clamp(2rem,7cqw,5rem)] leading-[1]';
+const EXPERIENCE_TEXT_CLASS = 'font-medium tracking-[-0.07em] text-gradient-black-gray';
+const EXPERIENCE_ROW_CLASS = `h-[1.08em] ${EXPERIENCE_TYPE_CLASS}`;
 
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
-  const roleItemRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
-  const [rowHeight, setRowHeight] = useState<number | null>(null);
-
-  useEffect(() => {
-    let frame = 0;
-
-    const updateRowHeight = () => {
-      frame = 0;
-      const measuredRoleHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
-      const measuredCompanyHeight = Math.max(...companyRefs.current.map((company) => company?.getBoundingClientRect().height ?? 0));
-      const measuredRowHeight = Math.max(measuredRoleHeight, measuredCompanyHeight);
-
-      if (measuredRowHeight > 0) {
-        setRowHeight(Math.ceil(measuredRowHeight + ROLE_ROW_MASK_BUFFER));
-      }
-    };
-
-    const requestUpdate = () => {
-      if (frame) {
-        return;
-      }
-
-      frame = window.requestAnimationFrame(updateRowHeight);
-    };
-
-    const resizeObserver = new ResizeObserver(requestUpdate);
-    const observedElement = roleViewportRef.current?.parentElement;
-
-    if (observedElement) {
-      resizeObserver.observe(observedElement);
-    }
-
-    requestUpdate();
-    window.addEventListener('resize', requestUpdate);
-
-    return () => {
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', requestUpdate);
-    };
-  }, [experiences.length]);
 
   useEffect(() => {
     let frame = 0;
@@ -80,7 +37,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const updateExperienceProgress = () => {
       frame = 0;
       const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
-      const currentRowHeight = rowHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
+      const currentRowHeight = roleViewportRef.current?.offsetHeight ?? 0;
       const itemPositions = companyRefs.current.map((company) => company?.getBoundingClientRect().top ?? 0);
 
       if (!currentRowHeight || itemPositions.length === 0) {
@@ -131,7 +88,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
     };
-  }, [experiences.length, rowHeight]);
+  }, [experiences.length]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -166,22 +123,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
-            <div ref={roleViewportRef} className="overflow-hidden pt-2 mb-2" style={{ height: rowHeight ?? undefined }} aria-live="polite">
+            <div ref={roleViewportRef} className={`overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
-                {experiences.map((experience, index) => (
-                  <p
-                    key={`${experience.period}-${experience.role}`}
-                    className="m-0 flex items-start justify-end text-right"
-                    style={{ height: rowHeight ?? undefined }}
-                  >
-                    <span
-                      ref={(roleItem) => {
-                        roleItemRefs.current[index] = roleItem;
-                      }}
-                      className={EXPERIENCE_TEXT_CLASS}
-                    >
-                      {experience.role}
-                    </span>
+                {experiences.map((experience) => (
+                  <p key={`${experience.period}-${experience.role}`} className={`m-0 flex items-start justify-end text-right ${EXPERIENCE_ROW_CLASS}`}>
+                    <span className={EXPERIENCE_TEXT_CLASS}>{experience.role}</span>
                   </p>
                 ))}
               </div>
@@ -196,19 +142,16 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                   ref={(item) => {
                     itemRefs.current[index] = item;
                   }}
-                  className="flex items-start"
-                  style={{ height: rowHeight ?? undefined }}
+                  className={`flex items-start ${EXPERIENCE_ROW_CLASS}`}
                 >
-                  <p className="m-0">
-                    <span
-                      ref={(company) => {
-                        companyRefs.current[index] = company;
-                      }}
-                      className={EXPERIENCE_TEXT_CLASS}
-                    >
-                      {experience.company}
-                    </span>
-                  </p>
+                  <span
+                    ref={(company) => {
+                      companyRefs.current[index] = company;
+                    }}
+                    className={EXPERIENCE_TEXT_CLASS}
+                  >
+                    {experience.company}
+                  </span>
                 </article>
               );
             })}
