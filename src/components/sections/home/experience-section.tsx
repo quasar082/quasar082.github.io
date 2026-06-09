@@ -126,6 +126,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       return;
     }
 
+    if (periodTransition.transitionKey === 0) {
+      gsap.set(currentPeriod, { autoAlpha: 0.7, y: 0 });
+      return;
+    }
+
     gsap.set(currentPeriod, { autoAlpha: 0, y: 6, willChange: 'transform, opacity' });
 
     if (previousPeriod && periodTransition.previous) {
@@ -223,7 +228,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                   {periodTransition.previous}
                 </div>
               ) : null}
-              <div key={`current-${periodTransition.transitionKey}`} ref={currentPeriodRef} className="absolute right-0 top-0 whitespace-nowrap">
+              <div
+                key={`current-${periodTransition.transitionKey}`}
+                ref={currentPeriodRef}
+                className="absolute right-0 top-0 whitespace-nowrap"
+                style={{ opacity: periodTransition.transitionKey === 0 ? 0.7 : 0 }}
+              >
                 {periodTransition.current}
               </div>
             </div>
