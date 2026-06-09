@@ -28,15 +28,15 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
   useEffect(() => {
     const updateHeights = () => {
-      const measuredRoleHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
-      const measuredDetailHeight = Math.max(...detailItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+      const measuredRoleHeight = Math.ceil(Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0)));
+      const measuredDetailHeight = Math.ceil(Math.max(...detailItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0)));
 
       if (measuredRoleHeight > 0) {
-        setRoleHeight(measuredRoleHeight);
+        setRoleHeight(measuredRoleHeight + 2);
       }
 
       if (measuredDetailHeight > 0) {
-        setDetailHeight(measuredDetailHeight);
+        setDetailHeight(measuredDetailHeight + 2);
       }
     };
 
@@ -151,7 +151,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="box-border bg-white pb-[55vh] pt-40 text-black" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-[38vh] md:h-fit">
@@ -163,7 +163,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(roleItem) => {
                       roleItemRefs.current[index] = roleItem;
                     }}
-                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 truncate text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                     style={{ height: roleHeight ?? undefined }}
                   >
                     {experience.role}
@@ -180,7 +180,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(detailItem) => {
                       detailItemRefs.current[index] = detailItem;
                     }}
-                    className="m-0 text-right text-[clamp(0.875rem,1.4cqw,1.15rem)] font-medium leading-[1.15] tracking-[-0.03em] text-black/45"
+                    className="m-0 truncate text-right text-[clamp(0.875rem,1.4cqw,1.15rem)] font-medium leading-[1.15] tracking-[-0.03em] text-black/45"
                     style={{ height: detailHeight ?? undefined }}
                   >
                     {formatExperienceDetails(experience)}
@@ -190,7 +190,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             {experiences.map((experience, index) => {
               return (
                 <article
@@ -203,7 +203,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(company) => {
                       companyRefs.current[index] = company;
                     }}
-                    className="m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 truncate text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                   >
                     {experience.company}
                   </p>
