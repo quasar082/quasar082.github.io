@@ -1,5 +1,5 @@
 ---
-period: 6/2014-2/2025
+period: (6/2014-2/2025)
 role: Fresher AI Engineer
 company: C-Unit Square
 employmentType: Full time

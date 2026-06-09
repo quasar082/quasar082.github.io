@@ -1,5 +1,5 @@
 ---
-period: 11/2023-1/2024
+period: (11/2023-1/2024)
 role: Intern AI Engineer
 company: TMA Solution
 employmentType: Full time

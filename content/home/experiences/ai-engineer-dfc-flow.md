@@ -1,5 +1,5 @@
 ---
-period: 6/2025-3/2026
+period: (6/2025-3/2026)
 role: Junior AI Engineer
 company: DFC Flow
 employmentType: Full time
