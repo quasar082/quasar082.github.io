@@ -17,55 +17,73 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
 
   useEffect(() => {
-    const getRoleAnchor = () => roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
+    let frame = 0;
+    const roleTrack = roleTrackRef.current;
 
-    const updateActiveExperience = () => {
-      const roleAnchor = getRoleAnchor();
-      let closestIndex = 0;
-      let closestDistance = Number.POSITIVE_INFINITY;
+    if (!roleTrack) {
+      return;
+    }
 
-      itemRefs.current.forEach((item, index) => {
-        if (!item) {
-          return;
+    const setRoleY = gsap.quickTo(roleTrack, 'y', { duration: 0.28, ease: 'power3.out' });
+
+    const updateExperienceProgress = () => {
+      frame = 0;
+      const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
+      const roleHeight = roleViewportRef.current?.offsetHeight ?? 0;
+      const itemPositions = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
+
+      if (!roleHeight || itemPositions.length === 0) {
+        return;
+      }
+
+      let progressIndex = 0;
+
+      for (let index = 0; index < itemPositions.length - 1; index += 1) {
+        const currentTop = itemPositions[index];
+        const nextTop = itemPositions[index + 1];
+
+        if (roleAnchor >= currentTop && roleAnchor <= nextTop) {
+          const distance = nextTop - currentTop || 1;
+          progressIndex = index + (roleAnchor - currentTop) / distance;
+          break;
         }
 
-        const distance = Math.abs(item.getBoundingClientRect().top - roleAnchor);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
+        if (roleAnchor > nextTop) {
+          progressIndex = index + 1;
         }
-      });
+      }
 
-      setActiveExperienceIndex(closestIndex);
+      const clampedProgress = Math.min(experiences.length - 1, Math.max(0, progressIndex));
+      const closestIndex = Math.round(clampedProgress);
+
+      setRoleY(-clampedProgress * roleHeight);
+      setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
-    updateActiveExperience();
-    window.addEventListener('scroll', updateActiveExperience, { passive: true });
-    window.addEventListener('resize', updateActiveExperience);
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateExperienceProgress);
+    };
+
+    requestUpdate();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
 
     return () => {
-      window.removeEventListener('scroll', updateActiveExperience);
-      window.removeEventListener('resize', updateActiveExperience);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
     };
   }, [experiences.length]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
-    const roleViewport = roleViewportRef.current;
-    const roleTrack = roleTrackRef.current;
-
-    if (roleViewport && roleTrack) {
-      timeline.to(
-        roleTrack,
-        {
-          y: -activeExperienceIndex * roleViewport.offsetHeight,
-          duration: 0.62,
-          ease: 'expo.inOut',
-        },
-        0,
-      );
-    }
 
     companyRefs.current.forEach((company, index) => {
       if (!company) {
@@ -80,8 +98,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           autoAlpha: isActive ? 1 : 0.28,
           x: isActive ? 0 : -8,
           scale: isActive ? 1.01 : 0.99,
-          duration: 0.36,
-          ease: 'expo.out',
+          duration: 0.28,
+          ease: 'power3.out',
         },
         0,
       );
