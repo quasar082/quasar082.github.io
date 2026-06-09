@@ -167,7 +167,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               const isActive = index === activeExperienceIndex;
 
               return (
-                <article className='mt-3'
+                <article className='mt-6'
                   key={`${experience.date}-${experience.role}`}
                   ref={(item) => {
                     itemRefs.current[index] = item;
