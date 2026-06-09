@@ -16,9 +16,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
+  const periodRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
+  const [visiblePeriod, setVisiblePeriod] = useState(experiences[0]?.period ?? '');
 
   useEffect(() => {
     let frame = 0;
@@ -91,6 +93,39 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [experiences.length]);
 
   useEffect(() => {
+    const nextPeriod = experiences[activeExperienceIndex]?.period ?? '';
+    const period = periodRef.current;
+
+    if (!period || visiblePeriod === nextPeriod) {
+      return;
+    }
+
+    const timeline = gsap.timeline({ defaults: { overwrite: true } });
+
+    timeline
+      .to(period, {
+        autoAlpha: 0,
+        y: -6,
+        duration: 0.18,
+        ease: 'power2.out',
+      })
+      .call(() => {
+        setVisiblePeriod(nextPeriod);
+      })
+      .set(period, { y: 6 })
+      .to(period, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.26,
+        ease: 'power3.out',
+      });
+
+    return () => {
+      timeline.kill();
+    };
+  }, [activeExperienceIndex, experiences, visiblePeriod]);
+
+  useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
 
     companyRefs.current.forEach((company, index) => {
@@ -132,7 +167,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
+            <div ref={periodRef} className="mt-3 text-right text-sm font-medium uppercase tracking-[0.18em] text-gradient-black-gray opacity-70">
+              {visiblePeriod}
+            </div>
           </div>
+         
 
           <div className="min-w-0 w-full [container-type:inline-size]">
             {experiences.map((experience, index) => {
