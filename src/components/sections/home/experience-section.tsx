@@ -20,12 +20,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
   useEffect(() => {
     const updateRoleHeight = () => {
-      const measuredTextHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
-      const itemTops = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
-      const measuredRowHeight = itemTops.length > 1 ? itemTops[1] - itemTops[0] : measuredTextHeight;
+      const measuredRoleHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+      const measuredCompanyHeight = Math.max(...companyRefs.current.map((company) => company?.getBoundingClientRect().height ?? 0));
+      const measuredRowHeight = Math.max(measuredRoleHeight, measuredCompanyHeight);
 
       if (measuredRowHeight > 0) {
-        setRoleHeight(measuredRowHeight);
+        setRoleHeight(Math.ceil(measuredRowHeight));
       }
     };
 
@@ -56,7 +56,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       frame = 0;
       const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
       const currentRoleHeight = roleHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
-      const itemPositions = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
+      const itemPositions = companyRefs.current.map((company) => company?.getBoundingClientRect().top ?? 0);
 
       if (!currentRoleHeight || itemPositions.length === 0) {
         return;
@@ -149,7 +149,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     ref={(roleItem) => {
                       roleItemRefs.current[index] = roleItem;
                     }}
-                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                    className="m-0 flex items-start justify-end text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
                     style={{ height: roleHeight ?? undefined }}
                   >
                     {experience.role}
@@ -162,11 +162,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           <div>
             {experiences.map((experience, index) => {
               return (
-                <article className='mt-6'
+                <article
                   key={`${experience.period}-${experience.role}-${experience.company}`}
                   ref={(item) => {
                     itemRefs.current[index] = item;
                   }}
+                  className="flex items-start"
+                  style={{ height: roleHeight ?? undefined }}
                 >
                   <p
                     ref={(company) => {
