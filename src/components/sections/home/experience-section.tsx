@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import type { ExperienceItem } from '@/lib/content/home';
 
 type ExperienceSectionProps = {
@@ -15,13 +16,13 @@ function formatExperienceDate(date: string) {
     const [startMonth, startYear] = [matches[0][1], matches[0][2]];
     const [endMonth, endYear] = [matches[1][1], matches[1][2]];
 
-    return `01/${startMonth.padStart(2, '0')}/${startYear.slice(-2)} - 01/${endMonth.padStart(2, '0')}/${endYear.slice(-2)}`;
+    return `1/${startMonth}/${startYear.slice(-2)} - 1/${endMonth}/${endYear.slice(-2)}`;
   }
 
   const yearRange = normalizedDate.match(/^(\d{4})-(\d{4})$/);
 
   if (yearRange) {
-    return `01/01/${yearRange[1].slice(-2)} - 01/01/${yearRange[2].slice(-2)}`;
+    return `1/1/${yearRange[1].slice(-2)} - 1/1/${yearRange[2].slice(-2)}`;
   }
 
   return normalizedDate;
@@ -39,6 +40,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleRef = useRef<HTMLParagraphElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
+  const companyRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const metaRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const isSnappingRef = useRef(false);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const activeExperience = experiences[activeExperienceIndex] ?? experiences[0];
@@ -121,6 +124,34 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     };
   }, [activeExperienceIndex, experiences.length]);
 
+  useEffect(() => {
+    const role = roleRef.current;
+
+    if (role) {
+      gsap.fromTo(role, { autoAlpha: 0.45, yPercent: 8, filter: 'blur(6px)' }, { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.42, ease: 'power3.out', overwrite: true });
+    }
+
+    companyRefs.current.forEach((company, index) => {
+      if (!company) {
+        return;
+      }
+
+      gsap.to(company, {
+        autoAlpha: index === activeExperienceIndex ? 1 : 0.35,
+        x: index === activeExperienceIndex ? 0 : -6,
+        duration: 0.32,
+        ease: 'power2.out',
+        overwrite: true,
+      });
+    });
+
+    const meta = metaRefs.current[activeExperienceIndex];
+
+    if (meta) {
+      gsap.fromTo(meta, { autoAlpha: 0, y: -6, filter: 'blur(4px)' }, { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.34, ease: 'power3.out', overwrite: true });
+    }
+  }, [activeExperienceIndex]);
+
   return (
     <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
       <div className="container mx-auto">
@@ -142,11 +173,21 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     itemRefs.current[index] = item;
                   }}
                 >
-                  <p className={`m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-35'}`}>
+                  <p
+                    ref={(company) => {
+                      companyRefs.current[index] = company;
+                    }}
+                    className="m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
+                  >
                     {getCompanyName(experience.details)}
                   </p>
                   {isActive ? (
-                    <p className="m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45">
+                    <p
+                      ref={(meta) => {
+                        metaRefs.current[index] = meta;
+                      }}
+                      className="m-0 mt-1 text-[clamp(0.75rem,1.3cqw,1rem)] font-medium tracking-[-0.02em] text-black/45"
+                    >
                       {formatExperienceMeta(experience.date)}
                     </p>
                   ) : null}
