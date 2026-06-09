@@ -12,9 +12,28 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
+  const roleItemRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
+  const [roleHeight, setRoleHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const updateRoleHeight = () => {
+      const measuredHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
+
+      if (measuredHeight > 0) {
+        setRoleHeight(measuredHeight);
+      }
+    };
+
+    updateRoleHeight();
+    window.addEventListener('resize', updateRoleHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateRoleHeight);
+    };
+  }, [experiences.length]);
 
   useEffect(() => {
     let frame = 0;
@@ -29,10 +48,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const updateExperienceProgress = () => {
       frame = 0;
       const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
-      const roleHeight = roleViewportRef.current?.offsetHeight ?? 0;
+      const currentRoleHeight = roleHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
       const itemPositions = itemRefs.current.map((item) => item?.getBoundingClientRect().top ?? 0);
 
-      if (!roleHeight || itemPositions.length === 0) {
+      if (!currentRoleHeight || itemPositions.length === 0) {
         return;
       }
 
@@ -56,7 +75,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       const clampedProgress = Math.min(experiences.length - 1, Math.max(0, progressIndex));
       const closestIndex = Math.round(clampedProgress);
 
-      setRoleY(-clampedProgress * roleHeight);
+      setRoleY(-clampedProgress * currentRoleHeight);
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
@@ -80,7 +99,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
     };
-  }, [experiences.length]);
+  }, [experiences.length, roleHeight]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -115,10 +134,17 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
-            <div ref={roleViewportRef} className="h-[clamp(2.25rem,7.4cqw,5.4rem)] overflow-hidden" aria-live="polite">
+            <div ref={roleViewportRef} className="overflow-hidden" style={{ height: roleHeight ?? undefined }} aria-live="polite">
               <div ref={roleTrackRef}>
-                {experiences.map((experience) => (
-                  <p key={`${experience.period}-${experience.role}`} className="m-0 h-[clamp(2.25rem,7.4cqw,5.4rem)] text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[0.95] tracking-[-0.07em] text-gradient-black-gray">
+                {experiences.map((experience, index) => (
+                  <p
+                    key={`${experience.period}-${experience.role}`}
+                    ref={(roleItem) => {
+                      roleItemRefs.current[index] = roleItem;
+                    }}
+                    className="m-0 text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-none tracking-[-0.07em] text-gradient-black-gray"
+                    style={{ height: roleHeight ?? undefined }}
+                  >
                     {experience.role}
                   </p>
                 ))}
