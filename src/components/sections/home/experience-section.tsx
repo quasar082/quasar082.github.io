@@ -105,18 +105,20 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     timeline
       .to(period, {
         autoAlpha: 0,
-        y: -6,
-        duration: 0.18,
-        ease: 'power2.out',
+        y: -4,
+        filter: 'blur(4px)',
+        duration: 0.32,
+        ease: 'power2.inOut',
       })
       .call(() => {
         setVisiblePeriod(nextPeriod);
       })
-      .set(period, { y: 6 })
+      .set(period, { y: 4 })
       .to(period, {
-        autoAlpha: 1,
+        autoAlpha: 0.7,
         y: 0,
-        duration: 0.26,
+        filter: 'blur(0px)',
+        duration: 0.42,
         ease: 'power3.out',
       });
 
