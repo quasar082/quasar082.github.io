@@ -8,8 +8,8 @@ type ExperienceSectionProps = {
   experiences: ExperienceItem[];
 };
 
-const EXPERIENCE_TYPE_CLASS = 'text-[clamp(1rem,19cqw,5rem)] leading-[1]';
-const EXPERIENCE_TEXT_CLASS = 'font-medium tracking-[-0.01em] text-gradient-black-gray';
+const EXPERIENCE_TYPE_CLASS = 'text-[clamp(1rem,10cqw,5rem)] leading-[1]';
+const EXPERIENCE_TEXT_CLASS = 'font-medium tracking-[-0.03em] text-gradient-black-gray';
 const EXPERIENCE_ROW_CLASS = `h-[1.08em] ${EXPERIENCE_TYPE_CLASS}`;
 
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
@@ -121,8 +121,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   return (
     <section ref={sectionRef} id="experience" className="box-border  bg-white  text-black my-100" aria-label="Experience section">
       <div className="container mx-auto">
-        <div className="mt-12 grid gap-8 md:grid-cols-2 md:gap-10">
-          <div className="min-w-0 w-full [container-type:inline-size] md:sticky md:top-1/2 md:h-fit">
+        <div className="mt-12 grid grid-cols-2 gap-10">
+          <div className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size]">
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (
