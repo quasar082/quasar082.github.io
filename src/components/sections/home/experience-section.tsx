@@ -8,33 +8,58 @@ type ExperienceSectionProps = {
   experiences: ExperienceItem[];
 };
 
+const EXPERIENCE_TEXT_CLASS = 'text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray';
+const ROLE_ROW_MASK_BUFFER = 8;
+
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
-  const roleItemRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const roleItemRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const companyRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
-  const [roleHeight, setRoleHeight] = useState<number | null>(null);
+  const [rowHeight, setRowHeight] = useState<number | null>(null);
 
   useEffect(() => {
-    const updateRoleHeight = () => {
+    let frame = 0;
+
+    const updateRowHeight = () => {
+      frame = 0;
       const measuredRoleHeight = Math.max(...roleItemRefs.current.map((item) => item?.getBoundingClientRect().height ?? 0));
       const measuredCompanyHeight = Math.max(...companyRefs.current.map((company) => company?.getBoundingClientRect().height ?? 0));
       const measuredRowHeight = Math.max(measuredRoleHeight, measuredCompanyHeight);
 
       if (measuredRowHeight > 0) {
-        setRoleHeight(Math.ceil(measuredRowHeight));
+        setRowHeight(Math.ceil(measuredRowHeight + ROLE_ROW_MASK_BUFFER));
       }
     };
 
-    const frame = window.requestAnimationFrame(updateRoleHeight);
-    window.addEventListener('resize', updateRoleHeight);
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateRowHeight);
+    };
+
+    const resizeObserver = new ResizeObserver(requestUpdate);
+    const observedElement = roleViewportRef.current?.parentElement;
+
+    if (observedElement) {
+      resizeObserver.observe(observedElement);
+    }
+
+    requestUpdate();
+    window.addEventListener('resize', requestUpdate);
 
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('resize', updateRoleHeight);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', requestUpdate);
     };
   }, [experiences.length]);
 
@@ -55,10 +80,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const updateExperienceProgress = () => {
       frame = 0;
       const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
-      const currentRoleHeight = roleHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
+      const currentRowHeight = rowHeight ?? roleViewportRef.current?.offsetHeight ?? 0;
       const itemPositions = companyRefs.current.map((company) => company?.getBoundingClientRect().top ?? 0);
 
-      if (!currentRoleHeight || itemPositions.length === 0) {
+      if (!currentRowHeight || itemPositions.length === 0) {
         return;
       }
 
@@ -82,7 +107,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       const clampedProgress = Math.min(experiences.length - 1, Math.max(0, progressIndex));
       const closestIndex = Math.round(clampedProgress);
 
-      setRoleY(-clampedProgress * currentRoleHeight);
+      setRoleY(-clampedProgress * currentRowHeight);
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
@@ -106,7 +131,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
     };
-  }, [experiences.length, roleHeight]);
+  }, [experiences.length, rowHeight]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -141,18 +166,22 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="mt-12 grid gap-8 [container-type:inline-size] md:grid-cols-2 md:gap-10">
           <div className="md:sticky md:top-1/2 md:h-fit">
-            <div ref={roleViewportRef} className="overflow-hidden" style={{ height: roleHeight ?? undefined }} aria-live="polite">
+            <div ref={roleViewportRef} className="overflow-hidden" style={{ height: rowHeight ?? undefined }} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience, index) => (
                   <p
                     key={`${experience.period}-${experience.role}`}
-                    ref={(roleItem) => {
-                      roleItemRefs.current[index] = roleItem;
-                    }}
-                    className="m-0 flex items-start justify-end text-right text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
-                    style={{ height: roleHeight ?? undefined }}
+                    className="m-0 flex items-start justify-end text-right"
+                    style={{ height: rowHeight ?? undefined }}
                   >
-                    {experience.role}
+                    <span
+                      ref={(roleItem) => {
+                        roleItemRefs.current[index] = roleItem;
+                      }}
+                      className={EXPERIENCE_TEXT_CLASS}
+                    >
+                      {experience.role}
+                    </span>
                   </p>
                 ))}
               </div>
@@ -168,15 +197,17 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     itemRefs.current[index] = item;
                   }}
                   className="flex items-start"
-                  style={{ height: roleHeight ?? undefined }}
+                  style={{ height: rowHeight ?? undefined }}
                 >
-                  <p
-                    ref={(company) => {
-                      companyRefs.current[index] = company;
-                    }}
-                    className="m-0 text-[clamp(2rem,7cqw,5rem)] max-h-fit font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray"
-                  >
-                    {experience.company}
+                  <p className="m-0">
+                    <span
+                      ref={(company) => {
+                        companyRefs.current[index] = company;
+                      }}
+                      className={EXPERIENCE_TEXT_CLASS}
+                    >
+                      {experience.company}
+                    </span>
                   </p>
                 </article>
               );
