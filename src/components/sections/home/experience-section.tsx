@@ -9,7 +9,7 @@ type ExperienceSectionProps = {
 };
 
 const EXPERIENCE_TEXT_CLASS = 'text-[clamp(2rem,7cqw,5rem)] font-medium leading-[1] tracking-[-0.07em] text-gradient-black-gray';
-const ROLE_ROW_MASK_BUFFER = 8;
+const ROLE_ROW_MASK_BUFFER = 5;
 
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
