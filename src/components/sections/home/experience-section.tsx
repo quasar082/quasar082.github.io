@@ -125,10 +125,16 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex, experiences.length]);
 
   useEffect(() => {
+    const timeline = gsap.timeline({ defaults: { overwrite: true } });
     const role = roleRef.current;
 
     if (role) {
-      gsap.fromTo(role, { autoAlpha: 0.45, yPercent: 8, filter: 'blur(6px)' }, { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.42, ease: 'power3.out', overwrite: true });
+      timeline.fromTo(
+        role,
+        { autoAlpha: 0, yPercent: 18, scale: 0.96, filter: 'blur(10px)', clipPath: 'inset(0 0 100% 0)' },
+        { autoAlpha: 1, yPercent: 0, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0 0 0% 0)', duration: 0.58, ease: 'expo.out' },
+        0,
+      );
     }
 
     companyRefs.current.forEach((company, index) => {
@@ -136,20 +142,37 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
         return;
       }
 
-      gsap.to(company, {
-        autoAlpha: index === activeExperienceIndex ? 1 : 0.35,
-        x: index === activeExperienceIndex ? 0 : -6,
-        duration: 0.32,
-        ease: 'power2.out',
-        overwrite: true,
-      });
+      const isActive = index === activeExperienceIndex;
+
+      timeline.to(
+        company,
+        {
+          autoAlpha: isActive ? 1 : 0.28,
+          x: isActive ? 0 : -10,
+          scale: isActive ? 1.015 : 0.985,
+          letterSpacing: isActive ? '-0.085em' : '-0.07em',
+          filter: isActive ? 'blur(0px)' : 'blur(0.8px)',
+          duration: 0.48,
+          ease: 'expo.out',
+        },
+        0,
+      );
     });
 
     const meta = metaRefs.current[activeExperienceIndex];
 
     if (meta) {
-      gsap.fromTo(meta, { autoAlpha: 0, y: -6, filter: 'blur(4px)' }, { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.34, ease: 'power3.out', overwrite: true });
+      timeline.fromTo(
+        meta,
+        { autoAlpha: 0, y: -10, x: -8, filter: 'blur(6px)', clipPath: 'inset(0 100% 0 0)' },
+        { autoAlpha: 1, y: 0, x: 0, filter: 'blur(0px)', clipPath: 'inset(0 0% 0 0)', duration: 0.46, ease: 'power4.out' },
+        0.1,
+      );
     }
+
+    return () => {
+      timeline.kill();
+    };
   }, [activeExperienceIndex]);
 
   return (
