@@ -17,6 +17,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
   const periodRef = useRef<HTMLDivElement | null>(null);
+  const visiblePeriodRef = useRef(experiences[0]?.period ?? '');
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
@@ -96,7 +97,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const nextPeriod = experiences[activeExperienceIndex]?.period ?? '';
     const period = periodRef.current;
 
-    if (!period || visiblePeriod === nextPeriod) {
+    if (!period || visiblePeriodRef.current === nextPeriod) {
       return;
     }
 
@@ -105,27 +106,26 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     timeline
       .to(period, {
         autoAlpha: 0,
-        y: -4,
-        filter: 'blur(4px)',
-        duration: 0.32,
+        y: -6,
+        duration: 0.4,
         ease: 'power2.inOut',
       })
       .call(() => {
+        visiblePeriodRef.current = nextPeriod;
         setVisiblePeriod(nextPeriod);
       })
-      .set(period, { y: 4 })
+      .set(period, { y: 6 })
       .to(period, {
         autoAlpha: 0.7,
         y: 0,
-        filter: 'blur(0px)',
-        duration: 0.42,
+        duration: 0.48,
         ease: 'power3.out',
       });
 
     return () => {
       timeline.kill();
     };
-  }, [activeExperienceIndex, experiences, visiblePeriod]);
+  }, [activeExperienceIndex, experiences]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
