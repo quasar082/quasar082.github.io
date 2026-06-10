@@ -205,7 +205,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                         className={`${secondaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div data-project-image-surface className={`absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 will-change-[filter,transform] ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
+                        <div data-project-image-surface className={`absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center will-change-[filter,transform] ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
