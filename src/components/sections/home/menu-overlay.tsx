@@ -3,6 +3,7 @@
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import type { MenuItem } from '@/lib/content/home';
 
 type MenuOverlayProps = {
@@ -21,9 +22,78 @@ const previewClassByHref: Record<string, string> = {
   '/blog': 'from-[#111111] via-[#3a3a3a] to-[#d9d9d9]',
 };
 
+type MenuRevealLabelProps = {
+  label: string;
+};
+
+function MenuRevealLabel({ label }: MenuRevealLabelProps) {
+  return (
+    <span className="relative overflow-hidden after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100" aria-label={label} data-menu-reveal>
+      {Array.from(label).map((character, index) => (
+        <span key={`${character}-${index}`} className="inline-flex overflow-hidden align-baseline" aria-hidden="true">
+          <span data-menu-character>{character === ' ' ? ' ' : character}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const overlay = overlayRef.current;
+
+    if (!overlay) {
+      return;
+    }
+
+    const characters = gsap.utils.toArray<HTMLElement>(overlay.querySelectorAll('[data-menu-character]'));
+    const previews = gsap.utils.toArray<HTMLElement>(overlay.querySelectorAll('[data-menu-preview]'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isOpen) {
+      gsap.set(characters, { yPercent: 110, autoAlpha: 0 });
+      gsap.set(previews, { y: 24, autoAlpha: 0 });
+      return;
+    }
+
+    if (reduceMotion) {
+      gsap.set(characters, { yPercent: 0, autoAlpha: 1 });
+      gsap.set(previews, { y: 0, autoAlpha: 1 });
+      return;
+    }
+
+    const context = gsap.context(() => {
+      const revealLines = gsap.utils.toArray<HTMLElement>(overlay.querySelectorAll('[data-menu-reveal]'));
+      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      gsap.set(characters, { yPercent: 110, autoAlpha: 0 });
+      gsap.set(previews, { y: 24, autoAlpha: 0 });
+
+      revealLines.forEach((line, lineIndex) => {
+        const lineCharacters = gsap.utils.toArray<HTMLElement>(line.querySelectorAll('[data-menu-character]'));
+
+        timeline.to(
+          lineCharacters,
+          {
+            yPercent: 0,
+            autoAlpha: 1,
+            duration: 0.62,
+            stagger: 0.028,
+          },
+          lineIndex * 0.055,
+        );
+      });
+
+      timeline.to(previews, { y: 0, autoAlpha: 1, duration: 0.58, stagger: 0.045 }, 0.08);
+    }, overlay);
+
+    return () => {
+      context.revert();
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -133,11 +203,9 @@ export function MenuOverlay({ menuItems, activeSection, isOpen, onClose }: MenuO
                       <span className="flex h-3 w-3 items-center justify-center" aria-hidden="true">
                         <span className={`h-2 w-2 rounded-full bg-[#a7d7ad] transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
                       </span>
-                      <span className="relative after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100">
-                        {item.label}
-                      </span>
+                      <MenuRevealLabel label={item.label} />
                     </span>
-                    <span className={`block aspect-[16/8] w-full rounded-lg bg-gradient-to-br ${previewClass}`} aria-hidden="true" />
+                    <span data-menu-preview className={`block aspect-[16/8] w-full rounded-lg bg-gradient-to-br ${previewClass}`} aria-hidden="true" />
                   </Link>
                 </CursorHoverCard>
               </li>
