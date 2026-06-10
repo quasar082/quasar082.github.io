@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { HomeContent } from '@/lib/content/home';
 import { AboutSection } from './about-section';
 import { ExperienceSection } from './experience-section';
@@ -22,6 +22,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isHeaderInverted, setIsHeaderInverted] = useState(false);
   const [isIntroComplete, setIsIntroComplete] = useState(false);
+  const completeIntro = useCallback(() => setIsIntroComplete(true), []);
 
   useEffect(() => {
     const sectionIds = content.menuItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1));
@@ -120,7 +121,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="min-h-dvh overflow-x-clip bg-white">
-      <HomePreloader onComplete={() => setIsIntroComplete(true)} />
+      {!isIntroComplete ? <HomePreloader onComplete={completeIntro} /> : null}
       <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection playIntro={isIntroComplete} />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
