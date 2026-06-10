@@ -157,7 +157,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     <section ref={sectionRef} id="experience" className="box-border bg-white text-black" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-[45vh]">
-          <div className="sticky top-1/2 h-fit min-w-0 -translate-y-1/2 w-full [container-type:inline-size] relative">
+          <div className="sticky top-1/2 h-fit min-w-0 -translate-y-1/2 w-full [container-type:inline-size]">
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (
@@ -167,7 +167,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-            <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.20rem)] text-right text-black/60 text-sm font-medium uppercase tracking-[0.18em] text-gray opacity-70">
+            <div ref={periodRef} className="mt-2 text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70">
               {visiblePeriod}
             </div>
           </div>
