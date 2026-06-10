@@ -160,8 +160,8 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
         <div className="mt-12 flex flex-col gap-20 md:gap-24">
           {projects.map((project, index) => {
             const isEven = index % 2 === 0;
-            const primaryWidth = isEven ? 'md:basis-[calc(80%-0.5rem)]' : 'md:basis-[calc(20%-0.5rem)]';
-            const secondaryWidth = isEven ? 'md:basis-[calc(20%-0.5rem)]' : 'md:basis-[calc(80%-0.5rem)]';
+            const primaryWidth = isEven ? 'md:basis-[calc(66.666%-0.5rem)]' : 'md:basis-[calc(33.333%-0.5rem)]';
+            const secondaryWidth = isEven ? 'md:basis-[calc(33.333%-0.5rem)]' : 'md:basis-[calc(66.666%-0.5rem)]';
             const fallbackClass = 'bg-gradient-to-br from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
 
@@ -175,19 +175,19 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:snap-none md:overflow-x-visible md:overflow-y-visible">
                       <div
                         data-project-image
-                        className={`${primaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
+                        className={`${primaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
+                        <div className={`project-image-surface absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
                       <div
                         data-project-image
-                        className={`${secondaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
+                        className={`${secondaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
+                        <div className={`project-image-surface absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
