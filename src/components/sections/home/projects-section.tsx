@@ -64,19 +64,21 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
 
     const revealBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-reveal]'));
     const imageBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-image]'));
+    const imageCovers = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-image-cover]'));
     const allCharacters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-character]'));
     const allWords = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-word]'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduceMotion) {
-      gsap.set([...allCharacters, ...allWords, ...imageBlocks], { yPercent: 0, autoAlpha: 1, clipPath: 'inset(0 0% 0 0%)', webkitClipPath: 'inset(0 0% 0 0%)' });
+      gsap.set([...allCharacters, ...allWords], { yPercent: 0, autoAlpha: 1 });
+      gsap.set(imageCovers, { autoAlpha: 0 });
       return;
     }
 
     const context = gsap.context(() => {
       gsap.set(allCharacters, { yPercent: 110, autoAlpha: 0 });
       gsap.set(allWords, { yPercent: 110, autoAlpha: 0 });
-      gsap.set(imageBlocks, { clipPath: 'inset(0 50% 0 50%)', webkitClipPath: 'inset(0 50% 0 50%)' });
+      gsap.set(imageCovers, { xPercent: 0 });
     }, section);
 
     const revealedTextBlocks = new Set<Element>();
@@ -116,12 +118,12 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           }
 
           revealedImages.add(entry.target);
-          gsap.to(entry.target, {
-            clipPath: 'inset(0 0% 0 0%)',
-            webkitClipPath: 'inset(0 0% 0 0%)',
-            duration: 1.05,
-            ease: 'expo.inOut',
-          });
+          const leftCover = entry.target.querySelector('[data-project-image-cover="left"]');
+          const rightCover = entry.target.querySelector('[data-project-image-cover="right"]');
+
+          gsap.timeline({ defaults: { duration: 1.05, ease: 'expo.inOut' } })
+            .to(leftCover, { xPercent: -100 }, 0)
+            .to(rightCover, { xPercent: 100 }, 0);
 
           imageObserver.unobserve(entry.target);
         });
@@ -162,7 +164,6 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             const secondaryWidth = isEven ? 'md:basis-[calc(40%-0.5rem)]' : 'md:basis-[calc(60%-0.5rem)]';
             const fallbackClass = 'bg-gradient-to-br from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
-            const revealImageStyle = { ...imageStyle, clipPath: 'inset(0 50% 0 50%)', WebkitClipPath: 'inset(0 50% 0 50%)' };
 
             return (
               <CursorHoverCard key={project.name} label="View now" iconVariant="arrow-up-right" iconOnly className="relative block">
@@ -174,16 +175,22 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     <div className="flex h-[80vh] min-h-[520px] w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:snap-none md:overflow-x-visible md:overflow-y-visible">
                       <div
                         data-project-image
-                        className={`${primaryWidth} project-image-surface h-full w-[90%] shrink-0 snap-start rounded-2xl border border-black/20 bg-cover bg-center md:shrink-0 ${project.imageUrl ? '' : fallbackClass}`}
-                        style={revealImageStyle}
+                        className={`${primaryWidth} relative h-full w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
                         aria-hidden="true"
-                      />
+                      >
+                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
+                        <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
+                        <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
+                      </div>
                       <div
                         data-project-image
-                        className={`${secondaryWidth} project-image-surface h-full w-[90%] shrink-0 snap-start rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 md:shrink-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`}
-                        style={revealImageStyle}
+                        className={`${secondaryWidth} relative h-full w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
                         aria-hidden="true"
-                      />
+                      >
+                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
+                        <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
+                        <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
+                      </div>
                     </div>
                     <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <span className="inline-flex items-center gap-3 text-xl leading-none tracking-tight text-gradient-black-gray md:text-2xl">
