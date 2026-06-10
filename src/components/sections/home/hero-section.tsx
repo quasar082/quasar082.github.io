@@ -97,7 +97,7 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
         <div className="flex w-full flex-col items-center justify-between md:flex-row">
           <div className="mt-auto flex h-full w-fit items-end justify-end leading-none md:justify-start">
             <div data-hero-scroll className="opacity-45">
-              <p className="m-0 text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-gradient-black-gray">Scroll</p>
+              <p className="m-0 text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-black/60">Scroll</p>
             </div>
           </div>
 
