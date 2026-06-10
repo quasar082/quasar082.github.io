@@ -47,7 +47,7 @@ export function ParallaxVideoSection() {
     <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-white mt-50" aria-label="Visual interlude">
       <video
         ref={videoRef}
-        className="absolute inset-x-0 -top-[25dvh] h-[150dvh] w-full object-cover will-change-transform"
+        className="absolute inset-x-0 -top-[18dvh] h-[136dvh] w-full object-cover will-change-transform"
         src={PARALLAX_VIDEO_URL}
         autoPlay
         loop
