@@ -3,7 +3,8 @@
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { ArrowRight } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import type { PointerEvent } from 'react';
 import { gsap } from 'gsap';
 import type { ProjectItem } from '@/lib/content/home';
 
@@ -54,6 +55,21 @@ function ProjectRevealText({ text, className, characterClassName = 'text-gradien
 
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
+
+  const playImageInterference = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const surface = event.currentTarget.querySelector<HTMLElement>('[data-project-image-surface]');
+
+    if (!surface) {
+      return;
+    }
+
+    gsap.killTweensOf(surface);
+    gsap.timeline()
+      .to(surface, { filter: 'blur(3px) saturate(1.25)', x: -3, y: 2, scale: 1.012, duration: 0.11, ease: 'power2.out' })
+      .to(surface, { filter: 'blur(1.5px) saturate(0.92)', x: 3, y: -1, scale: 1.006, duration: 0.1, ease: 'power2.out' })
+      .to(surface, { filter: 'blur(2.5px) saturate(1.12)', x: -1, y: -2, scale: 1.01, duration: 0.1, ease: 'power2.out' })
+      .to(surface, { filter: 'blur(0) saturate(1)', x: 0, y: 0, scale: 1, duration: 0.28, ease: 'power3.out', clearProps: 'filter,transform' });
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -175,19 +191,21 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:snap-none md:overflow-x-visible md:overflow-y-visible">
                       <div
                         data-project-image
+                        onPointerEnter={playImageInterference}
                         className={`${primaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div className={`project-image-surface absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
+                        <div data-project-image-surface className={`absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center will-change-[filter,transform] ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
                       <div
                         data-project-image
+                        onPointerEnter={playImageInterference}
                         className={`${secondaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div className={`project-image-surface absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
+                        <div data-project-image-surface className={`absolute inset-0 rounded-2xl border border-black/20 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 will-change-[filter,transform] ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
