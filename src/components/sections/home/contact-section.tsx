@@ -44,6 +44,47 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
       return;
     }
 
+    let frame = 0;
+
+    const updateContactOverlay = () => {
+      frame = 0;
+      const start = section.offsetTop - window.innerHeight;
+      const end = section.offsetTop;
+      const distance = end - start || 1;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+
+      gsap.set(section, { yPercent: (1 - progress) * 100 });
+    };
+
+    const requestOverlayUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateContactOverlay);
+    };
+
+    updateContactOverlay();
+    window.addEventListener('scroll', requestOverlayUpdate, { passive: true });
+    window.addEventListener('resize', requestOverlayUpdate);
+
+    return () => {
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestOverlayUpdate);
+      window.removeEventListener('resize', requestOverlayUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
     const revealBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-reveal]'));
     const allCharacters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-character]'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
