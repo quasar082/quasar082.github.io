@@ -18,7 +18,7 @@ type RevealLineProps = {
 
 function RevealLine({ text, className }: RevealLineProps) {
   return (
-    <span className="block overflow-hidden pb-[0.06em]" aria-label={text} data-hero-reveal>
+    <span className="block overflow-hidden pb-[0.01em]" aria-label={text} data-hero-reveal>
       {Array.from(text).map((character, index) => (
         <span key={`${character}-${index}`} className="inline-flex overflow-hidden align-baseline" aria-hidden="true">
           <span className={className} data-hero-character>
@@ -103,16 +103,16 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
 
           <div className="w-4/5 flex-shrink-0 md:w-3/5">
             <div className="@container h-fit w-full">
-              <p className="h-fit w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[0.9] text-gradient-black-gray">
-                <RevealLine text="quasar" className="inline-flex text-gradient-black-gray" />
+              <p className="h-fit w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[1] text-gradient-black-gray">
+                <RevealLine text="quasar" className=" text-gradient-black-gray" />
               </p>
             </div>
 
             <div className="ml-auto w-full">
-              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">
+              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.95] tracking-[-0.02em] text-gradient-black-gray">
                 <RevealLine text="Harness AI" className="inline-flex text-gradient-black-gray" />
               </p>
-              <p className="mt-2 m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">
+              <p className=" m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[1] tracking-[-0.02em] text-gradient-black-gray">
                 <RevealLine text="Shape what's next." className="inline-flex text-gradient-black-gray" />
               </p>
             </div>
