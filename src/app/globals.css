@@ -183,4 +183,36 @@ body {
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
+
+  .project-image-surface {
+    transform: translateZ(0);
+    will-change: clip-path, filter, transform;
+  }
+
+  .group:hover .project-image-surface {
+    animation: project-image-interference 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes project-image-interference {
+    0% {
+      filter: blur(0) saturate(1);
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    18% {
+      filter: blur(3px) saturate(1.25);
+      transform: translate3d(-3px, 2px, 0) scale(1.012);
+    }
+    34% {
+      filter: blur(1.5px) saturate(0.92);
+      transform: translate3d(3px, -1px, 0) scale(1.006);
+    }
+    52% {
+      filter: blur(2.5px) saturate(1.12);
+      transform: translate3d(-1px, -2px, 0) scale(1.01);
+    }
+    100% {
+      filter: blur(0) saturate(1);
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
 }
