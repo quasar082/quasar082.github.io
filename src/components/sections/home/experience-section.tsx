@@ -21,6 +21,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [visiblePeriod, setVisiblePeriod] = useState(experiences[0]?.period ?? '');
+  const visiblePeriodRef = useRef(experiences[0]?.period ?? '');
 
   useEffect(() => {
     let frame = 0;
@@ -96,7 +97,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const nextPeriod = experiences[activeExperienceIndex]?.period ?? '';
     const period = periodRef.current;
 
-    if (!period || visiblePeriod === nextPeriod) {
+    if (!period || visiblePeriodRef.current === nextPeriod) {
       return;
     }
 
@@ -110,6 +111,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
         ease: 'power2.out',
       })
       .call(() => {
+        visiblePeriodRef.current = nextPeriod;
         setVisiblePeriod(nextPeriod);
       })
       .set(period, { y: 6 })
@@ -123,7 +125,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     return () => {
       timeline.kill();
     };
-  }, [activeExperienceIndex, experiences, visiblePeriod]);
+  }, [activeExperienceIndex, experiences]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
