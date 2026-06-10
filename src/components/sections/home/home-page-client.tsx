@@ -6,6 +6,7 @@ import { AboutSection } from './about-section';
 import { ExperienceSection } from './experience-section';
 import { ContactSection } from './contact-section';
 import { HeroSection } from './hero-section';
+import { HomePreloader } from './home-preloader';
 import { MenuOverlay } from './menu-overlay';
 import { ParallaxVideoSection } from './parallax-video-section';
 import { ProjectsSection } from './projects-section';
@@ -20,6 +21,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const [activeSection, setActiveSection] = useState(content.menuItems[0]?.href ?? '#home');
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isHeaderInverted, setIsHeaderInverted] = useState(false);
+  const [isIntroComplete, setIsIntroComplete] = useState(false);
 
   useEffect(() => {
     const sectionIds = content.menuItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1));
@@ -118,8 +120,9 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="min-h-dvh overflow-x-clip bg-white">
+      <HomePreloader onComplete={() => setIsIntroComplete(true)} />
       <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
-      <HeroSection />
+      <HeroSection playIntro={isIntroComplete} />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection paragraphs={content.aboutParagraphs} />
       <ProjectsSection projects={content.projects} />
