@@ -9,7 +9,7 @@ type ContactSectionProps = {
 export function ContactSection({ contactSocials }: ContactSectionProps) {
   return (
     <section id="contact" className="box-border flex h-dvh min-h-0 flex-col overflow-hidden bg-[#e9e9e9] px-4 pt-10 pb-2 text-black sm:px-6 lg:px-8" aria-label="Contact section">
-      <div className="container mx-auto flex min-h-0 flex-1 flex-col pt-10 [@media(min-height:900px)]:pt-15">
+      <div className="container mx-auto flex min-h-0 flex-1 flex-col pt-8 [@media(min-height:900px)]:pt-15">
         <div className="shrink-0 grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
           <div className="flex flex-col gap-6 lg:col-span-1">
             <h2 className="m-0 w-full max-w-none text-[clamp(2rem,2vmin,3rem)]  md:text-[clamp(2rem,4vmin,3rem)] xl:text-[clamp(2rem,5vmin,3rem)] leading-[0.95] tracking-tight">

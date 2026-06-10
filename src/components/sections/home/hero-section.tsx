@@ -103,12 +103,12 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
 
           <div className="w-4/5 flex-shrink-0 md:w-3/5">
             <div className="@container w-full">
-              <p className="w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[0.95] text-gradient-black-gray md:text-[clamp(1rem,32.1cqw,100rem)]">
+              <p className="w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[0.9] text-gradient-black-gray md:text-[clamp(1rem,32.1cqw,100rem)]">
                 <SplitRevealText text="quasar" className="block" delayGroup="primary" />
               </p>
             </div>
 
-            <div className="mt-8 ml-auto w-full">
+            <div className=" ml-auto w-full">
               <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">
                 <SplitRevealText text="Harness AI" className="block" delayGroup="secondary" />
               </p>
