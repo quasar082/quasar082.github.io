@@ -69,14 +69,14 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduceMotion) {
-      gsap.set([...allCharacters, ...allWords, ...imageBlocks], { yPercent: 0, autoAlpha: 1, clipPath: 'inset(0 0% 0 0%)' });
+      gsap.set([...allCharacters, ...allWords, ...imageBlocks], { yPercent: 0, autoAlpha: 1, clipPath: 'inset(0 0% 0 0%)', webkitClipPath: 'inset(0 0% 0 0%)' });
       return;
     }
 
     const context = gsap.context(() => {
       gsap.set(allCharacters, { yPercent: 110, autoAlpha: 0 });
       gsap.set(allWords, { yPercent: 110, autoAlpha: 0 });
-      gsap.set(imageBlocks, { clipPath: 'inset(0 50% 0 50%)' });
+      gsap.set(imageBlocks, { clipPath: 'inset(0 50% 0 50%)', webkitClipPath: 'inset(0 50% 0 50%)' });
     }, section);
 
     const revealedTextBlocks = new Set<Element>();
@@ -118,6 +118,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           revealedImages.add(entry.target);
           gsap.to(entry.target, {
             clipPath: 'inset(0 0% 0 0%)',
+            webkitClipPath: 'inset(0 0% 0 0%)',
             duration: 1.05,
             ease: 'expo.inOut',
           });
@@ -125,7 +126,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           imageObserver.unobserve(entry.target);
         });
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.2 },
+      { rootMargin: '20% 0px -8% 0px', threshold: 0.01 },
     );
 
     revealBlocks.forEach((block) => textObserver.observe(block));
@@ -161,7 +162,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             const secondaryWidth = isEven ? 'md:basis-[calc(40%-0.5rem)]' : 'md:basis-[calc(60%-0.5rem)]';
             const fallbackClass = 'bg-gradient-to-br from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
-            const revealImageStyle = { ...imageStyle, clipPath: 'inset(0 50% 0 50%)' };
+            const revealImageStyle = { ...imageStyle, clipPath: 'inset(0 50% 0 50%)', WebkitClipPath: 'inset(0 50% 0 50%)' };
 
             return (
               <CursorHoverCard key={project.name} label="View now" iconVariant="arrow-up-right" iconOnly className="relative block">
@@ -187,7 +188,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <span className="inline-flex items-center gap-3 text-xl leading-none tracking-tight text-gradient-black-gray md:text-2xl">
                         <span className="relative inline-flex items-center transition-transform duration-500 ease-out group-hover:translate-x-8">
-                          <span className="absolute left-0 inline-flex -translate-x-8 translate-y-[0.08em] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" aria-hidden="true">
+                          <span className="absolute left-0 inline-flex -translate-x-8 translate-y-[0.08em] text-black opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" aria-hidden="true">
                             <ArrowRight size={22} />
                           </span>
                           <ProjectRevealText text={project.name} />
