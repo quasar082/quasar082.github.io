@@ -20,8 +20,8 @@ function SplitRevealText({ text, className, characterClassName, delayGroup }: Sp
   return (
     <span className={className} aria-label={text} data-hero-reveal={delayGroup}>
       {Array.from(text).map((character, index) => (
-        <span key={`${character}-${index}`} className="inline-block overflow-hidden align-bottom" aria-hidden="true">
-          <span className={`inline-block text-gradient-black-gray ${characterClassName ?? ''}`} data-hero-character>
+        <span key={`${character}-${index}`} className="inline-block overflow-hidden align-baseline leading-[inherit] pb-[0.06em]" aria-hidden="true">
+          <span className={`inline-block leading-[inherit] text-gradient-black-gray ${characterClassName ?? ''}`} data-hero-character>
             {character === ' ' ? ' ' : character}
           </span>
         </span>
@@ -52,7 +52,7 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
       const scrollLabel = section.querySelector('[data-hero-scroll]');
       const revealLines = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal]'));
 
-      gsap.set(characters, { yPercent: 115, autoAlpha: 0 });
+      gsap.set(characters, { yPercent: 100, autoAlpha: 0 });
       gsap.set(scrollLabel, { y: 18, autoAlpha: 0 });
 
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -96,11 +96,7 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
       <div className="container relative z-10 mx-auto mt-auto pb-15 [@media(min-height:900px)]:pb-25">
         <div className="flex w-full flex-col items-center justify-between md:flex-row">
           <div className="mt-auto flex h-full w-fit items-end justify-end leading-none md:justify-start">
-            <div data-hero-scroll className="flex items-center gap-3 opacity-45">
-              <span
-                className="h-[clamp(0.42rem,0.72vw,0.62rem)] w-[clamp(2.8rem,6vw,5.6rem)] rounded-full bg-[linear-gradient(90deg,rgba(20,20,20,0.96),rgba(20,20,20,0.72)_48%,rgba(20,20,20,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_0_18px_rgba(0,0,0,0.18)]"
-                aria-hidden="true"
-              />
+            <div data-hero-scroll className="opacity-45">
               <p className="m-0 text-[clamp(0.85rem,1.35vw,1.1rem)] font-semibold leading-none tracking-[-0.03em] text-gradient-black-gray">Scroll</p>
             </div>
           </div>
