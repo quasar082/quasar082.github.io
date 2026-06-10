@@ -158,17 +158,19 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div className="sticky top-1/2 h-fit min-w-0 -translate-y-1/2 w-full [container-type:inline-size]">
-            <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
-              <div ref={roleTrackRef}>
-                {experiences.map((experience) => (
-                  <p key={`${experience.period}-${experience.role}`} className={`m-0 flex w-full min-w-0 items-start justify-end text-right ${EXPERIENCE_ROW_CLASS}`}>
-                    <span className={EXPERIENCE_TEXT_CLASS}>{experience.role}</span>
-                  </p>
-                ))}
+            <div className="relative h-[1.08em]">
+              <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
+                <div ref={roleTrackRef}>
+                  {experiences.map((experience) => (
+                    <p key={`${experience.period}-${experience.role}`} className={`m-0 flex w-full min-w-0 items-start justify-end text-right ${EXPERIENCE_ROW_CLASS}`}>
+                      <span className={EXPERIENCE_TEXT_CLASS}>{experience.role}</span>
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div ref={periodRef} className="mt-2 text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70">
-              {visiblePeriod}
+              <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.5rem)] text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70">
+                {visiblePeriod}
+              </div>
             </div>
           </div>
          
