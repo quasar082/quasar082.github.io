@@ -91,7 +91,7 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
   }, []);
 
   return (
-    <section ref={sectionRef} id="contact" className="relative z-20 box-border flex h-dvh min-h-0 flex-col overflow-hidden bg-[#e9e9e9] px-4 pt-10 pb-2 text-black sm:px-6 lg:px-8" aria-label="Contact section">
+    <section ref={sectionRef} id="contact" className="relative z-20 -mt-[100vh] box-border flex h-dvh min-h-0 flex-col overflow-hidden bg-[#e9e9e9] px-4 pt-10 pb-2 text-black sm:px-6 lg:px-8" aria-label="Contact section">
       <div className="container mx-auto flex min-h-0 flex-1 flex-col pt-8 [@media(min-height:900px)]:pt-15">
         <div className="grid shrink-0 grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
           <div className="flex flex-col gap-6 lg:col-span-1">
