@@ -21,7 +21,7 @@ function SplitRevealText({ text, className, characterClassName, delayGroup }: Sp
     <span className={className} aria-label={text} data-hero-reveal={delayGroup}>
       {Array.from(text).map((character, index) => (
         <span key={`${character}-${index}`} className="inline-block overflow-hidden align-bottom" aria-hidden="true">
-          <span className={`inline-block translate-y-[115%] opacity-0 ${characterClassName ?? ''}`} data-hero-character>
+          <span className={`inline-block text-gradient-black-gray ${characterClassName ?? ''}`} data-hero-character>
             {character === ' ' ? ' ' : character}
           </span>
         </span>
