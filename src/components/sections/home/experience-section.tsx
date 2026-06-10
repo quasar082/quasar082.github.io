@@ -38,8 +38,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
     const updateExperienceProgress = () => {
       frame = 0;
-      const roleAnchor = roleViewportRef.current?.getBoundingClientRect().top ?? window.innerHeight * 0.5;
       const currentRowHeight = roleViewportRef.current?.offsetHeight ?? 0;
+      const roleAnchor = window.innerHeight * 0.5;
       const itemPositions = companyRefs.current.map((company) => company?.getBoundingClientRect().top ?? 0);
 
       if (!currentRowHeight || itemPositions.length === 0) {
@@ -154,10 +154,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="box-border flex min-h-screen items-center bg-white py-32 text-black md:py-40 lg:py-48" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="box-border bg-white text-black" aria-label="Experience section">
       <div className="container mx-auto">
-        <div className="grid grid-cols-2 gap-10">
-          <div className="sticky top-24 h-fit min-w-0 w-full [container-type:inline-size] relative md:top-32">
+        <div className="grid grid-cols-2 gap-10 py-[45vh]">
+          <div className="sticky top-1/2 h-fit min-w-0 -translate-y-1/2 w-full [container-type:inline-size] relative">
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (
