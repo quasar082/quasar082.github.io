@@ -160,8 +160,8 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
         <div className="mt-12 flex flex-col gap-20 md:gap-24">
           {projects.map((project, index) => {
             const isEven = index % 2 === 0;
-            const primaryWidth = isEven ? 'md:basis-[calc(60%-0.5rem)]' : 'md:basis-[calc(40%-0.5rem)]';
-            const secondaryWidth = isEven ? 'md:basis-[calc(40%-0.5rem)]' : 'md:basis-[calc(60%-0.5rem)]';
+            const primaryWidth = isEven ? 'md:basis-[calc(80%-0.5rem)]' : 'md:basis-[calc(20%-0.5rem)]';
+            const secondaryWidth = isEven ? 'md:basis-[calc(20%-0.5rem)]' : 'md:basis-[calc(80%-0.5rem)]';
             const fallbackClass = 'bg-gradient-to-br from-[#cfc7bb] via-[#a6b7a4] to-[#5c6c63]';
             const imageStyle = project.imageUrl ? { backgroundImage: `url('${project.imageUrl}')` } : undefined;
 
