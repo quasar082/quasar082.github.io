@@ -95,7 +95,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
     <main className="min-h-dvh overflow-x-clip bg-[#8f9a94]">
       <SiteHeader isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection />
-      <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[100px] h-[100px] w-full bg-gradient-to-b from-transparent to-white" />
+      <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection paragraphs={content.aboutParagraphs} />
       <ProjectsSection projects={content.projects} />
       <ParallaxImageSection />
