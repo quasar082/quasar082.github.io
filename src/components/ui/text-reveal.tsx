@@ -17,14 +17,12 @@ type TextRevealToken =
 export interface TextRevealProps extends ComponentPropsWithoutRef<"div"> {
   children: string
   italicWords?: string[]
-  decorativeDashes?: boolean
 }
 
 export const TextReveal: FC<TextRevealProps> = ({
   children,
   className,
   italicWords = [],
-  decorativeDashes = false,
 }) => {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const { scrollYProgress } = useScroll({
@@ -59,14 +57,12 @@ export const TextReveal: FC<TextRevealProps> = ({
           const end = start + 1 / revealTokens.length
           const normalizedWord = token.value.toLowerCase().replace(/[^a-z0-9]/gi, "")
           const isItalic = italicWordSet.has(normalizedWord)
-          const isDash = decorativeDashes && (token.value === "—" || token.value === "-")
           return (
             <Word
               key={`${i}-${token.value}`}
               progress={scrollYProgress}
               range={[start, end]}
               className={isItalic ? "italic" : undefined}
-              variant={isDash ? "dash" : "text"}
             >
               {token.value}
             </Word>
@@ -82,30 +78,19 @@ interface WordProps {
   progress: MotionValue<number>
   range: [number, number]
   className?: string
-  variant?: "text" | "dash"
 }
 
-const DashMark: FC = () => (
-  <span className="relative inline-block h-[0.05em] w-[1.6em] align-[0.28em] bg-current before:absolute before:left-0 before:top-1/2 before:h-[0.28em] before:w-[0.28em] before:-translate-y-1/2 before:rotate-45 before:border-b-[0.05em] before:border-l-[0.05em] before:border-current" />
-)
-
-const Word: FC<WordProps> = ({ children, progress, range, className, variant = "text" }) => {
+const Word: FC<WordProps> = ({ children, progress, range, className }) => {
   const opacity = useTransform(progress, range, [0, 1])
-  const content = variant === "dash" ? <DashMark /> : children
-
   return (
     <span className="relative mx-1 leading-[inherit] lg:mx-1.5">
-      <span className={cn("absolute leading-[inherit] opacity-30", className)} aria-hidden={variant === "dash"}>
-        {content}
-      </span>
+      <span className={cn("absolute leading-[inherit] opacity-30", className)}>{children}</span>
       <motion.span
         style={{ opacity: opacity }}
         className={cn("leading-[inherit] text-inherit", className)}
-        aria-hidden={variant === "dash"}
       >
-        {content}
+        {children}
       </motion.span>
-      {variant === "dash" ? <span className="sr-only">{children}</span> : null}
     </span>
   )
 }

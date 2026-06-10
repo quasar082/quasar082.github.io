@@ -125,7 +125,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
       <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection playIntro={isIntroComplete} />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
-      <AboutSection paragraphs={content.aboutParagraphs} />
+      <AboutSection />
       <ProjectsSection projects={content.projects} />
       <ParallaxVideoSection />
       <ExperienceSection experiences={content.experiences} />
