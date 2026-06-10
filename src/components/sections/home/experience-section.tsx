@@ -145,7 +145,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="box-border bg-white text-black min-h-screen py-100" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="sticky top-0 z-0 box-border min-h-screen bg-white py-100 text-black" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
