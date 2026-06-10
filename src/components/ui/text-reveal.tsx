@@ -17,12 +17,14 @@ type TextRevealToken =
 export interface TextRevealProps extends ComponentPropsWithoutRef<"div"> {
   children: string
   italicWords?: string[]
+  decorativeDashes?: boolean
 }
 
 export const TextReveal: FC<TextRevealProps> = ({
   children,
   className,
   italicWords = [],
+  decorativeDashes = false,
 }) => {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const { scrollYProgress } = useScroll({
@@ -57,7 +59,7 @@ export const TextReveal: FC<TextRevealProps> = ({
           const end = start + 1 / revealTokens.length
           const normalizedWord = token.value.toLowerCase().replace(/[^a-z0-9]/gi, "")
           const isItalic = italicWordSet.has(normalizedWord)
-          const isDash = token.value === "—" || token.value === "-"
+          const isDash = decorativeDashes && (token.value === "—" || token.value === "-")
           return (
             <Word
               key={`${i}-${token.value}`}

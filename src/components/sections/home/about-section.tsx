@@ -12,6 +12,7 @@ export function AboutSection({ paragraphs }: AboutSectionProps) {
         <TextReveal
           className="mt-8 self-start text-3xl leading-[1] [&_*]:leading-[1] md:col-start-2 md:col-end-6 md:row-start-1 md:row-end-3 text-[clamp(1.85rem,3.7vmin,2.75rem)] md:text-[clamp(1.85rem,3.7vmin,3.7rem)] lg:text-[clamp(1.85rem,4.6vmin,3.7rem)] xl:text-[clamp(1.85rem,5.4vmin,3.7rem)] [&>span]:text-gradient-black-gray"
           italicWords={["Ha", "Minh", "Quan", "Quasar"]}
+          decorativeDashes
         >
           {paragraphs.map((paragraph) => `"${paragraph}"`).join('\n')}
         </TextReveal>
