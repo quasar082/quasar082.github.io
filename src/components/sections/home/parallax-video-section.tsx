@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const PARALLAX_VIDEO_URL = '/parallax-showcase.mp4';
 
-export function ParallaxImageSection() {
+export function ParallaxVideoSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -23,9 +23,9 @@ export function ParallaxImageSection() {
     const context = gsap.context(() => {
       gsap.fromTo(
         video,
-        { yPercent: -12 },
+        { yPercent: -18 },
         {
-          yPercent: 12,
+          yPercent: 18,
           ease: 'none',
           scrollTrigger: {
             trigger: section,
@@ -47,7 +47,7 @@ export function ParallaxImageSection() {
     <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-white mt-50" aria-label="Visual interlude">
       <video
         ref={videoRef}
-        className="absolute inset-x-0 -top-[14dvh] h-[128dvh] w-full object-cover will-change-transform"
+        className="absolute inset-x-0 -top-[25dvh] h-[150dvh] w-full object-cover will-change-transform"
         src={PARALLAX_VIDEO_URL}
         autoPlay
         loop

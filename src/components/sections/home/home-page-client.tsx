@@ -7,7 +7,7 @@ import { ExperienceSection } from './experience-section';
 import { ContactSection } from './contact-section';
 import { HeroSection } from './hero-section';
 import { MenuOverlay } from './menu-overlay';
-import { ParallaxImageSection } from './parallax-image-section';
+import { ParallaxVideoSection } from './parallax-video-section';
 import { ProjectsSection } from './projects-section';
 import { SiteHeader } from './site-header';
 
@@ -98,7 +98,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection paragraphs={content.aboutParagraphs} />
       <ProjectsSection projects={content.projects} />
-      <ParallaxImageSection />
+      <ParallaxVideoSection />
       <ExperienceSection experiences={content.experiences} />
       <ContactSection contactSocials={content.contactSocials} />
       <MenuOverlay menuItems={content.menuItems} activeSection={activeSection} isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
