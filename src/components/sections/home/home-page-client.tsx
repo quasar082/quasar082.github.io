@@ -22,6 +22,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isHeaderInverted, setIsHeaderInverted] = useState(false);
   const [isIntroComplete, setIsIntroComplete] = useState(false);
+  const [shouldPlayHeroIntro, setShouldPlayHeroIntro] = useState(false);
+  const startHeroIntro = useCallback(() => setShouldPlayHeroIntro(true), []);
   const completeIntro = useCallback(() => setIsIntroComplete(true), []);
 
   useEffect(() => {
@@ -121,9 +123,9 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="min-h-dvh overflow-x-clip bg-white">
-      {!isIntroComplete ? <HomePreloader onComplete={completeIntro} /> : null}
+      {!isIntroComplete ? <HomePreloader onComplete={completeIntro} onExitStart={startHeroIntro} /> : null}
       <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
-      <HeroSection playIntro={isIntroComplete} />
+      <HeroSection playIntro={shouldPlayHeroIntro} />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection />
       <ProjectsSection projects={content.projects} />
