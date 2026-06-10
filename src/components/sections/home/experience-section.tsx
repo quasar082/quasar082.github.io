@@ -20,8 +20,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
-  const [visiblePeriod, setVisiblePeriod] = useState(experiences[0]?.period ?? '');
-  const visiblePeriodRef = useRef(experiences[0]?.period ?? '');
+  const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
 
   useEffect(() => {
     let frame = 0;
@@ -94,38 +93,28 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [experiences.length]);
 
   useEffect(() => {
-    const nextPeriod = experiences[activeExperienceIndex]?.period ?? '';
     const period = periodRef.current;
 
-    if (!period || visiblePeriodRef.current === nextPeriod) {
+    if (!period) {
       return;
     }
 
-    const timeline = gsap.timeline({ defaults: { overwrite: true } });
-
-    timeline
-      .to(period, {
-        autoAlpha: 0,
-        y: -6,
-        duration: 0.18,
-        ease: 'power2.out',
-      })
-      .call(() => {
-        visiblePeriodRef.current = nextPeriod;
-        setVisiblePeriod(nextPeriod);
-      })
-      .set(period, { y: 6 })
-      .to(period, {
+    const timeline = gsap.fromTo(
+      period,
+      { autoAlpha: 0, y: 6 },
+      {
         autoAlpha: 1,
         y: 0,
-        duration: 0.26,
+        duration: 0.32,
         ease: 'power3.out',
-      });
+        overwrite: true,
+      },
+    );
 
     return () => {
       timeline.kill();
     };
-  }, [activeExperienceIndex, experiences]);
+  }, [activePeriod]);
 
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { overwrite: true } });
@@ -170,7 +159,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               </div>
             </div>
             <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.5rem)] text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70">
-              {visiblePeriod}
+              {activePeriod}
             </div>
           </div>
          
