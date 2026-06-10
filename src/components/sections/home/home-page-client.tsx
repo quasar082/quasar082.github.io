@@ -124,7 +124,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   return (
     <main className="min-h-dvh overflow-x-clip bg-white">
       {!isIntroComplete ? <HomePreloader onComplete={completeIntro} onExitStart={startHeroIntro} /> : null}
-      <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
+      <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} playIntro={shouldPlayHeroIntro} sticky />
       <HeroSection playIntro={shouldPlayHeroIntro} />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection />
