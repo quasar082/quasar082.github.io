@@ -19,6 +19,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(content.menuItems[0]?.href ?? '#home');
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [isHeaderInverted, setIsHeaderInverted] = useState(false);
 
   useEffect(() => {
     const sectionIds = content.menuItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1));
@@ -67,6 +68,30 @@ export function HomePageClient({ content }: HomePageClientProps) {
   }, [isMenuOpen]);
 
   useEffect(() => {
+    const parallaxSection = document.getElementById('parallax-video');
+
+    if (!parallaxSection) {
+      return;
+    }
+
+    const updateHeaderTone = () => {
+      const { top, bottom } = parallaxSection.getBoundingClientRect();
+      const headerProbeY = 32;
+
+      setIsHeaderInverted(top <= headerProbeY && bottom >= headerProbeY);
+    };
+
+    updateHeaderTone();
+    window.addEventListener('scroll', updateHeaderTone, { passive: true });
+    window.addEventListener('resize', updateHeaderTone);
+
+    return () => {
+      window.removeEventListener('scroll', updateHeaderTone);
+      window.removeEventListener('resize', updateHeaderTone);
+    };
+  }, []);
+
+  useEffect(() => {
     let lastScrollY = window.scrollY;
 
     const updateHeaderVisibility = () => {
@@ -93,7 +118,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <main className="min-h-dvh overflow-x-clip bg-white">
-      <SiteHeader isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
+      <SiteHeader isInverted={isHeaderInverted} isMenuOpen={isMenuOpen} isVisible={isHeaderVisible} onOpenMenu={() => setIsMenuOpen((open) => !open)} sticky />
       <HeroSection />
       <div aria-hidden="true" className="pointer-events-none relative z-10 -mt-[80px] h-[80px] w-full bg-gradient-to-b from-transparent to-white" />
       <AboutSection paragraphs={content.aboutParagraphs} />
