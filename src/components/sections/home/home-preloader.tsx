@@ -43,8 +43,7 @@ export function HomePreloader({ onComplete }: HomePreloaderProps) {
     const context = gsap.context(() => {
       gsap.set(root, { yPercent: 0, autoAlpha: 1 });
       gsap.set(word, {
-        clipPath: 'inset(0 50% 0 50%)',
-        webkitClipPath: 'inset(0 50% 0 50%)',
+        scaleX: 0,
         transformOrigin: '50% 50%',
         autoAlpha: 1,
       });
@@ -56,8 +55,9 @@ export function HomePreloader({ onComplete }: HomePreloaderProps) {
       });
 
       timeline
-        .to(word, { clipPath: 'inset(0 0% 0 0%)', webkitClipPath: 'inset(0 0% 0 0%)', duration: 0.92 })
-        .to(word, { clipPath: 'inset(0 50% 0 50%)', webkitClipPath: 'inset(0 50% 0 50%)', duration: 0.72, delay: 0.24 })
+        .to({}, { duration: 0.7 })
+        .to(word, { scaleX: 1, duration: 0.92 })
+        .to(word, { scaleX: 0, duration: 0.72, delay: 0.24 })
         .to(logo, { autoAlpha: 1, scale: 1, rotate: 0, duration: 0.55, ease: 'back.out(1.8)' }, '-=0.2')
         .to(logo, { autoAlpha: 0, y: -24, scale: 0.94, duration: 0.38, ease: 'power2.in' }, '+=0.48')
         .to(root, { yPercent: -100, duration: 0.95, ease: 'expo.inOut' }, '-=0.16')

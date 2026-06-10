@@ -50,32 +50,29 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
 
     const context = gsap.context(() => {
       const scrollLabel = section.querySelector('[data-hero-scroll]');
-      const primaryChars = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal="primary"] [data-hero-character]'));
-      const secondaryChars = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal="secondary"] [data-hero-character]'));
+      const revealLines = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal]'));
 
-      gsap.set([primaryChars, secondaryChars], { yPercent: 115, autoAlpha: 0 });
+      gsap.set(characters, { yPercent: 115, autoAlpha: 0 });
       gsap.set(scrollLabel, { y: 18, autoAlpha: 0 });
 
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      timeline
-        .to(primaryChars, {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 0.86,
-          stagger: 0.055,
-        })
-        .to(
-          secondaryChars,
+      revealLines.forEach((line) => {
+        const lineCharacters = gsap.utils.toArray<HTMLElement>(line.querySelectorAll('[data-hero-character]'));
+
+        timeline.to(
+          lineCharacters,
           {
             yPercent: 0,
             autoAlpha: 1,
-            duration: 0.72,
-            stagger: 0.018,
+            duration: 0.86,
+            stagger: 0.045,
           },
-          '-=0.34',
-        )
-        .to(scrollLabel, { y: 0, autoAlpha: 1, duration: 0.55 }, '-=0.3');
+          0,
+        );
+      });
+
+      timeline.to(scrollLabel, { y: 0, autoAlpha: 1, duration: 0.55 }, 0.42);
     }, section);
 
     return () => {
