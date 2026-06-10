@@ -161,7 +161,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
     <section ref={sectionRef} id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
         <div className="grid gap-6 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:items-start md:gap-14">
-          <h2 className="m-0 max-w-[13ch] -translate-y-4 pb-2 text-[clamp(2.8rem,5vw,4.8rem)] leading-[1] tracking-tight text-gradient-black-gray md:-translate-y-6">
+          <h2 className="m-0 max-w-[13ch] -translate-y-4 pb-2 text-[clamp(2.8rem,5vw,4.8rem)] leading-[1.15] tracking-tight text-gradient-black-gray md:-translate-y-6">
             <ProjectRevealText text="Designing AI products with intent" />
           </h2>
           <p className="m-0 max-w-[38rem] justify-self-start text-sm leading-7 text-black/60 md:ml-auto md:pt-30 md:text-right md:text-base">
