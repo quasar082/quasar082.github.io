@@ -109,10 +109,10 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
             </div>
 
             <div className="ml-auto w-full">
-              <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.95] tracking-[-0.02em] text-gradient-black-gray">
+              <p className="m-0 text-left text-[clamp(1.4rem,3vw,5rem)] leading-[0.95] tracking-[-0.02em] text-gradient-black-gray">
                 <RevealLine text="Harness AI" className="inline-flex text-gradient-black-gray" />
               </p>
-              <p className=" m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[1] tracking-[-0.02em] text-gradient-black-gray">
+              <p className=" m-0 text-left text-[clamp(1.4rem,3vw,5rem)] leading-[1] tracking-[-0.02em] text-gradient-black-gray">
                 <RevealLine text="Shape what's next." className="inline-flex text-gradient-black-gray" />
               </p>
             </div>
