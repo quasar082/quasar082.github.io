@@ -44,7 +44,7 @@ export function ParallaxImageSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-black" aria-label="Visual interlude">
+    <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-white mt-50" aria-label="Visual interlude">
       <div
         ref={imageRef}
         className="absolute inset-x-0 -top-[14dvh] h-[128dvh] will-change-transform bg-cover bg-center"
