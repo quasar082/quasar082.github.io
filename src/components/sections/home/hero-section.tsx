@@ -9,23 +9,17 @@ type HeroSectionProps = {
   playIntro?: boolean;
 };
 
-type SplitRevealTextProps = {
+type RevealLineProps = {
   text: string;
   className: string;
-  characterClassName?: string;
-  delayGroup: string;
 };
 
-function SplitRevealText({ text, className, characterClassName, delayGroup }: SplitRevealTextProps) {
+function RevealLine({ text, className }: RevealLineProps) {
   return (
-    <span className={className} aria-label={text} data-hero-reveal={delayGroup}>
-      {Array.from(text).map((character, index) => (
-        <span key={`${character}-${index}`} className="inline-block overflow-hidden align-baseline leading-[inherit] pb-[0.06em]" aria-hidden="true">
-          <span className={`inline-block leading-[inherit] text-gradient-black-gray ${characterClassName ?? ''}`} data-hero-character>
-            {character === ' ' ? ' ' : character}
-          </span>
-        </span>
-      ))}
+    <span className="block overflow-hidden pb-[0.06em]" aria-label={text} data-hero-reveal>
+      <span className={className} aria-hidden="true" data-hero-line>
+        {text}
+      </span>
     </span>
   );
 }
@@ -41,38 +35,29 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
     }
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const characters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-character]'));
+    const lines = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-line]'));
 
     if (reduceMotion) {
-      gsap.set(characters, { yPercent: 0, autoAlpha: 1 });
+      gsap.set(lines, { yPercent: 0, autoAlpha: 1 });
       return;
     }
 
     const context = gsap.context(() => {
       const scrollLabel = section.querySelector('[data-hero-scroll]');
-      const revealLines = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal]'));
 
-      gsap.set(characters, { yPercent: 100, autoAlpha: 0 });
+      gsap.set(lines, { yPercent: 110, autoAlpha: 0 });
       gsap.set(scrollLabel, { y: 18, autoAlpha: 0 });
 
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      revealLines.forEach((line) => {
-        const lineCharacters = gsap.utils.toArray<HTMLElement>(line.querySelectorAll('[data-hero-character]'));
-
-        timeline.to(
-          lineCharacters,
-          {
-            yPercent: 0,
-            autoAlpha: 1,
-            duration: 0.86,
-            stagger: 0.045,
-          },
-          0,
-        );
-      });
-
-      timeline.to(scrollLabel, { y: 0, autoAlpha: 1, duration: 0.55 }, 0.42);
+      timeline
+        .to(lines, {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 0.74,
+          stagger: 0,
+        })
+        .to(scrollLabel, { y: 0, autoAlpha: 1, duration: 0.4 }, 0.12);
     }, section);
 
     return () => {
@@ -102,18 +87,18 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
           </div>
 
           <div className="w-4/5 flex-shrink-0 md:w-3/5">
-            <div className="@container w-full">
-              <p className="w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[0.9] text-gradient-black-gray md:text-[clamp(1rem,32.1cqw,100rem)]">
-                <SplitRevealText text="quasar" className="block" delayGroup="primary" />
+            <div className="@container h-fit w-full">
+              <p className="h-fit w-fit whitespace-nowrap text-[clamp(1rem,32.1cqw,100rem)] font-medium leading-[0.9] text-gradient-black-gray">
+                <RevealLine text="quasar" className="block text-gradient-black-gray" />
               </p>
             </div>
 
-            <div className=" ml-auto w-full">
+            <div className="ml-auto w-full">
               <p className="m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">
-                <SplitRevealText text="Harness AI" className="block" delayGroup="secondary" />
+                <RevealLine text="Harness AI" className="block text-gradient-black-gray" />
               </p>
               <p className="mt-2 m-0 text-left text-[clamp(1rem,3vw,5rem)] leading-[0.7] tracking-[-0.05em] text-gradient-black-gray">
-                <SplitRevealText text="Shape what's next." className="block" delayGroup="secondary" />
+                <RevealLine text="Shape what's next." className="block text-gradient-black-gray" />
               </p>
             </div>
           </div>

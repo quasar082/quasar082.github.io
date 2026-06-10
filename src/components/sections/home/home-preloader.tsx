@@ -10,6 +10,7 @@ type HomePreloaderProps = {
 
 export function HomePreloader({ onComplete, onExitStart }: HomePreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const wordStageRef = useRef<HTMLSpanElement>(null);
   const leftCoverRef = useRef<HTMLSpanElement>(null);
   const rightCoverRef = useRef<HTMLSpanElement>(null);
   const logoRef = useRef<HTMLSpanElement>(null);
@@ -18,11 +19,12 @@ export function HomePreloader({ onComplete, onExitStart }: HomePreloaderProps) {
 
   useEffect(() => {
     const root = rootRef.current;
+    const wordStage = wordStageRef.current;
     const leftCover = leftCoverRef.current;
     const rightCover = rightCoverRef.current;
     const logo = logoRef.current;
 
-    if (!root || !leftCover || !rightCover || !logo) {
+    if (!root || !wordStage || !leftCover || !rightCover || !logo) {
       onComplete();
       return;
     }
@@ -70,7 +72,8 @@ export function HomePreloader({ onComplete, onExitStart }: HomePreloaderProps) {
         .to(rightCover, { xPercent: 100, duration: 0.92 }, 'wordOpen')
         .to(leftCover, { xPercent: 0, duration: 0.72, delay: 0.24 }, 'wordClose')
         .to(rightCover, { xPercent: 0, duration: 0.72, delay: 0.24 }, 'wordClose')
-        .to(logo, { autoAlpha: 1, scale: 1, rotate: 0, duration: 0.55, ease: 'back.out(1.8)' }, '-=0.2')
+        .set(wordStage, { autoAlpha: 0 })
+        .to(logo, { autoAlpha: 1, scale: 1, rotate: 0, duration: 0.55, ease: 'back.out(1.8)' }, '+=0.02')
         .to(logo, { autoAlpha: 0, y: -24, scale: 0.94, duration: 0.28, ease: 'power2.in' }, '+=0.36')
         .add(startExit, '-=0.02')
         .to(root, { yPercent: -100, duration: 0.95, ease: 'expo.inOut' }, '<')
@@ -91,7 +94,7 @@ export function HomePreloader({ onComplete, onExitStart }: HomePreloaderProps) {
     >
       <span className="sr-only">Loading</span>
       <span className="relative grid place-items-center" aria-hidden="true">
-        <span className="relative col-start-1 row-start-1 block overflow-hidden">
+        <span ref={wordStageRef} className="relative col-start-1 row-start-1 block overflow-hidden">
           <span className="block text-[clamp(3rem,14vw,14rem)] font-medium leading-none tracking-[-0.075em] text-gradient-black-gray">quasar</span>
           <span ref={leftCoverRef} className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
           <span ref={rightCoverRef} className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
