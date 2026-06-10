@@ -4,17 +4,17 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const PARALLAX_IMAGE_URL = '/parallax-showcase.jpg';
+const PARALLAX_VIDEO_URL = '/parallax-showcase.mp4';
 
 export function ParallaxImageSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const imageRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
-    const image = imageRef.current;
+    const video = videoRef.current;
 
-    if (!section || !image) {
+    if (!section || !video) {
       return;
     }
 
@@ -22,7 +22,7 @@ export function ParallaxImageSection() {
 
     const context = gsap.context(() => {
       gsap.fromTo(
-        image,
+        video,
         { yPercent: -12 },
         {
           yPercent: 12,
@@ -45,10 +45,14 @@ export function ParallaxImageSection() {
 
   return (
     <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-white mt-50" aria-label="Visual interlude">
-      <div
-        ref={imageRef}
-        className="absolute inset-x-0 -top-[14dvh] h-[128dvh] will-change-transform bg-cover bg-center"
-        style={{ backgroundImage: `url('${PARALLAX_IMAGE_URL}')` }}
+      <video
+        ref={videoRef}
+        className="absolute inset-x-0 -top-[14dvh] h-[128dvh] w-full object-cover will-change-transform"
+        src={PARALLAX_VIDEO_URL}
+        autoPlay
+        loop
+        muted
+        playsInline
         aria-hidden="true"
       />
     </section>
