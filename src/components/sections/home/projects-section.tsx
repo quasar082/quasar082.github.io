@@ -1,22 +1,110 @@
+'use client';
+
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import type { ProjectItem } from '@/lib/content/home';
 
 type ProjectsSectionProps = {
   projects: ProjectItem[];
 };
 
-export function ProjectsSection({ projects }: ProjectsSectionProps) {
+type ProjectRevealTextProps = {
+  text: string;
+  className?: string;
+  characterClassName?: string;
+};
+
+function ProjectRevealText({ text, className, characterClassName = 'text-gradient-black-gray' }: ProjectRevealTextProps) {
   return (
-    <section id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8 " aria-label="Projects section">
+    <span className={className} aria-label={text} data-project-reveal>
+      {text.split(' ').map((word, wordIndex, words) => (
+        <span key={`${word}-${wordIndex}`} className="inline-flex whitespace-nowrap" aria-hidden="true">
+          {Array.from(word).map((character, characterIndex) => (
+            <span key={`${character}-${characterIndex}`} className="inline-flex overflow-hidden align-baseline">
+              <span className={`inline-flex ${characterClassName}`} data-project-character>
+                {character}
+              </span>
+            </span>
+          ))}
+          {wordIndex < words.length - 1 ? <span className="whitespace-pre"> </span> : null}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+export function ProjectsSection({ projects }: ProjectsSectionProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const revealBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-reveal]'));
+    const allCharacters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-project-character]'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) {
+      gsap.set(allCharacters, { yPercent: 0, autoAlpha: 1 });
+      return;
+    }
+
+    const context = gsap.context(() => {
+      gsap.set(allCharacters, { yPercent: 110, autoAlpha: 0 });
+    }, section);
+
+    const revealedBlocks = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || revealedBlocks.has(entry.target)) {
+            return;
+          }
+
+          revealedBlocks.add(entry.target);
+          const characters = gsap.utils.toArray<HTMLElement>(entry.target.querySelectorAll('[data-project-character]'));
+
+          gsap.to(characters, {
+            yPercent: 0,
+            autoAlpha: 1,
+            duration: 0.72,
+            ease: 'power3.out',
+            stagger: 0.018,
+          });
+
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -18% 0px', threshold: 0.25 },
+    );
+
+    revealBlocks.forEach((block) => observer.observe(block));
+
+    return () => {
+      observer.disconnect();
+      context.revert();
+    };
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="projects" className="box-border bg-white px-4 py-10 text-black sm:px-6 lg:px-8" aria-label="Projects section">
       <div className="container mx-auto">
         <div className="grid gap-6 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:items-start md:gap-14">
           <h2 className="m-0 max-w-[13ch] -translate-y-4 pb-2 text-[clamp(2.8rem,5vw,4.8rem)] leading-[1] tracking-tight text-gradient-black-gray md:-translate-y-6">
-            Designing AI products with intent
+            <ProjectRevealText text="Designing AI products with intent" />
           </h2>
           <p className="m-0 max-w-[38rem] justify-self-start text-sm leading-7 text-black/60 md:ml-auto md:pt-30 md:text-right md:text-base">
-            I craft end-to-end artificial intelligence systems and agentic pipelines, from experimental interfaces to production-ready workflows that turn complex ideas into clear, useful product experiences.
+            <ProjectRevealText
+              text="I craft end-to-end artificial intelligence systems and agentic pipelines, from experimental interfaces to production-ready workflows that turn complex ideas into clear, useful product experiences."
+              className="text-black/60"
+              characterClassName="text-black/60"
+            />
           </p>
         </div>
         <div className="mt-12 flex flex-col gap-20 md:gap-24">
@@ -48,7 +136,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     </div>
                     <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <span className="inline-flex items-center gap-3 text-xl leading-none tracking-tight text-gradient-black-gray transition-opacity group-hover:opacity-70 md:text-2xl">
-                        {project.name}
+                        <ProjectRevealText text={project.name} />
                         <ArrowUpRight
                           size={22}
                           className="translate-y-1 -translate-x-2 opacity-0 transition duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
@@ -56,7 +144,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                         />
                       </span>
                       <p className="m-0 max-w-[32rem] text-left text-sm leading-relaxed text-black/60 md:mr-20 md:text-right md:text-base">
-                        {project.description}
+                        <ProjectRevealText text={project.description} className="text-black/60" characterClassName="text-black/60" />
                       </p>
                     </div>
                   </article>
