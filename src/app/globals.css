@@ -189,7 +189,7 @@ body {
     will-change: clip-path, filter, transform;
   }
 
-  .group:hover .project-image-surface {
+  .project-image-frame:hover .project-image-surface {
     animation: project-image-interference 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 

@@ -172,10 +172,10 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                   className="group block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
                 >
                   <article>
-                    <div className="flex h-[80vh] min-h-[520px] w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:snap-none md:overflow-x-visible md:overflow-y-visible">
+                    <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden md:snap-none md:overflow-x-visible md:overflow-y-visible">
                       <div
                         data-project-image
-                        className={`${primaryWidth} relative h-full w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
+                        className={`${primaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
                         aria-hidden="true"
                       >
                         <div className={`project-image-surface absolute inset-0 bg-cover bg-center ${project.imageUrl ? '' : fallbackClass}`} style={imageStyle} />
@@ -184,10 +184,10 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                       </div>
                       <div
                         data-project-image
-                        className={`${secondaryWidth} relative h-full w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
+                        className={`${secondaryWidth} project-image-frame relative aspect-video w-[90%] shrink-0 snap-start overflow-hidden rounded-2xl border border-black/20 md:shrink-0`}
                         aria-hidden="true"
                       >
-                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 group-hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
+                        <div className={`project-image-surface absolute inset-0 bg-cover bg-center bg-blend-multiply grayscale transition duration-700 hover:grayscale-0 ${project.imageUrl ? 'bg-black/20' : fallbackClass}`} style={imageStyle} />
                         <span data-project-image-cover="left" className="absolute inset-y-0 left-0 z-10 w-1/2 bg-white" />
                         <span data-project-image-cover="right" className="absolute inset-y-0 right-0 z-10 w-1/2 bg-white" />
                       </div>
