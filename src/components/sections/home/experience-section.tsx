@@ -14,8 +14,12 @@ const EXPERIENCE_ROW_CLASS = `h-[1.08em] ${EXPERIENCE_TYPE_CLASS}`;
 
 export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const stickyColumnRef = useRef<HTMLDivElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
+  const labelShellRef = useRef<HTMLDivElement | null>(null);
+  const labelViewportRef = useRef<HTMLDivElement | null>(null);
+  const labelTrackRef = useRef<HTMLDivElement | null>(null);
   const periodRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -35,6 +39,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     };
 
     gsap.set(roleTrack, { y: 0 });
+    gsap.set(labelTrackRef.current, { y: 0 });
+    gsap.set(labelShellRef.current, { x: 0 });
 
     const updateExperienceProgress = () => {
       frame = 0;
@@ -67,6 +73,24 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       const closestIndex = Math.round(clampedProgress);
 
       setRoleY(-clampedProgress * currentRowHeight);
+
+      const stickyColumn = stickyColumnRef.current;
+      const labelShell = labelShellRef.current;
+      const labelViewport = labelViewportRef.current;
+      const labelTrack = labelTrackRef.current;
+
+      if (stickyColumn && labelShell && labelViewport && labelTrack) {
+        const labelRowHeight = labelViewport.offsetHeight || currentRowHeight;
+        const stickyTop = stickyColumn.getBoundingClientRect().top;
+        const stickyAnchor = window.innerHeight * 0.5;
+        const activationDistance = currentRowHeight || 1;
+        const activationProgress = Math.min(1, Math.max(0, (stickyAnchor - stickyTop) / activationDistance));
+        const labelProgress = activationProgress * (clampedProgress + 1);
+
+        gsap.set(labelTrack, { y: -labelProgress * labelRowHeight });
+        gsap.set(labelShell, { x: -activationProgress * 64 });
+      }
+
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
@@ -148,7 +172,21 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     <section ref={sectionRef} id="experience" className="relative z-0 box-border min-h-screen bg-white pt-80 pb-200 text-black" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
-          <div className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
+          <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
+            <div ref={labelShellRef} className="pointer-events-none absolute left-full top-0 z-10 ml-5 w-max" aria-hidden="true">
+              <div ref={labelViewportRef} className={`overflow-hidden ${EXPERIENCE_ROW_CLASS}`}>
+                <div ref={labelTrackRef}>
+                  <p className={`m-0 flex min-w-0 items-start justify-start ${EXPERIENCE_ROW_CLASS}`}>
+                    <span className={EXPERIENCE_TEXT_CLASS}>experience</span>
+                  </p>
+                  {experiences.map((experience) => (
+                    <p key={`label-${experience.period}-${experience.role}`} className={`m-0 flex min-w-0 items-start justify-start ${EXPERIENCE_ROW_CLASS}`}>
+                      <span className={EXPERIENCE_TEXT_CLASS}>{experience.role}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (
