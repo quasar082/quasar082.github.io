@@ -191,7 +191,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
             <div
               ref={labelShellRef}
-              className={`pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max translate-x-[60%] text-right leading-[1] font-medium tracking-[0.18em] ${
+              className={`pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max text-right leading-[1] font-medium tracking-[0.18em] ${
                 displayLabel === 'Role' ? 'text-[clamp(1rem,4cqw,6rem)] text-black/30' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray opacity-70'
               }`}
               aria-hidden="true"
