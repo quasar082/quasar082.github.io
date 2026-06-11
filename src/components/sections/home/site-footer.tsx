@@ -80,7 +80,7 @@ export function SiteFooter() {
   return (
     <footer ref={footerRef} aria-label="Site footer" className="mt-auto min-h-0">
       <div className="@container w-full">
-        <p className="w-fit whitespace-nowrap text-[clamp(1rem,26.2cqw,100rem)] font-medium leading-[0.95] tracking-[-0.04em] text-gradient-black-gray" aria-label={footerLogo}>
+        <p className="w-fit whitespace-nowrap text-[clamp(1rem,25.2cqw,100rem)] font-medium leading-[0.95] tracking-[-0.025em] text-gradient-black-gray" aria-label={footerLogo}>
           {Array.from(footerLogo).map((character, index) => (
             <span key={`${character}-${index}`} className="inline-flex overflow-hidden align-baseline" aria-hidden="true">
               <span className="inline-flex text-gradient-black-gray" data-footer-logo-character>

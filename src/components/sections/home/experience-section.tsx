@@ -27,7 +27,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     target: sectionRef,
     offset: ['start 20%', 'center 20%'],
   });
-  const labelRight = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const labelRight = useTransform(scrollYProgress, [0, 1], ['-17%', '43%']);
   const labelX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
 
   useEffect(() => {
