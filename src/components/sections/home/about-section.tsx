@@ -18,7 +18,7 @@ export function AboutSection() {
     offset: ["center 70%", "center 30%"],
   });
   const markerLeft = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const markerTop = "calc(100% - 15rem)";
+  const markerTop = "calc(75% )";
   const markerX = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
   return (
