@@ -7,7 +7,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { TextReveal } from '@/components/ui/text-reveal';
 
 const aboutCopy = [
-  '"Hi! My name is Ha Minh Quan — Quasar. I am an AI engineer based in Vietnam, focused on architecture design, operational optimization, and scaling intelligent systems."',
+  '"Hi! My name is Ha Minh Quan — Quasar. I am an AI engineer, focused on architecture design, operational optimization, and scaling intelligent systems."',
   '"I build end-to-end AI products — from unstructured data processing and multi-agent systems to chatbots and real-world deployment."',
 ].join('\n');
 
@@ -18,7 +18,7 @@ export function AboutSection() {
     offset: ["center 70%", "center 30%"],
   });
   const markerLeft = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const markerTop = "calc(100% - 11rem)";
+  const markerTop = "calc(100% - 15rem)";
   const markerX = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
   return (
@@ -37,7 +37,7 @@ export function AboutSection() {
           style={{ left: markerLeft, top: markerTop, x: markerX }}
         >
           <ArrowUpRight aria-hidden="true" className="h-[0.82em] w-[0.82em] shrink-0 stroke-[1.4] text-black" />
-          <span>2002</span>
+          <span>2002 Vietnamesé</span>
         </motion.div>
       </div>
     </section>
