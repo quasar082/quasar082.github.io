@@ -22,7 +22,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
+  const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
+  const activeRole = experiences[activeExperienceIndex]?.role ?? '';
+  const activeLabel = isStickyLabelActive ? activeRole : 'experience';
 
   useEffect(() => {
     let frame = 0;
@@ -37,7 +40,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     };
 
     gsap.set(roleTrack, { y: 0 });
-    gsap.set(labelShellRef.current, { x: 0, y: 0, autoAlpha: 1 });
 
     const updateExperienceProgress = () => {
       frame = 0;
@@ -72,19 +74,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       setRoleY(-clampedProgress * currentRowHeight);
 
       const stickyColumn = stickyColumnRef.current;
-      const labelShell = labelShellRef.current;
 
-      if (stickyColumn && labelShell) {
+      if (stickyColumn) {
         const stickyTop = stickyColumn.getBoundingClientRect().top;
         const stickyAnchor = window.innerHeight * 0.5;
-        const activationDistance = currentRowHeight || 1;
-        const activationProgress = Math.min(1, Math.max(0, (stickyAnchor - stickyTop) / activationDistance));
+        const isLabelActive = stickyTop <= stickyAnchor + 1;
 
-        gsap.set(labelShell, {
-          x: -activationProgress * 64,
-          y: -activationProgress * currentRowHeight,
-          autoAlpha: 1 - activationProgress,
-        });
+        setIsStickyLabelActive((currentValue) => (currentValue === isLabelActive ? currentValue : isLabelActive));
       }
 
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
@@ -111,6 +107,30 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       window.removeEventListener('resize', requestUpdate);
     };
   }, [experiences.length]);
+
+  useEffect(() => {
+    const label = labelShellRef.current;
+
+    if (!label) {
+      return;
+    }
+
+    const timeline = gsap.fromTo(
+      label,
+      { autoAlpha: 0, y: 6 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.32,
+        ease: 'power3.out',
+        overwrite: true,
+      },
+    );
+
+    return () => {
+      timeline.kill();
+    };
+  }, [activeLabel]);
 
   useEffect(() => {
     const period = periodRef.current;
@@ -169,8 +189,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
-            <div ref={labelShellRef} className={`pointer-events-none absolute left-full top-0 z-10 ml-5 w-max ${EXPERIENCE_ROW_CLASS}`} aria-hidden="true">
-              <span className={EXPERIENCE_TEXT_CLASS}>experience</span>
+            <div ref={labelShellRef} className="pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70" aria-hidden="true">
+              {activeLabel}
             </div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
