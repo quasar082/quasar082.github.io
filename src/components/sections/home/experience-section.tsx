@@ -125,10 +125,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     timeline
       .set(enteringLabel, { autoAlpha: 1, filter: 'blur(4px)', y: enteringY, scale: isStickyLabelActive ? 1.06 : 0.96 }, 0)
       .set(leavingLabel, { autoAlpha: 1 }, 0)
-      .to(label, { xPercent: isStickyLabelActive ? 0 : 60, duration: 0.74 }, 0)
-      .to(leavingLabel, { filter: 'blur(4px)', y: leavingY, scale: isStickyLabelActive ? 0.96 : 1.06, duration: 0.3 }, 0)
-      .set(leavingLabel, { autoAlpha: 0, clearProps: 'filter' })
-      .to(enteringLabel, { filter: 'blur(0px)', y: 0, scale: 1, autoAlpha: 1, duration: 0.46, clearProps: 'filter' }, '-=0.08');
+      .to(label, { xPercent: isStickyLabelActive ? 0 : 60, duration: 0.72 }, 0)
+      .to(leavingLabel, { filter: 'blur(4px)', y: leavingY, scale: isStickyLabelActive ? 0.96 : 1.06, duration: 0.72 }, 0)
+      .to(enteringLabel, { filter: 'blur(0px)', y: 0, scale: 1, autoAlpha: 1, duration: 0.72, clearProps: 'filter' }, 0)
+      .set(leavingLabel, { autoAlpha: 0, clearProps: 'filter' });
 
     return () => {
       timeline.kill();
