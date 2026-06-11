@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { HomeContent } from '@/lib/content/home';
 import { AboutSection } from './about-section';
-import { ExperienceSection } from './experience-section';
-import { ContactSection } from './contact-section';
+import { ExperienceContactTransition } from './experience-contact-transition';
 import { HeroSection } from './hero-section';
 import { HomePreloader } from './home-preloader';
 import { MenuOverlay } from './menu-overlay';
@@ -130,8 +129,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
       <AboutSection />
       <ProjectsSection projects={content.projects} />
       <ParallaxVideoSection />
-      <ExperienceSection experiences={content.experiences} />
-      <ContactSection contactSocials={content.contactSocials} />
+      <ExperienceContactTransition experiences={content.experiences} contactSocials={content.contactSocials} />
       <MenuOverlay menuItems={content.menuItems} activeSection={activeSection} isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </main>
   );

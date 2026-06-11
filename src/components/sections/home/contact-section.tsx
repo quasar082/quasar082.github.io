@@ -44,47 +44,6 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
       return;
     }
 
-    let frame = 0;
-
-    const updateContactOverlay = () => {
-      frame = 0;
-      const start = section.offsetTop - window.innerHeight;
-      const end = section.offsetTop;
-      const distance = end - start || 1;
-      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
-
-      gsap.set(section, { yPercent: (1 - progress) * 100 });
-    };
-
-    const requestOverlayUpdate = () => {
-      if (frame) {
-        return;
-      }
-
-      frame = window.requestAnimationFrame(updateContactOverlay);
-    };
-
-    updateContactOverlay();
-    window.addEventListener('scroll', requestOverlayUpdate, { passive: true });
-    window.addEventListener('resize', requestOverlayUpdate);
-
-    return () => {
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-
-      window.removeEventListener('scroll', requestOverlayUpdate);
-      window.removeEventListener('resize', requestOverlayUpdate);
-    };
-  }, []);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
     const revealBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-reveal]'));
     const allCharacters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-character]'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -132,7 +91,7 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
   }, []);
 
   return (
-    <section ref={sectionRef} id="contact" className="relative z-20 -mt-[100vh] box-border flex h-dvh min-h-0 flex-col overflow-hidden bg-[#e9e9e9] px-4 pt-10 pb-2 text-black sm:px-6 lg:px-8" aria-label="Contact section">
+    <section ref={sectionRef} id="contact" className="relative z-20 box-border flex h-dvh min-h-0 flex-col overflow-hidden bg-[#e9e9e9] px-4 pt-10 pb-2 text-black sm:px-6 lg:px-8" aria-label="Contact section">
       <div className="container mx-auto flex min-h-0 flex-1 flex-col pt-8 [@media(min-height:900px)]:pt-15">
         <div className="grid shrink-0 grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
           <div className="flex flex-col gap-6 lg:col-span-1">
