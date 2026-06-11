@@ -24,7 +24,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
-  const activeLabel = isStickyLabelActive ? 'Role' : 'Experience';
+  const activeLabel = isStickyLabelActive ? 'Experience' : 'Experience';
 
   useEffect(() => {
     let frame = 0;
@@ -116,11 +116,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
     const timeline = gsap.fromTo(
       label,
-      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 65 : 0 },
+      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 63 : 0 },
       {
         autoAlpha: 1,
         y: 0,
-        xPercent: isStickyLabelActive ? 0 : 65,
+        xPercent: isStickyLabelActive ? 0 : 63,
         duration: 0.62,
         ease: 'power3.out',
         overwrite: true,
@@ -185,11 +185,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   }, [activeExperienceIndex]);
 
   return (
-    <section ref={sectionRef} id="experience" className="relative z-0 box-border min-h-screen bg-white pt-80 pb-200 text-black" aria-label="Experience section">
+    <section ref={sectionRef} id="experience" className="relative z-0 box-border min-h-screen bg-white pt-80 pb-100 text-black" aria-label="Experience section">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
-            <div ref={labelShellRef} className={`pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max text-right leading-[1] font-medium tracking-[0.18em] opacity-70 ${isStickyLabelActive ? 'text-sm uppercase text-black/60' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray'}`} aria-hidden="true">
+            <div ref={labelShellRef} className={`pointer-events-none absolute right-0 z-10 w-max text-right leading-[1] font-medium opacity-70 ${isStickyLabelActive ? 'text-[clamp(1rem,3cqw,6rem)] text-black/60 bottom-[calc(100%+0.5rem)]' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray bottom-[calc(100%+0.9rem)]'}`} aria-hidden="true">
               {activeLabel}
             </div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
@@ -201,7 +201,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                 ))}
               </div>
             </div>
-            <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.5rem)] text-right text-sm font-medium uppercase tracking-[0.18em] text-black/60 opacity-70">
+            <div ref={periodRef} className="absolute right-0 top-[calc(100%+0.5rem)] text-right text-[clamp(1rem,2.3cqw,6rem)] font-medium text-black/60 opacity-70">
               {activePeriod}
             </div>
           </div>
