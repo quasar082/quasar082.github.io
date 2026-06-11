@@ -24,8 +24,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
-  const activeRole = experiences[activeExperienceIndex]?.role ?? '';
-  const activeLabel = isStickyLabelActive ? activeRole : 'experience';
+  const activeLabel = isStickyLabelActive ? 'role' : 'experience';
 
   useEffect(() => {
     let frame = 0;
@@ -117,10 +116,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
     const timeline = gsap.fromTo(
       label,
-      { autoAlpha: 0, y: 6 },
+      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 50 : 0 },
       {
         autoAlpha: 1,
         y: 0,
+        xPercent: isStickyLabelActive ? 0 : 50,
         duration: 0.32,
         ease: 'power3.out',
         overwrite: true,
@@ -130,7 +130,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     return () => {
       timeline.kill();
     };
-  }, [activeLabel]);
+  }, [activeLabel, isStickyLabelActive]);
 
   useEffect(() => {
     const period = periodRef.current;
