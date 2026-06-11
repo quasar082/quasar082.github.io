@@ -23,8 +23,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
-  const [displayLabel, setDisplayLabel] = useState('Experience');
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
+  const activeLabel = isStickyLabelActive ? 'Role' : 'Experience';
 
   useEffect(() => {
     let frame = 0;
@@ -114,23 +114,23 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       return;
     }
 
-    const nextLabel = isStickyLabelActive ? 'Role' : 'Experience';
-    const enteringY = isStickyLabelActive ? 8 : -8;
-    const leavingY = isStickyLabelActive ? -8 : 8;
-
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: true } });
-
-    timeline
-      .to(label, { xPercent: isStickyLabelActive ? 0 : 60, duration: 0.72 }, 0)
-      .to(label, { filter: 'blur(4px)', y: leavingY, scale: isStickyLabelActive ? 0.96 : 1.06, duration: 0.32 }, 0)
-      .add(() => setDisplayLabel(nextLabel), 0.32)
-      .set(label, { y: enteringY, scale: isStickyLabelActive ? 1.06 : 0.96 }, 0.32)
-      .to(label, { filter: 'blur(0px)', y: 0, scale: 1, duration: 0.4, clearProps: 'filter' }, 0.32);
+    const timeline = gsap.fromTo(
+      label,
+      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 50 : 0 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        xPercent: isStickyLabelActive ? 0 : 60,
+        duration: 0.62,
+        ease: 'power3.out',
+        overwrite: true,
+      },
+    );
 
     return () => {
       timeline.kill();
     };
-  }, [isStickyLabelActive]);
+  }, [activeLabel, isStickyLabelActive]);
 
   useEffect(() => {
     const period = periodRef.current;
@@ -189,14 +189,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
-            <div
-              ref={labelShellRef}
-              className={`pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max text-right leading-[1] font-medium tracking-[0.18em] ${
-                displayLabel === 'Role' ? 'text-[clamp(1rem,4cqw,6rem)] text-black/30' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray opacity-70'
-              }`}
-              aria-hidden="true"
-            >
-              {displayLabel}
+            <div ref={labelShellRef} className="pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max text-right text-[clamp(1rem,6cqw,6rem)] leading-[1] font-medium tracking-[0.18em] text-gradient-black-gray opacity-70" aria-hidden="true">
+              {activeLabel}
             </div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
