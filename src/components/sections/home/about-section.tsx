@@ -15,10 +15,10 @@ export function AboutSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["center 58%", "center 42%"],
+    offset: ["center 70%", "center 30%"],
   });
   const markerLeft = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const markerTop = "calc(100% - 9rem)";
+  const markerTop = "calc(100% - 11rem)";
   const markerX = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
   return (
