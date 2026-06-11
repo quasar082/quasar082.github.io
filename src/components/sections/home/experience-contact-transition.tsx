@@ -14,15 +14,13 @@ type ExperienceContactTransitionProps = {
 
 export function ExperienceContactTransition({ experiences, contactSocials }: ExperienceContactTransitionProps) {
   const wrapperRef = useRef<HTMLElement>(null);
-  const overlayTriggerRef = useRef<HTMLDivElement>(null);
   const contactLayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    const overlayTrigger = overlayTriggerRef.current;
     const contactLayer = contactLayerRef.current;
 
-    if (!wrapper || !overlayTrigger || !contactLayer) {
+    if (!wrapper || !contactLayer) {
       return;
     }
 
@@ -36,24 +34,21 @@ export function ExperienceContactTransition({ experiences, contactSocials }: Exp
     }
 
     const context = gsap.context(() => {
-      gsap.set(contactLayer, { yPercent: 100, force3D: true, willChange: 'transform' });
-
-      gsap.to(contactLayer, {
-        yPercent: 0,
-        ease: 'none',
-        force3D: true,
-        scrollTrigger: {
-          trigger: overlayTrigger,
-          start: 'top bottom',
-          end: 'bottom bottom',
-          scrub: 0.35,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-          onLeave: () => gsap.set(contactLayer, { yPercent: 0 }),
-          onEnterBack: () => gsap.set(contactLayer, { willChange: 'transform' }),
-          onLeaveBack: () => gsap.set(contactLayer, { yPercent: 100 }),
+      gsap.fromTo(
+        contactLayer,
+        { yPercent: 100 },
+        {
+          yPercent: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: contactLayer,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
         },
-      });
+      );
     }, wrapper);
 
     return () => {
@@ -64,10 +59,8 @@ export function ExperienceContactTransition({ experiences, contactSocials }: Exp
   return (
     <section ref={wrapperRef} className="relative bg-white">
       <ExperienceSection experiences={experiences} />
-      <div ref={overlayTriggerRef} className="relative z-20 -mt-[100vh] h-dvh overflow-hidden">
-        <div ref={contactLayerRef} className="h-full will-change-transform">
-          <ContactSection contactSocials={contactSocials} />
-        </div>
+      <div ref={contactLayerRef} className="relative z-20 -mt-[100vh] h-dvh overflow-hidden">
+        <ContactSection contactSocials={contactSocials} />
       </div>
     </section>
   );

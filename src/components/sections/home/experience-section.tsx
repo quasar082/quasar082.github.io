@@ -116,11 +116,11 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
     const timeline = gsap.fromTo(
       label,
-      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 50 : 0 },
+      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 65 : 0 },
       {
         autoAlpha: 1,
         y: 0,
-        xPercent: isStickyLabelActive ? 0 : 60,
+        xPercent: isStickyLabelActive ? 0 : 65,
         duration: 0.62,
         ease: 'power3.out',
         overwrite: true,
