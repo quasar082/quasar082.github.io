@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { motion, useScroll, useTransform } from 'motion/react';
 import type { ExperienceItem } from '@/lib/content/home';
 
 type ExperienceSectionProps = {
@@ -17,14 +18,17 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const stickyColumnRef = useRef<HTMLDivElement | null>(null);
   const roleViewportRef = useRef<HTMLDivElement | null>(null);
   const roleTrackRef = useRef<HTMLDivElement | null>(null);
-  const labelShellRef = useRef<HTMLDivElement | null>(null);
   const periodRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
-  const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
-  const activeLabel = isStickyLabelActive ? 'Experience' : 'Experience';
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start 80%', 'center 30%'],
+  });
+  const labelRight = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const labelX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
 
   useEffect(() => {
     let frame = 0;
@@ -72,16 +76,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
       setRoleY(-clampedProgress * currentRowHeight);
 
-      const stickyColumn = stickyColumnRef.current;
-
-      if (stickyColumn) {
-        const stickyTop = stickyColumn.getBoundingClientRect().top;
-        const stickyAnchor = window.innerHeight * 0.5;
-        const isLabelActive = stickyTop <= stickyAnchor + 1;
-
-        setIsStickyLabelActive((currentValue) => (currentValue === isLabelActive ? currentValue : isLabelActive));
-      }
-
       setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
     };
 
@@ -107,30 +101,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     };
   }, [experiences.length]);
 
-  useEffect(() => {
-    const label = labelShellRef.current;
-
-    if (!label) {
-      return;
-    }
-
-    const timeline = gsap.fromTo(
-      label,
-      { autoAlpha: 0, y: 6, xPercent: isStickyLabelActive ? 63 : 0 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        xPercent: isStickyLabelActive ? 0 : 63,
-        duration: 0.62,
-        ease: 'power3.out',
-        overwrite: true,
-      },
-    );
-
-    return () => {
-      timeline.kill();
-    };
-  }, [activeLabel, isStickyLabelActive]);
 
   useEffect(() => {
     const period = periodRef.current;
@@ -189,9 +159,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="container mx-auto">
         <div className="grid grid-cols-2 gap-10 py-24 md:py-28 lg:py-32">
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
-            <div ref={labelShellRef} className={`pointer-events-none absolute right-0 z-10 w-max text-right leading-[1] font-medium opacity-70 ${isStickyLabelActive ? 'text-[clamp(1rem,3cqw,6rem)] text-black/60 bottom-[calc(100%+0.5rem)]' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray bottom-[calc(100%+0.9rem)]'}`} aria-hidden="true">
-              {activeLabel}
-            </div>
+            <motion.div
+              className="pointer-events-none absolute bottom-[calc(100%+0.9rem)] z-10 w-max text-right text-[clamp(1rem,6cqw,6rem)] leading-[1] font-medium text-gradient-black-gray opacity-70 will-change-transform"
+              style={{ right: labelRight, x: labelX }}
+              aria-hidden="true"
+            >
+              Experience
+            </motion.div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
                 {experiences.map((experience) => (
