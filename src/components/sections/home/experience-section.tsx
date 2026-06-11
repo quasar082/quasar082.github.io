@@ -25,10 +25,10 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ['start 20%', 'center 20%'],
+    offset: ['start 30%', 'center 70%'],
   });
-  const labelRight = useTransform(scrollYProgress, [0, 1], ['-17%', '43%']);
-  const labelX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
+  const labelRight = useTransform(scrollYProgress, [0, 1], ['-17%', '0%']);
+  const labelX = useTransform(scrollYProgress, [0, 1], ['0%', '0%']);
 
   useEffect(() => {
     let frame = 0;
