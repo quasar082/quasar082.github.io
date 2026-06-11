@@ -23,6 +23,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const [isStickyLabelActive, setIsStickyLabelActive] = useState(false);
+  const [displayLabel, setDisplayLabel] = useState('Experience');
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
 
   useEffect(() => {
@@ -108,27 +109,23 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
   useEffect(() => {
     const label = labelShellRef.current;
-    const experienceLabel = label?.querySelector<HTMLElement>('[data-experience-label="experience"]');
-    const roleLabel = label?.querySelector<HTMLElement>('[data-experience-label="role"]');
 
-    if (!label || !experienceLabel || !roleLabel) {
+    if (!label) {
       return;
     }
 
-    const enteringLabel = isStickyLabelActive ? roleLabel : experienceLabel;
-    const leavingLabel = isStickyLabelActive ? experienceLabel : roleLabel;
+    const nextLabel = isStickyLabelActive ? 'Role' : 'Experience';
     const enteringY = isStickyLabelActive ? 8 : -8;
     const leavingY = isStickyLabelActive ? -8 : 8;
 
     const timeline = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: true } });
 
     timeline
-      .set(enteringLabel, { autoAlpha: 1, filter: 'blur(4px)', y: enteringY, scale: isStickyLabelActive ? 1.06 : 0.96 }, 0)
-      .set(leavingLabel, { autoAlpha: 1 }, 0)
       .to(label, { xPercent: isStickyLabelActive ? 0 : 60, duration: 0.72 }, 0)
-      .to(leavingLabel, { filter: 'blur(4px)', y: leavingY, scale: isStickyLabelActive ? 0.96 : 1.06, duration: 0.72 }, 0)
-      .to(enteringLabel, { filter: 'blur(0px)', y: 0, scale: 1, autoAlpha: 1, duration: 0.72, clearProps: 'filter' }, 0)
-      .set(leavingLabel, { autoAlpha: 0, clearProps: 'filter' });
+      .to(label, { filter: 'blur(4px)', y: leavingY, scale: isStickyLabelActive ? 0.96 : 1.06, duration: 0.32 }, 0)
+      .add(() => setDisplayLabel(nextLabel), 0.32)
+      .set(label, { y: enteringY, scale: isStickyLabelActive ? 1.06 : 0.96 }, 0.32)
+      .to(label, { filter: 'blur(0px)', y: 0, scale: 1, duration: 0.4, clearProps: 'filter' }, 0.32);
 
     return () => {
       timeline.kill();
@@ -194,15 +191,12 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
             <div
               ref={labelShellRef}
-              className="pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 grid w-max translate-x-[60%] text-right leading-[1] font-medium tracking-[0.18em]"
+              className={`pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 w-max translate-x-[60%] text-right leading-[1] font-medium tracking-[0.18em] ${
+                displayLabel === 'Role' ? 'text-[clamp(1rem,4cqw,6rem)] text-black/30' : 'text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray opacity-70'
+              }`}
               aria-hidden="true"
             >
-              <span data-experience-label="experience" className="col-start-1 row-start-1 text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray opacity-70">
-                Experience
-              </span>
-              <span data-experience-label="role" className="invisible col-start-1 row-start-1 text-[clamp(1rem,4cqw,6rem)] text-black/30">
-                Role
-              </span>
+              {displayLabel}
             </div>
             <div ref={roleViewportRef} className={`w-full overflow-hidden ${EXPERIENCE_ROW_CLASS}`} aria-live="polite">
               <div ref={roleTrackRef}>
