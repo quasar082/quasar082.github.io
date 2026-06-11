@@ -119,8 +119,8 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
     timeline
       .to(label, { xPercent: isStickyLabelActive ? 0 : 60 }, 0)
-      .to(experienceLabel, { autoAlpha: isStickyLabelActive ? 0 : 1, y: isStickyLabelActive ? -8 : 0, scale: isStickyLabelActive ? 0.96 : 1 }, 0)
-      .to(roleLabel, { autoAlpha: isStickyLabelActive ? 1 : 0, y: isStickyLabelActive ? 0 : 8, scale: isStickyLabelActive ? 1 : 1.06 }, 0.08);
+      .to(experienceLabel, { yPercent: isStickyLabelActive ? -110 : 0, scale: isStickyLabelActive ? 0.96 : 1 }, 0)
+      .to(roleLabel, { yPercent: isStickyLabelActive ? 0 : 110, scale: isStickyLabelActive ? 1 : 1.06 }, 0);
 
     return () => {
       timeline.kill();
@@ -186,13 +186,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           <div ref={stickyColumnRef} className="sticky top-1/2 h-fit min-w-0 w-full [container-type:inline-size] relative">
             <div
               ref={labelShellRef}
-              className="pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 grid w-max translate-x-[60%] text-right leading-[1] font-medium tracking-[0.18em]"
+              className="pointer-events-none absolute right-0 bottom-[calc(100%+0.5rem)] z-10 grid w-max translate-x-[60%] overflow-hidden text-right leading-[1] font-medium tracking-[0.18em]"
               aria-hidden="true"
             >
               <span data-experience-label="experience" className="col-start-1 row-start-1 text-[clamp(1rem,6cqw,6rem)] text-gradient-black-gray opacity-70">
                 Experience
               </span>
-              <span data-experience-label="role" className="invisible col-start-1 row-start-1 text-[clamp(1rem,4cqw,6rem)] text-black/30 opacity-0">
+              <span data-experience-label="role" className="col-start-1 row-start-1 translate-y-[110%] text-[clamp(1rem,4cqw,6rem)] text-black/30">
                 Role
               </span>
             </div>
