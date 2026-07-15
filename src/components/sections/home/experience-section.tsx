@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, useScroll, useTransform } from 'motion/react';
 import type { ExperienceItem } from '@/lib/content/home';
 
@@ -21,6 +22,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const periodRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const companyRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const activeExperienceIndexRef = useRef(0);
   const [activeExperienceIndex, setActiveExperienceIndex] = useState(0);
   const activePeriod = experiences[activeExperienceIndex]?.period ?? '';
   const { scrollYProgress } = useScroll({
@@ -31,73 +33,63 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const labelX = useTransform(scrollYProgress, [0, 1], ['0%', '0%']);
 
   useEffect(() => {
-    let frame = 0;
+    const section = sectionRef.current;
+    const roleViewport = roleViewportRef.current;
     const roleTrack = roleTrackRef.current;
+    const firstCompany = companyRefs.current[0];
+    const lastCompany = companyRefs.current[experiences.length - 1];
 
-    if (!roleTrack) {
+    if (!section || !roleViewport || !roleTrack || !firstCompany || !lastCompany || experiences.length === 0) {
       return;
     }
 
-    const setRoleY = (value: number) => {
-      gsap.set(roleTrack, { y: value });
-    };
+    gsap.registerPlugin(ScrollTrigger);
 
-    gsap.set(roleTrack, { y: 0 });
+    const context = gsap.context(() => {
+      const setRoleY = gsap.quickSetter(roleTrack, 'y', 'px');
+      const itemCount = experiences.length;
+      const maxProgress = itemCount - 1;
+      let rowHeight = roleViewport.offsetHeight;
 
-    const updateExperienceProgress = () => {
-      frame = 0;
-      const currentRowHeight = roleViewportRef.current?.offsetHeight ?? 0;
-      const roleAnchor = window.innerHeight * 0.5;
-      const itemPositions = companyRefs.current.map((company) => company?.getBoundingClientRect().top ?? 0);
+      const syncMeasurements = () => {
+        rowHeight = roleViewport.offsetHeight;
+      };
 
-      if (!currentRowHeight || itemPositions.length === 0) {
-        return;
-      }
-
-      let progressIndex = 0;
-
-      for (let index = 0; index < itemPositions.length - 1; index += 1) {
-        const currentTop = itemPositions[index];
-        const nextTop = itemPositions[index + 1];
-
-        if (roleAnchor >= currentTop && roleAnchor <= nextTop) {
-          const distance = nextTop - currentTop || 1;
-          progressIndex = index + (roleAnchor - currentTop) / distance;
-          break;
+      const updateActiveIndex = (nextIndex: number) => {
+        if (activeExperienceIndexRef.current === nextIndex) {
+          return;
         }
 
-        if (roleAnchor > nextTop) {
-          progressIndex = index + 1;
-        }
-      }
+        activeExperienceIndexRef.current = nextIndex;
+        setActiveExperienceIndex(nextIndex);
+      };
 
-      const clampedProgress = Math.min(experiences.length - 1, Math.max(0, progressIndex));
-      const closestIndex = Math.round(clampedProgress);
+      gsap.set(roleTrack, { y: 0, force3D: true });
 
-      setRoleY(-clampedProgress * currentRowHeight);
+      const trigger = ScrollTrigger.create({
+        trigger: firstCompany,
+        start: 'top center',
+        endTrigger: lastCompany,
+        end: 'top center',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onRefreshInit: syncMeasurements,
+        onRefresh: syncMeasurements,
+        onUpdate: (self) => {
+          const clampedProgress = Math.min(maxProgress, Math.max(0, self.progress * maxProgress));
 
-      setActiveExperienceIndex((currentIndex) => (currentIndex === closestIndex ? currentIndex : closestIndex));
-    };
+          setRoleY(-clampedProgress * rowHeight);
+          updateActiveIndex(Math.round(clampedProgress));
+        },
+      });
 
-    const requestUpdate = () => {
-      if (frame) {
-        return;
-      }
-
-      frame = window.requestAnimationFrame(updateExperienceProgress);
-    };
-
-    requestUpdate();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
+      return () => {
+        trigger.kill();
+      };
+    }, section);
 
     return () => {
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
+      context.revert();
     };
   }, [experiences.length]);
 
