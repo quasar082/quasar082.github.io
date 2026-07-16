@@ -183,4 +183,50 @@ body {
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
+
+  .hero-scroll-shimmer {
+    background-image: linear-gradient(90deg, rgb(0 0 0 / 48%) 0%, rgb(0 0 0 / 48%) 34%, rgb(115 115 115 / 95%) 50%, rgb(0 0 0 / 48%) 66%, rgb(0 0 0 / 48%) 100%);
+    background-size: 220% 100%;
+    background-position: 120% 50%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: hero-scroll-shimmer 2.2s ease-out infinite;
+  }
+
+  .hero-scroll-arrow {
+    animation: hero-scroll-arrow 1.25s ease-out infinite;
+  }
+}
+
+@keyframes hero-scroll-shimmer {
+  0% {
+    background-position: 120% 50%;
+  }
+  62%,
+  100% {
+    background-position: -120% 50%;
+  }
+}
+
+@keyframes hero-scroll-arrow {
+  0% {
+    opacity: 0;
+    transform: translateY(-35%);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(45%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-shimmer,
+  .hero-scroll-arrow {
+    animation: none;
+  }
 }

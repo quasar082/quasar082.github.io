@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { TextReveal } from '@/components/ui/text-reveal';
 import type { ContactSocial } from '@/lib/content/home';
 import { SiteFooter } from './site-footer';
 
@@ -19,14 +18,10 @@ function ContactRevealText({ text, className }: ContactRevealTextProps) {
   return (
     <span className={className} aria-label={text} data-contact-reveal>
       {text.split(' ').map((word, wordIndex, words) => (
-        <span key={`${word}-${wordIndex}`} className="inline-flex whitespace-nowrap" aria-hidden="true">
-          {Array.from(word).map((character, characterIndex) => (
-            <span key={`${character}-${characterIndex}`} className="inline-flex overflow-hidden align-baseline">
-              <span className="inline-flex text-gradient-black-gray" data-contact-character>
-                {character}
-              </span>
-            </span>
-          ))}
+        <span key={`${word}-${wordIndex}`} className="inline-flex overflow-hidden whitespace-nowrap align-baseline" aria-hidden="true">
+          <span className="inline-flex text-gradient-black-gray" data-contact-reveal-item>
+            {word}
+          </span>
           {wordIndex < words.length - 1 ? <span className="whitespace-pre"> </span> : null}
         </span>
       ))}
@@ -34,7 +29,7 @@ function ContactRevealText({ text, className }: ContactRevealTextProps) {
   );
 }
 
-export function ContactSection({ contactSocials }: ContactSectionProps) {
+export const ContactSection = memo(function ContactSection({ contactSocials }: ContactSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -45,16 +40,16 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
     }
 
     const revealBlocks = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-reveal]'));
-    const allCharacters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-character]'));
+    const revealItems = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-contact-reveal-item]'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduceMotion) {
-      gsap.set(allCharacters, { yPercent: 0, autoAlpha: 1 });
+      gsap.set(revealItems, { yPercent: 0, autoAlpha: 1, clearProps: 'willChange' });
       return;
     }
 
     const context = gsap.context(() => {
-      gsap.set(allCharacters, { yPercent: 110, autoAlpha: 0 });
+      gsap.set(revealItems, { yPercent: 110, autoAlpha: 0 });
     }, section);
 
     const revealedBlocks = new Set<Element>();
@@ -66,14 +61,17 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
           }
 
           revealedBlocks.add(entry.target);
-          const characters = gsap.utils.toArray<HTMLElement>(entry.target.querySelectorAll('[data-contact-character]'));
+          const items = gsap.utils.toArray<HTMLElement>(entry.target.querySelectorAll('[data-contact-reveal-item]'));
 
-          gsap.to(characters, {
+          gsap.to(items, {
             yPercent: 0,
             autoAlpha: 1,
-            duration: 0.68,
+            duration: 0.62,
             ease: 'power3.out',
-            stagger: 0.018,
+            force3D: true,
+            stagger: 0.04,
+            willChange: 'transform, opacity',
+            clearProps: 'willChange',
           });
 
           observer.unobserve(entry.target);
@@ -96,7 +94,7 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
         <div className="grid shrink-0 grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
           <div className="flex flex-col gap-6 lg:col-span-1">
             <h2 className="m-0 w-full max-w-none text-[clamp(2rem,2vmin,3rem)] leading-[0.95] tracking-tight md:text-[clamp(2rem,4vmin,3rem)] xl:text-[clamp(2rem,5vmin,3rem)]">
-              <TextReveal className="[&>span]:text-gradient-black-gray">WE WOULD LOVE TO HEAR FROM YOU. LET&apos;S WORK — TOGETHER.</TextReveal>
+              <ContactRevealText text="WE WOULD LOVE TO HEAR FROM YOU. LET'S WORK — TOGETHER." />
             </h2>
             <a
               href="mailto:haminhquan12c7@gmail.com"
@@ -170,4 +168,4 @@ export function ContactSection({ contactSocials }: ContactSectionProps) {
       </div>
     </section>
   );
-}
+});

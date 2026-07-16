@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { ContactSocial, ExperienceItem } from '@/lib/content/home';
@@ -12,7 +12,7 @@ type ExperienceContactTransitionProps = {
   contactSocials: ContactSocial[];
 };
 
-export function ExperienceContactTransition({ experiences, contactSocials }: ExperienceContactTransitionProps) {
+export const ExperienceContactTransition = memo(function ExperienceContactTransition({ experiences, contactSocials }: ExperienceContactTransitionProps) {
   const wrapperRef = useRef<HTMLElement>(null);
   const contactLayerRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +40,7 @@ export function ExperienceContactTransition({ experiences, contactSocials }: Exp
         {
           yPercent: 0,
           ease: 'none',
+          force3D: true,
           scrollTrigger: {
             trigger: contactLayer,
             start: 'top bottom',
@@ -59,9 +60,9 @@ export function ExperienceContactTransition({ experiences, contactSocials }: Exp
   return (
     <section ref={wrapperRef} className="relative bg-white">
       <ExperienceSection experiences={experiences} />
-      <div ref={contactLayerRef} className="relative z-20 -mt-[100vh] h-dvh overflow-hidden">
+      <div ref={contactLayerRef} className="relative z-20 -mt-[100vh] h-dvh overflow-hidden will-change-transform">
         <ContactSection contactSocials={contactSocials} />
       </div>
     </section>
   );
-}
+});
