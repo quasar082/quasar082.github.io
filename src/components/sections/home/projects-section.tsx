@@ -25,7 +25,7 @@ function ProjectRevealText({ text, className, characterClassName = 'text-gradien
       <span className={className} aria-label={text} data-project-reveal data-project-reveal-mode="words">
         {text.split(' ').map((word, wordIndex, words) => (
           <span key={`${word}-${wordIndex}`} className="inline-flex overflow-hidden whitespace-nowrap align-baseline" aria-hidden="true">
-            <span className={`inline-flex ${characterClassName}`} data-project-word>
+            <span className={`inline-flex translate-y-[110%] opacity-0 ${characterClassName}`} data-project-word>
               {word}
             </span>
             {wordIndex < words.length - 1 ? <span className="whitespace-pre"> </span> : null}
@@ -41,7 +41,7 @@ function ProjectRevealText({ text, className, characterClassName = 'text-gradien
         <span key={`${word}-${wordIndex}`} className="inline-flex whitespace-nowrap" aria-hidden="true">
           {Array.from(word).map((character, characterIndex) => (
             <span key={`${character}-${characterIndex}`} className="inline-flex overflow-hidden align-baseline">
-              <span className={`inline-flex ${characterClassName}`} data-project-character>
+              <span className={`inline-flex translate-y-[110%] opacity-0 ${characterClassName}`} data-project-character>
                 {character}
               </span>
             </span>

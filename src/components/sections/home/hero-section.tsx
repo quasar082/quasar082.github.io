@@ -22,7 +22,7 @@ function RevealLine({ text, className }: RevealLineProps) {
     <span className="block overflow-hidden pb-[0.01em]" aria-label={text} data-hero-reveal>
       {Array.from(text).map((character, index) => (
         <span key={`${character}-${index}`} className="inline-flex overflow-hidden align-baseline" aria-hidden="true">
-          <span className={className} data-hero-character>
+          <span className={`inline-flex translate-y-[110%] opacity-0 ${className}`} data-hero-character>
             {character === ' ' ? ' ' : character}
           </span>
         </span>
