@@ -62,7 +62,7 @@ export const ExperienceContactTransition = memo(function ExperienceContactTransi
   return (
     <section ref={wrapperRef} className="relative bg-white">
       <ExperienceSection experiences={experiences} />
-      <div ref={contactTriggerRef} className="relative z-20 -mt-[100svh] h-svh overflow-hidden">
+      <div ref={contactTriggerRef} className="relative z-20 h-svh overflow-hidden">
         <div ref={contactLayerRef} className="h-full will-change-transform">
           <ContactSection contactSocials={contactSocials} />
         </div>
