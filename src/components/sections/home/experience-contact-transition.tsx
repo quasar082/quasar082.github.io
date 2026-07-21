@@ -14,13 +14,15 @@ type ExperienceContactTransitionProps = {
 
 export const ExperienceContactTransition = memo(function ExperienceContactTransition({ experiences, contactSocials }: ExperienceContactTransitionProps) {
   const wrapperRef = useRef<HTMLElement>(null);
+  const contactTriggerRef = useRef<HTMLDivElement>(null);
   const contactLayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
+    const contactTrigger = contactTriggerRef.current;
     const contactLayer = contactLayerRef.current;
 
-    if (!wrapper || !contactLayer) {
+    if (!wrapper || !contactTrigger || !contactLayer) {
       return;
     }
 
@@ -42,7 +44,7 @@ export const ExperienceContactTransition = memo(function ExperienceContactTransi
           ease: 'none',
           force3D: true,
           scrollTrigger: {
-            trigger: contactLayer,
+            trigger: contactTrigger,
             start: 'top bottom',
             end: 'top top',
             scrub: true,
@@ -60,8 +62,10 @@ export const ExperienceContactTransition = memo(function ExperienceContactTransi
   return (
     <section ref={wrapperRef} className="relative bg-white">
       <ExperienceSection experiences={experiences} />
-      <div ref={contactLayerRef} className="relative z-20 -mt-[100vh] h-dvh overflow-hidden will-change-transform">
-        <ContactSection contactSocials={contactSocials} />
+      <div ref={contactTriggerRef} className="relative z-20 -mt-[100svh] h-svh overflow-hidden">
+        <div ref={contactLayerRef} className="h-full will-change-transform">
+          <ContactSection contactSocials={contactSocials} />
+        </div>
       </div>
     </section>
   );

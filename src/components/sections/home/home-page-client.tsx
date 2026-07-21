@@ -26,27 +26,48 @@ export function HomePageClient({ content }: HomePageClientProps) {
   const completeIntro = useCallback(() => setIsIntroComplete(true), []);
 
   useEffect(() => {
-    const sectionIds = content.menuItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1));
+    const sections = content.menuItems
+      .filter((item) => item.href.startsWith('#'))
+      .map((item) => {
+        const id = item.href.slice(1);
+
+        return { id, element: document.getElementById(id) };
+      })
+      .filter((section): section is { id: string; element: HTMLElement } => Boolean(section.element));
+    let frame = 0;
 
     const updateScrollState = () => {
-      const currentSectionId = sectionIds.findLast((sectionId) => {
-        const section = document.getElementById(sectionId);
+      frame = 0;
+      const currentSection = sections.findLast(({ element }) => element.getBoundingClientRect().top <= window.innerHeight * 0.35);
 
-        return section ? section.getBoundingClientRect().top <= window.innerHeight * 0.35 : false;
-      });
+      if (currentSection) {
+        setActiveSection((currentActiveSection) => {
+          const nextActiveSection = `#${currentSection.id}`;
 
-      if (currentSectionId) {
-        setActiveSection(`#${currentSectionId}`);
+          return currentActiveSection === nextActiveSection ? currentActiveSection : nextActiveSection;
+        });
       }
     };
 
-    updateScrollState();
-    window.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateScrollState);
+    };
+
+    requestUpdate();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
 
     return () => {
-      window.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
     };
   }, [content.menuItems]);
 
@@ -78,45 +99,76 @@ export function HomePageClient({ content }: HomePageClientProps) {
       return;
     }
 
+    let frame = 0;
+
     const updateHeaderTone = () => {
+      frame = 0;
       const { top, bottom } = parallaxSection.getBoundingClientRect();
       const headerProbeY = 32;
+      const nextIsHeaderInverted = top <= headerProbeY && bottom >= headerProbeY;
 
-      setIsHeaderInverted(top <= headerProbeY && bottom >= headerProbeY);
+      setIsHeaderInverted((currentIsHeaderInverted) => (currentIsHeaderInverted === nextIsHeaderInverted ? currentIsHeaderInverted : nextIsHeaderInverted));
     };
 
-    updateHeaderTone();
-    window.addEventListener('scroll', updateHeaderTone, { passive: true });
-    window.addEventListener('resize', updateHeaderTone);
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateHeaderTone);
+    };
+
+    requestUpdate();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
 
     return () => {
-      window.removeEventListener('scroll', updateHeaderTone);
-      window.removeEventListener('resize', updateHeaderTone);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
     };
   }, []);
 
   useEffect(() => {
+    let frame = 0;
     let lastScrollY = window.scrollY;
+    const contactSection = document.getElementById('contact');
 
     const updateHeaderVisibility = () => {
+      frame = 0;
       const currentScrollY = window.scrollY;
       const scrollingUp = currentScrollY < lastScrollY;
       const nearTop = currentScrollY <= 16;
+      const contactRect = contactSection?.getBoundingClientRect();
+      const inContactSection = contactRect ? contactRect.top <= window.innerHeight * 0.6 && contactRect.bottom >= 0 : false;
+      const nextIsHeaderVisible = nearTop || scrollingUp || isMenuOpen || inContactSection;
 
-      const contactSection = document.getElementById('contact');
-      const inContactSection = contactSection
-        ? contactSection.getBoundingClientRect().top <= window.innerHeight * 0.6 && contactSection.getBoundingClientRect().bottom >= 0
-        : false;
-
-      setIsHeaderVisible(nearTop || scrollingUp || isMenuOpen || inContactSection);
+      setIsHeaderVisible((currentIsHeaderVisible) => (currentIsHeaderVisible === nextIsHeaderVisible ? currentIsHeaderVisible : nextIsHeaderVisible));
       lastScrollY = currentScrollY;
     };
 
-    updateHeaderVisibility();
-    window.addEventListener('scroll', updateHeaderVisibility, { passive: true });
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateHeaderVisibility);
+    };
+
+    requestUpdate();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
 
     return () => {
-      window.removeEventListener('scroll', updateHeaderVisibility);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
     };
   }, [isMenuOpen]);
 
