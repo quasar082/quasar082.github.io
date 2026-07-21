@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { gsap } from 'gsap';
 
@@ -22,7 +22,7 @@ function RevealLine({ text, className }: RevealLineProps) {
     <span className="block overflow-hidden pb-[0.01em]" aria-label={text} data-hero-reveal>
       {Array.from(text).map((character, index) => (
         <span key={`${character}-${index}`} className="inline-flex overflow-hidden align-baseline" aria-hidden="true">
-          <span className={`inline-flex translate-y-[110%] opacity-0 ${className}`} data-hero-character>
+          <span className={className} data-hero-character>
             {character === ' ' ? ' ' : character}
           </span>
         </span>
@@ -34,7 +34,34 @@ function RevealLine({ text, className }: RevealLineProps) {
 export function HeroSection({ playIntro = false }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const context = gsap.context(() => {
+      const characters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-character]'));
+      const scrollLabel = section.querySelector('[data-hero-scroll]');
+
+      if (reduceMotion) {
+        gsap.set(characters, { yPercent: 0, autoAlpha: 1 });
+        gsap.set(scrollLabel, { y: 0, autoAlpha: 1 });
+        return;
+      }
+
+      gsap.set(characters, { yPercent: 110, autoAlpha: 0 });
+      gsap.set(scrollLabel, { y: 18, autoAlpha: 0 });
+    }, section);
+
+    return () => {
+      context.revert();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     const section = sectionRef.current;
 
     if (!section || !playIntro) {
@@ -42,20 +69,14 @@ export function HeroSection({ playIntro = false }: HeroSectionProps) {
     }
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const characters = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-character]'));
 
     if (reduceMotion) {
-      gsap.set(characters, { yPercent: 0, autoAlpha: 1 });
       return;
     }
 
     const context = gsap.context(() => {
       const scrollLabel = section.querySelector('[data-hero-scroll]');
       const revealLines = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hero-reveal]'));
-
-      gsap.set(characters, { yPercent: 110, autoAlpha: 0 });
-      gsap.set(scrollLabel, { y: 18, autoAlpha: 0 });
-
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       revealLines.forEach((line) => {

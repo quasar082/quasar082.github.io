@@ -3,7 +3,7 @@
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { ArrowRight } from 'lucide-react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import type { PointerEvent } from 'react';
 import { gsap } from 'gsap';
 import type { ProjectItem } from '@/lib/content/home';
@@ -25,7 +25,7 @@ function ProjectRevealText({ text, className, characterClassName = 'text-gradien
       <span className={className} aria-label={text} data-project-reveal data-project-reveal-mode="words">
         {text.split(' ').map((word, wordIndex, words) => (
           <span key={`${word}-${wordIndex}`} className="inline-flex overflow-hidden whitespace-nowrap align-baseline" aria-hidden="true">
-            <span className={`inline-flex translate-y-[110%] opacity-0 ${characterClassName}`} data-project-word>
+            <span className={`inline-flex ${characterClassName}`} data-project-word>
               {word}
             </span>
             {wordIndex < words.length - 1 ? <span className="whitespace-pre"> </span> : null}
@@ -41,7 +41,7 @@ function ProjectRevealText({ text, className, characterClassName = 'text-gradien
         <span key={`${word}-${wordIndex}`} className="inline-flex whitespace-nowrap" aria-hidden="true">
           {Array.from(word).map((character, characterIndex) => (
             <span key={`${character}-${characterIndex}`} className="inline-flex overflow-hidden align-baseline">
-              <span className={`inline-flex translate-y-[110%] opacity-0 ${characterClassName}`} data-project-character>
+              <span className={`inline-flex ${characterClassName}`} data-project-character>
                 {character}
               </span>
             </span>
@@ -71,7 +71,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
       .to(surface, { filter: 'blur(0) saturate(1)', x: 0, y: 0, scale: 1, duration: 0.28, ease: 'power3.out', clearProps: 'filter,transform' });
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
 
     if (!section) {
