@@ -3,7 +3,7 @@
 import { CursorHoverCard } from '@/components/ui/cursor-hover-card';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { ArrowRight } from 'lucide-react';
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { PointerEvent } from 'react';
 import { gsap } from 'gsap';
 import type { ProjectItem } from '@/lib/content/home';
@@ -71,7 +71,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
       .to(surface, { filter: 'blur(0) saturate(1)', x: 0, y: 0, scale: 1, duration: 0.28, ease: 'power3.out', clearProps: 'filter,transform' });
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
 
     if (!section) {
